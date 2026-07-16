@@ -135,11 +135,11 @@ export default function SurveyPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="bachelor" id="bachelor" />
-                  <Label htmlFor="bachelor">Bachelor's Degree</Label>
+                  <Label htmlFor="bachelor">Bachelor&apos;s Degree</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="master" id="master" />
-                  <Label htmlFor="master">Master's Degree</Label>
+                  <Label htmlFor="master">Master&apos;s Degree</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="phd" id="phd" />

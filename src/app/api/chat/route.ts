@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
+import type { ChatCompletionMessageParam } from 'openai/resources/chat'
 
 export async function POST(request: Request) {
   try {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
       .single()
 
     // Build messages array
-    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+    const messages: ChatCompletionMessageParam[] = [
       {
         role: 'system',
         content: `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task. 
