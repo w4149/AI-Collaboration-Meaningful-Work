@@ -17,6 +17,7 @@ export default function ChatWindow() {
   const addChatMessage = useAppStore((state) => state.addChatMessage)
   const isChatOpen = useAppStore((state) => state.isChatOpen)
   const toggleChat = useAppStore((state) => state.toggleChat)
+  const allowChat = useAppStore((state) => state.allowChat)
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
 
@@ -85,6 +86,10 @@ export default function ChatWindow() {
       e.preventDefault()
       handleSend()
     }
+  }
+
+  if (!allowChat) {
+    return null
   }
 
   if (!isChatOpen) {

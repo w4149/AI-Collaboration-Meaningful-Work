@@ -44,7 +44,8 @@ export default function EntryPage() {
         data.taskType, 
         data.taskContent, 
         data.allowCopy, 
-        data.allowPaste
+        data.allowPaste,
+        data.allowChat
       )
       setStartTime(new Date())
       

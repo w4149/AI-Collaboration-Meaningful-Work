@@ -53,21 +53,18 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
       }
     }
     
-    const preventSelectionChange = () => {
-      if (!allowCopy) {
-        window.getSelection()?.removeAllRanges()
-      }
-    }
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!allowCopy) {
-        // Prevent Ctrl+C, Ctrl+X, Ctrl+A
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'a' || e.key === 's')) {
+        const target = e.target as HTMLElement
+        if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+          return
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'a')) {
           e.preventDefault()
           e.stopPropagation()
           return false
         }
-        // Prevent PrintScreen (limited effectiveness)
         if (e.key === 'PrintScreen') {
           e.preventDefault()
           return false
@@ -83,7 +80,6 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
       element.addEventListener('contextmenu', preventContextMenu, true)
       element.addEventListener('selectstart', preventSelectStart, true)
       document.addEventListener('keydown', handleKeyDown, true)
-      document.addEventListener('selectionchange', preventSelectionChange)
     }
 
     return () => {
@@ -95,7 +91,6 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
         element.removeEventListener('selectstart', preventSelectStart, true)
       }
       document.removeEventListener('keydown', handleKeyDown, true)
-      document.removeEventListener('selectionchange', preventSelectionChange)
     }
   }, [allowCopy])
 
@@ -112,7 +107,7 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
       <CardContent 
         ref={contentRef}
         className={`flex-1 overflow-y-auto scroll-smooth pr-2 ${
-          !allowCopy ? 'select-none pointer-events-auto' : ''
+          !allowCopy ? 'select-none' : ''
         }`}
         style={{
           maxHeight: 'calc(100vh - 200px)',

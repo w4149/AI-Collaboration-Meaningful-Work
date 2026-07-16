@@ -105,9 +105,10 @@ export async function POST(request: Request) {
     const taskContent = TASK_CONTENTS[selectedTaskType.type_name as keyof typeof TASK_CONTENTS] || 
       'Please complete this task by writing your response here.'
 
-    // Randomly set copy/paste permissions for variation
+    // Randomly set copy/paste/chat permissions for variation
     const allowCopy = Math.random() > 0.5
     const allowPaste = Math.random() > 0.5
+    const allowChat = Math.random() > 0.5
 
     // 4. Create task
     const { data: task, error: taskError } = await supabaseServer
@@ -135,6 +136,7 @@ export async function POST(request: Request) {
       taskContent,
       allowCopy,
       allowPaste,
+      allowChat,
     })
   } catch (error) {
     console.error('Error in start session:', error)

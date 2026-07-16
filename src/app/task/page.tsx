@@ -28,6 +28,7 @@ export default function TaskPage() {
   const taskType = useAppStore((state) => state.taskType)
   const allowCopy = useAppStore((state) => state.allowCopy)
   const allowPaste = useAppStore((state) => state.allowPaste)
+  const allowChat = useAppStore((state) => state.allowChat)
   const taskSubmission = useAppStore((state) => state.taskSubmission)
   const chatMessages = useAppStore((state) => state.chatMessages)
   const isChatOpen = useAppStore((state) => state.isChatOpen)
@@ -118,7 +119,7 @@ export default function TaskPage() {
       <main className="flex-1 flex flex-col p-4 lg:p-6">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Left Panel */}
-          <div className={`lg:col-span-7 ${!isChatOpen ? 'lg:col-span-12' : ''} flex flex-col gap-4`}>
+          <div className={`lg:col-span-7 ${!isChatOpen || !allowChat ? 'lg:col-span-12' : ''} flex flex-col gap-4`}>
             <div className="flex-1 min-h-[300px]">
               <InfoDisplay 
                 content={taskContent} 
@@ -140,7 +141,7 @@ export default function TaskPage() {
           </div>
           
           {/* Right Panel - Chat */}
-          {isChatOpen && (
+          {allowChat && isChatOpen && (
             <div className="lg:col-span-5">
               <div className="h-[calc(100vh-140px)] min-h-[500px]">
                 <ChatWindow />

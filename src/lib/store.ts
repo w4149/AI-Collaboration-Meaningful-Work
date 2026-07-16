@@ -21,7 +21,8 @@ interface AppState {
   taskContent: string | null
   allowCopy: boolean
   allowPaste: boolean
-  setTask: (taskId: string, taskType: string, taskContent: string, allowCopy: boolean, allowPaste: boolean) => void
+  allowChat: boolean
+  setTask: (taskId: string, taskType: string, taskContent: string, allowCopy: boolean, allowPaste: boolean, allowChat: boolean) => void
   
   // Task Submission
   taskSubmission: string
@@ -57,8 +58,9 @@ export const useAppStore = create<AppState>()(
       taskContent: null,
       allowCopy: true,
       allowPaste: true,
-      setTask: (taskId, taskType, taskContent, allowCopy, allowPaste) => 
-        set({ taskId, taskType, taskContent, allowCopy, allowPaste }),
+      allowChat: true,
+      setTask: (taskId, taskType, taskContent, allowCopy, allowPaste, allowChat) => 
+        set({ taskId, taskType, taskContent, allowCopy, allowPaste, allowChat }),
       
       // Task Submission
       taskSubmission: '',
