@@ -1,60 +1,214 @@
 import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
 
-// Sample task content for the four task types (long versions for testing scroll)
 const TASK_CONTENTS = {
-  'Type A': `Climate change is one of the most pressing issues of our time, a challenge that demands our immediate and sustained attention. Over the past century, global average temperatures have risen by approximately 1.1 degrees Celsius, a seemingly small number that belies its profound impact on our planet's delicate ecosystems. This temperature increase has triggered a cascade of environmental changes: polar ice caps are melting at an alarming rate, sea levels are rising steadily, threatening coastal communities and small island nations, and extreme weather events - from hurricanes and floods to droughts and wildfires - are becoming more frequent and intense across the globe.
+  'task1': `你是 Star 咖啡店的员工。下周店里要上架一款新饮品，店长请你负责它的推广。请你完成下面两件事：
 
-Scientists overwhelmingly agree that human activity, particularly the burning of fossil fuels like coal, oil, and natural gas, is the primary driver of this warming trend. When we burn these fuels for energy, transportation, and industry, we release massive quantities of greenhouse gases - most notably carbon dioxide (CO2) and methane - into the atmosphere. These gases act like a blanket, trapping heat from the sun that would otherwise radiate back into space, creating what is commonly known as the greenhouse effect. The concentration of CO2 in the atmosphere has increased by more than 40% since the Industrial Revolution, reaching levels not seen in millions of years.
+1）为新饮品设计营销方案，思考这款新品最适合卖给哪些顾客，以及怎样吸引他们来买。要求如下：
+- 包含目标顾客的简单描述
+- 2-3 个具体的推广点子（例如做什么活动、在哪里宣传、怎么摆放或搭配等）。点子要具体、能真正做得到。
+- 🍊提示：与众不同&高创造力想象力
+- 其他你认为需要提到的内容
+- 不少于200字
 
-Addressing climate change requires urgent, collective action on a global scale. There is no single solution; rather, we need a multifaceted approach that tackles the problem from multiple angles. This includes rapidly transitioning from fossil fuels to renewable energy sources like solar, wind, hydro, and geothermal power. We must also dramatically improve energy efficiency in our buildings, transportation systems, and industries. Protecting and restoring our forests, wetlands, and other natural carbon sinks is another critical piece of the puzzle, as these ecosystems absorb CO2 from the atmosphere. Additionally, we need to adopt more sustainable practices in agriculture, reduce waste, and promote circular economy models.
+2）为新饮品写一段推荐语，要求如下：
+- 该推荐语目标发布在社交媒体上
+- 内容新颖，让人一看就想尝一尝
+- 大约 100 字
 
-While government policies and international agreements are essential, individual actions also matter more than many people realize. Simple, everyday steps like reducing energy consumption at home, driving less or switching to electric vehicles, minimizing waste through recycling and composting, eating more plant-based foods, and supporting sustainable products and companies can all contribute to the solution when multiplied across millions or billions of people. Individual choices can also drive market change and create demand for sustainable alternatives.
+下面是这款新品的资料，请根据资料来写。
 
-Please write a short essay (200-300 words) discussing what you believe is the most important action we can take to address climate change, and why you think this action is particularly crucial. Support your argument with reasoning and, if possible, examples.`,
-  
-  'Type B': `The rise of artificial intelligence (AI) represents one of the most transformative technological developments in human history, fundamentally altering nearly every aspect of modern life. From healthcare and education to transportation, entertainment, and scientific research, AI systems have become integral to how we live, work, and interact with the world around us. The pace of innovation in this field is breathtaking, with breakthroughs happening at an accelerating rate that challenges our ability to fully comprehend the implications.
+📋 新品资料
+名称：枫糖肉桂燕麦拿铁 (Maple Cinnamon Oat Latte)
+冷热：冷、热均可
+口味：香浓咖啡 + 枫糖的甜香 + 肉桂的暖香 + 燕麦奶的顺滑
+用料特点：用燕麦奶（不含乳糖、适合素食者）、真枫糖浆、不加人工香精
+价格：5.5 美元
+上市时间：下周（秋季限定）`,
 
-In healthcare, AI is revolutionizing diagnosis, treatment, and patient care. Machine learning algorithms can analyze medical images - such as X-rays, MRIs, and CT scans - with remarkable accuracy, often detecting signs of cancer, cardiovascular disease, and other conditions at an earlier stage than human doctors, when treatment is more likely to be successful. AI-powered drug discovery platforms are dramatically reducing the time and cost of developing new medications, bringing potentially life-saving treatments to patients faster. In surgery, robotic systems guided by AI are enabling more precise, minimally invasive procedures that reduce recovery times and improve outcomes.
+  'task2': `你是 Lucky 咖啡店的员工。附近有1家 Bingo 咖啡店和你们形成长期竞争。店长想要你根据下面三份资料做一些分析，并对你所在咖啡店的未来规划提出建议。要求如下：
 
-In education, AI-powered tutoring systems and adaptive learning platforms are providing personalized educational experiences that adapt to each student's unique pace, learning style, strengths, and weaknesses. These technologies can identify knowledge gaps and provide targeted support, helping students master concepts more effectively. They also have the potential to democratize access to quality education, bringing world-class learning resources to students in remote or underserved communities who might not otherwise have access to them. Virtual reality and augmented reality, enhanced by AI, are creating immersive learning environments that make complex subjects more engaging and understandable.
+1. 你和竞争对手的主要优点和缺点分别（优劣势）是什么，用资料里的信息支持你的建议（根据材料得出，不要脱离现实和材料空想）
+2. 不少于200字
 
-However, the rapid advancement of AI also raises profound and complex ethical questions that society is only beginning to grapple with. One major concern is job displacement: as AI systems become more capable of performing tasks that were once done exclusively by humans, many traditional jobs may be automated, potentially leading to significant economic disruption and inequality. There are also worries about algorithmic bias - AI systems learn from historical data, which may contain human prejudices, leading to unfair or discriminatory outcomes in areas like hiring, lending, and criminal justice. Privacy concerns are growing as AI systems collect and analyze vast amounts of personal data. Additionally, the potential misuse of AI technology - from autonomous weapons to deepfakes and sophisticated disinformation campaigns - poses significant risks to global security and democracy.
+📊 资料一：销售数据对比图
+（蓝色：工作日早间；橙色：周末下午晚些时候）
+- Lucky Coffee（我们）：工作日早间 40单，周末下午晚些时候 15单
+- Bingo Coffee（竞争对手）：工作日早间 20单，周末下午晚些时候 65单
 
-Please write your thoughts (200-300 words) on whether you believe the benefits of AI outweigh the risks, and what specific safeguards, regulations, or ethical guidelines you think are necessary to ensure AI is developed and used responsibly for the benefit of humanity.`,
-  
-  'Type C': `The COVID-19 pandemic represented an unprecedented disruption to work life around the world, fundamentally altering how we work, collaborate, and think about the workplace. In a matter of weeks, millions of people transitioned to remote work almost overnight, transforming kitchens, bedrooms, and living rooms into makeshift offices. This sudden, forced experiment has had lasting effects on work culture, organizational structures, and employee expectations, reshaping the future of work in ways that are still unfolding.
+📝 资料二：顾客评价汇总
 
-Remote work offers many compelling benefits that have become increasingly apparent to both employees and employers. For workers, perhaps the most valued benefit is the flexibility it provides: the ability to set one's own schedule, work from anywhere (whether that's from home, a coffee shop, or a different city or country), and better balance work responsibilities with personal life, family commitments, and personal interests. Eliminating the daily commute saves valuable time and reduces stress, while also cutting down on transportation costs and greenhouse gas emissions. Many people also find that they're more productive in a remote setting, with fewer distractions and the ability to create a work environment that suits their individual needs.
+Lucky Coffee 评价：
+- Olivia：价格便宜，出餐快，上班路上买一杯提神醒脑。
+- Emma：咖啡味道还不错！
+- Sophia：服务员态度太冷淡了，问个问题都爱答不理，连个植物奶都没有。
+- James：价格低出餐快，味道一般般，能喝就行。
+- Liam：座位少得可怜，进去没地方坐，环境也太差了。
 
-For companies, remote work can significantly reduce overhead costs by eliminating or reducing the need for large, expensive office spaces. It also expands the talent pool exponentially, allowing organizations to hire the best candidates regardless of their geographic location. This can lead to more diverse and inclusive teams, as companies are no longer limited to hiring people who live within commuting distance of the office. Many businesses have also reported increased employee satisfaction and retention as a result of offering remote work options.
+---
 
-However, remote work also presents significant challenges that should not be underestimated. Feelings of isolation and loneliness are common among remote workers, as informal workplace interactions and spontaneous conversations that foster connection and creativity are lost. Collaboration and communication can become more difficult, requiring more intentional effort and the right tools to ensure everyone stays aligned and engaged. Maintaining healthy boundaries between work and personal life is another major challenge; when your home is also your office, it can be difficult to "clock out" and disconnect from work, increasing the risk of burnout. Other challenges include difficulties in onboarding and training new employees, ensuring equitable treatment and career advancement for remote workers, and maintaining company culture.
+Bingo Coffee 评价：
+- Noah：买咖啡居然还送蛋糕和徽章，也太划算了吧！
+- Ethan：出品质量很好，装修有格调，跟朋友来聊天坐一下午都不想走。
+- Ava：咖啡豆香气足，用料认真。
+- Chloe：经常做活动，买年卡真的十分优惠！
+- Ryan：我等了快二十分钟，太慢了吧，害我迟到了。
 
-The future of work will likely involve a variety of models, with many experts predicting that hybrid arrangements - combining remote work with some in-person time in an office - will become the norm for many organizations. Finding the right balance will require innovative approaches to management, communication technology, workplace design, and organizational culture.
+📋 资料三：本地顾客的小调查（回收 200 份）
+- 70% 的人希望有一个安静、能坐下来工作或学习的地方；
+- 60% 的人在意价格 & 赠品；
+- 50% 的人希望多一些吃的（不只是喝的）；
+- 40% 的人想要燕麦奶等植物奶的选择，适配自己的素食需求。
+- 🍊提示：早晨&周末`,
 
-Please write a reflection (200-300 words) on your ideal work arrangement (remote, in-person, or hybrid) and why you think it would be most effective for both employees and organizations. Consider factors like productivity, work-life balance, collaboration, mental health, and company culture.`,
-  
-  'Type D': `Social media has become a central, inescapable part of modern communication and daily life for billions of people around the world. Platforms like Facebook, Twitter/X, Instagram, TikTok, LinkedIn, and Snapchat connect us to friends, family, colleagues, and communities across the globe, enabling the instantaneous sharing of ideas, news, personal experiences, art, and information. These platforms have fundamentally transformed how we interact, form relationships, consume media, and engage with the world around us, creating both remarkable opportunities and significant challenges.
+  'task3': `你是Lucky 咖啡店的员工。下面是顾客留下的一批留言，每条都留了电话（但格式很乱）。请你把这批留言整理归档，对每一条完成三件事：
 
-One of the most positive aspects of social media is its unparalleled ability to keep us connected to friends and family regardless of geographical distance. People can share milestone moments, offer support during difficult times, and maintain relationships that might otherwise fade. Beyond personal connections, social media has given voice and visibility to marginalized communities, amplifying perspectives that have historically been excluded from mainstream media and discourse. It has also proven to be a powerful tool for social change, enabling social movements to organize, mobilize supporters, and spread awareness more quickly and effectively than ever before. During times of crisis, social media can facilitate rapid information sharing, disaster response, and community support.
+1. 判断它是表扬还是批评；
+2. 从下面 3 个标签里，给它选一个最合适的标签；
+3. 把电话号码改写成统一的标准格式：XXX-XXX-XXXX（三位-三位-四位，只保留数字，去掉多余符号和文字）。
 
-However, the rise of social media also has a darker side that is increasingly cause for concern. Numerous studies have linked heavy social media use to mental health issues, particularly among children, teenagers, and young adults. The pressure to present a curated, perfect version of one's life online can lead to feelings of inadequacy, low self-esteem, and anxiety. Cyberbullying - enabled by the anonymity and reach of social platforms - has become a pervasive problem with devastating consequences. Many people find themselves trapped in addictive usage patterns, spending hours scrolling through feeds even when it doesn't bring them joy or fulfillment. The design of these platforms, which relies on algorithms that prioritize engagement above all else, often amplifies this addictive behavior.
+标签体系：服务，环境，出品（饮品）
 
-Social media has also transformed how we consume and share information, not always for the better. The rapid spread of misinformation, disinformation, and "fake news" on these platforms has eroded trust in institutions, media, and even in one another. Algorithms tend to create echo chambers, showing us content that aligns with our existing beliefs and filtering out opposing viewpoints, which can deepen political and social polarization. The line between fact and fiction has become increasingly blurred, and conspiracy theories that once existed on the fringes can now spread rapidly to a global audience.
+请按下表格式填写：编号，标签，标准电话
 
-Please share your perspective (200-300 words) on how social media has affected relationships, communication, and society more broadly. You can draw from your personal experiences, observations of others, or general societal trends.`
+----------------------------------------
+
+编号    内容
+1       进门的时候那个女生抬头冲我笑了一下，整个早上都好了起来。
+2       坐进角落那个位子，窗外有棵树，就那么发了二十分钟呆。
+3       太甜了，甜到后来嗓子有点腻，也不知道是加了什么。
+4       站在门口等了有一分钟，里面的人没有一个抬头。
+5       隔壁那桌不知道在讨论什么，声音完全压过了我耳机里的音乐。
+6       喝了第一口，跟我之前喝过的那种不一样，有点惊喜。
+7       问了好几个问题，对方没有一次表现出不耐烦，这很少见。
+8       冬天进去一下子就暖过来了，帽子都不想摘。
+9       那个杯子上有拉花，我拍了照片发给朋友，她说下次一定来。
+10      点单的时候感觉自己在打扰他们聊天。
+11      阳光从左边打进来，随手拍出来的照片都有点好看。
+12      拿到的时候已经不烫了，不知道是不是放了一会儿。
+13      我包落在座位上出门才发现，他们帮我放在前台，还贴了个便利贴说是我的。
+14      椅子坐了没多久腰就开始有点酸，不太适合久待。
+15      喝完之后还有点回甘，这我真的没想到。
+16      说好了的东西不对，指出来之后对方的那个表情，算了不说了。
+17      插座就在旁边，电脑充着电坐了大半天，效率高得吓到我自己。
+18      喝到一半感觉杯底有一层沉下去的东西，没敢喝完。
+19      快打烊了还让我多坐一会儿，说不急，这在别的地方真的很少遇到。
+20      空调出风口正对着我的位子，坐了没多久就开始头疼。
+21      量给得很足，我一个人喝到撑。
+22      找零多给了两块，我说了一声，对方一脸"你不是赚到了吗"的表情，很奇怪。
+23      背景音乐音量刚好，不知不觉在里面待了三个小时。
+24      温度刚好，拿到就能直接喝，不用等，很省事。
+25      我说了一遍口味要求，拿到的完全对，一个字都没漏。
+26      那天人特别多，连个放包的地方都没找到，最后放在腿上喝完就走了。
+27      我朋友点的那个，和照片上的颜色差挺多，看着有点不对劲。
+28      一进门就有人来问要坐哪儿，没有那种自己站着不知道往哪去的尴尬。
+29      靠窗的位子能看到街上来来去去的人，发发呆正合适。
+30      泡沫很多但往下喝其实没多少，有一种被骗了的感觉。
+31      叫了两次才有人过来，那会儿也不是很忙的时候。
+32      洗手间的水龙头开了半天才出水，有点不舒服。
+33      朋友不喝咖啡，点了别的，喝了一口就说下次还来，这挺说明问题的。
+34      手抖把杯子碰倒了，对方过来处理，全程没让我有一点难堪。
+35      外面下着雨，里头暗暗的，听着雨声，待着很对。
+36      加了燕麦奶的版本比我想象中顺很多，不是那种寡淡的感觉。
+37      问了推荐，对方说都可以，然后就盯着我等，感觉自己在为难他。
+38      灯光有点暗，手机屏幕一直自动调亮，看久了眼睛很累。
+39      冰给的有点多，喝到后来基本上没什么味道，主要在喝水。
+40      带着孩子，他一直在吵，有人过来轻声说了句没关系，当时真的挺感激的。
+41      进去不花哨，也没有什么多余的东西，很安静，适合想清楚一件事的时候来坐坐。
+42      那个季节限定的，看着有点怀疑，喝了之后后悔没多点一杯。
+43      手机没电付不了款，对方一脸为难，来来去去说了好几轮，本来很简单的事。
+44      书架上有几本可以随手翻的，等朋友迟到的那四十分钟过得意外地快。
+45      点了两杯一样的，一杯浓一杯淡，明显不是同一个人做的，差很多。
+46      点单的时候主动提醒我这周有个东西在停供，帮我省了踩雷。
+47      门口位置靠近出入口，人来人往带进来的风一直吹，坐了一会儿就走了。
+48      那个杯子比我以为的大很多，喝了一个上午都还撑着，性价比真的高。
+49      说五分钟好，等了将近二十分钟，也没有人来说一声，就那么干坐着。
+50      说是热的，拿到手就是温，懒得说，但确实不太对。`,
+
+  'task4': `你是 Lucky 咖啡店的员工。今天你带病上班，状态不太好。给一位顾客做咖啡时不小心走神，把咖啡豆包装（异物）掉进了他的咖啡里没发现。这位顾客喝的时候差点被呛到，非常生气，专门写了一封投诉信投诉你。
+
+下面是他的投诉信。请你写一封回信，目标是：用适当的方法平复对方的情绪，让他愿意撤销投诉。
+
+---
+
+顾客的投诉信
+
+致咖啡店：
+
+今天早上我在你们店买了一杯拿铁，结果喝到一半，差点被里面一个塑料包装呛到！我当时赶着上班，喝了好几口才发现杯子里有东西，恶心得我到现在都反胃。
+
+做咖啡的那个员工看起来根本心不在焉，我叫他半天才反应过来。这也太不专业、太不负责任了。这是食品安全问题！我花钱买咖啡，不是来吃塑料的。
+
+我要正式投诉这名员工，并要求店里给我一个说法。否则我会把这件事发到网上，也会向有关部门举报。
+
+——Tony
+
+---
+
+要求：200-300字`,
+}
+
+const GROUP_CONFIG: Record<string, { allowCopy: boolean; allowPaste: boolean; allowChat: boolean }> = {
+  'G1-Human': {
+    allowCopy: false,
+    allowPaste: false,
+    allowChat: false,
+  },
+  'G2-HumanAndAI': {
+    allowCopy: false,
+    allowPaste: false,
+    allowChat: false,
+  },
+  'G3-AI': {
+    allowCopy: true,
+    allowPaste: true,
+    allowChat: true,
+  },
 }
 
 export async function POST(request: Request) {
   try {
-    const { prolificId } = await request.json()
+    const { prolificId, taskId, groupType } = await request.json()
 
     if (!prolificId) {
       return NextResponse.json({ error: 'Prolific ID is required' }, { status: 400 })
     }
 
-    // 1. Create or get user
+    let selectedTaskId = taskId as keyof typeof TASK_CONTENTS
+    let selectedGroupType = groupType as keyof typeof GROUP_CONFIG
+
+    if (!selectedTaskId || !TASK_CONTENTS[selectedTaskId]) {
+      const taskIds = Object.keys(TASK_CONTENTS) as (keyof typeof TASK_CONTENTS)[]
+      selectedTaskId = taskIds[Math.floor(Math.random() * taskIds.length)]
+    }
+
+    if (!selectedGroupType || !GROUP_CONFIG[selectedGroupType]) {
+      const groupTypes = Object.keys(GROUP_CONFIG) as (keyof typeof GROUP_CONFIG)[]
+      selectedGroupType = groupTypes[Math.floor(Math.random() * groupTypes.length)]
+    }
+
+    const config = GROUP_CONFIG[selectedGroupType]
+    const taskContent = TASK_CONTENTS[selectedTaskId] || 
+      'Please complete this task by writing your response here.'
+
+    const taskTypeMap: Record<keyof typeof TASK_CONTENTS, string> = {
+      'task1': 'Type A',
+      'task2': 'Type B',
+      'task3': 'Type C',
+      'task4': 'Type D',
+    }
+    
+    const { data: taskType, error: taskTypeError } = await supabaseServer
+      .from('task_types')
+      .select('id')
+      .eq('type_name', taskTypeMap[selectedTaskId])
+      .single()
+
+    if (taskTypeError || !taskType) {
+      console.error('Error fetching task type:', taskTypeError)
+      return NextResponse.json({ error: 'Failed to fetch task type' }, { status: 500 })
+    }
+
     const { data: existingUser } = await supabaseServer
       .from('users')
       .select('id')
@@ -79,7 +233,6 @@ export async function POST(request: Request) {
       userId = newUser.id
     }
 
-    // 2. Create session
     const { data: session, error: sessionError } = await supabaseServer
       .from('sessions')
       .insert({ user_id: userId })
@@ -91,34 +244,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
     }
 
-    // 3. Get task types and randomly assign one
-    const { data: taskTypes } = await supabaseServer
-      .from('task_types')
-      .select('*')
-
-    if (!taskTypes || taskTypes.length === 0) {
-      return NextResponse.json({ error: 'No task types available' }, { status: 500 })
-    }
-
-    const randomIndex = Math.floor(Math.random() * taskTypes.length)
-    const selectedTaskType = taskTypes[randomIndex]
-    const taskContent = TASK_CONTENTS[selectedTaskType.type_name as keyof typeof TASK_CONTENTS] || 
-      'Please complete this task by writing your response here.'
-
-    // Randomly set copy/paste/chat permissions for variation
-    const allowCopy = Math.random() > 0.5
-    const allowPaste = Math.random() > 0.5
-    const allowChat = Math.random() > 0.5
-
-    // 4. Create task
     const { data: task, error: taskError } = await supabaseServer
       .from('tasks')
       .insert({
         user_id: userId,
-        task_type_id: selectedTaskType.id,
+        task_type_id: taskType.id,
         content_to_display: taskContent,
-        allow_copy: allowCopy,
-        allow_paste: allowPaste,
+        allow_copy: config.allowCopy,
+        allow_paste: config.allowPaste,
       })
       .select('id')
       .single()
@@ -132,11 +265,11 @@ export async function POST(request: Request) {
       userId,
       sessionId: session.id,
       taskId: task.id,
-      taskType: selectedTaskType.type_name,
+      taskType: selectedTaskId,
       taskContent,
-      allowCopy,
-      allowPaste,
-      allowChat,
+      allowCopy: config.allowCopy,
+      allowPaste: config.allowPaste,
+      allowChat: config.allowChat,
     })
   } catch (error) {
     console.error('Error in start session:', error)

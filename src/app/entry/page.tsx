@@ -26,31 +26,10 @@ export default function EntryPage() {
     setIsLoading(true)
     
     try {
-      // Create user, session, and assign task via API
-      const response = await fetch('/api/auth/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prolificId }),
-      })
-      
-      if (!response.ok) throw new Error('Failed to start session')
-      
-      const data = await response.json()
-      
-      // Update store
-      setUser(data.userId, data.sessionId, prolificId)
-      setTask(
-        data.taskId, 
-        data.taskType, 
-        data.taskContent, 
-        data.allowCopy, 
-        data.allowPaste,
-        data.allowChat
-      )
+      setUser(`test_user_${Date.now()}`, `session_${Date.now()}`, prolificId)
       setStartTime(new Date())
       
-      // Navigate to task page
-      router.push('/task')
+      router.push('/select-task')
     } catch (error) {
       console.error('Error starting session:', error)
       alert('Failed to start. Please try again.')

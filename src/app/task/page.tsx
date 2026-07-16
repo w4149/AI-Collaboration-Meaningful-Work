@@ -10,17 +10,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
 import Navigation from '@/components/Navigation'
 import InfoDisplay from '@/components/InfoDisplay'
 import TaskInput from '@/components/TaskInput'
 import ChatWindow from '@/components/ChatWindow'
 import { useAppStore } from '@/lib/store'
 
+const UNLOCK_DELAY_MINUTES = 5
+
 export default function TaskPage() {
   const router = useRouter()
   const [showInstructions, setShowInstructions] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
   
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
@@ -32,15 +36,17 @@ export default function TaskPage() {
   const taskSubmission = useAppStore((state) => state.taskSubmission)
   const chatMessages = useAppStore((state) => state.chatMessages)
   const isChatOpen = useAppStore((state) => state.isChatOpen)
+  const groupType = useAppStore((state) => state.groupType)
+  const startTime = useAppStore((state) => state.startTime)
+  const unlockFeatures = useAppStore((state) => state.unlockFeatures)
+  const setTaskDuration = useAppStore((state) => state.setTaskDuration)
 
-  // Check if user has necessary data
   useEffect(() => {
     if (!userId || !taskId) {
       router.push('/entry')
     }
   }, [userId, taskId, router])
 
-  // Prevent refresh/close warning
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault()
@@ -51,6 +57,33 @@ export default function TaskPage() {
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
   }, [])
+
+  useEffect(() => {
+    if (groupType !== 'G2-HumanAndAI' || !startTime) {
+      setCountdown(null)
+      return
+    }
+
+    const targetTime = new Date(startTime.getTime() + UNLOCK_DELAY_MINUTES * 60 * 1000)
+    
+    const updateCountdown = () => {
+      const now = new Date()
+      const remaining = targetTime.getTime() - now.getTime()
+      
+      if (remaining <= 0) {
+        setCountdown(0)
+        unlockFeatures()
+        return
+      }
+      
+      setCountdown(Math.ceil(remaining / 1000))
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+    
+    return () => clearInterval(interval)
+  }, [groupType, startTime, unlockFeatures])
 
   const handleSubmit = async () => {
     if (!taskSubmission.trim()) {
@@ -66,7 +99,12 @@ export default function TaskPage() {
     setShowConfirmDialog(false)
 
     try {
-      // Save chat messages first
+      if (startTime) {
+        const endTime = new Date()
+        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
+        setTaskDuration(duration)
+      }
+
       for (const msg of chatMessages) {
         await fetch('/api/chat/save', {
           method: 'POST',
@@ -81,7 +119,6 @@ export default function TaskPage() {
         })
       }
 
-      // Save submission
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,7 +131,6 @@ export default function TaskPage() {
 
       if (!response.ok) throw new Error('Failed to submit')
 
-      // Navigate to survey
       router.push('/survey')
     } catch (error) {
       console.error('Error submitting task:', error)
@@ -102,6 +138,12 @@ export default function TaskPage() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const formatCountdown = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   if (!userId || !taskId) {
@@ -116,9 +158,32 @@ export default function TaskPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation onShowInstructions={() => setShowInstructions(true)} />
       
+      {groupType === 'G2-HumanAndAI' && countdown !== null && countdown > 0 && (
+        <div className="bg-amber-100 border-b border-amber-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-amber-500 text-white border-amber-500">
+              AI Assistant Unlocking Soon
+            </Badge>
+            <span className="text-amber-700 font-semibold">
+              {formatCountdown(countdown)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {groupType === 'G2-HumanAndAI' && countdown === 0 && (
+        <div className="bg-green-100 border-b border-green-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-green-500 text-white border-green-500">
+              Unlocked!
+            </Badge>
+            <span className="text-green-700">AI Assistant and copy/paste are now available</span>
+          </div>
+        </div>
+      )}
+      
       <main className="flex-1 flex flex-col p-4 lg:p-6">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-          {/* Left Panel */}
           <div className={`lg:col-span-7 ${!isChatOpen || !allowChat ? 'lg:col-span-12' : ''} flex flex-col gap-4`}>
             <div className="flex-1 min-h-[300px]">
               <InfoDisplay 
@@ -140,7 +205,6 @@ export default function TaskPage() {
             </div>
           </div>
           
-          {/* Right Panel - Chat */}
           {allowChat && isChatOpen && (
             <div className="lg:col-span-5">
               <div className="h-[calc(100vh-140px)] min-h-[500px]">
@@ -151,7 +215,6 @@ export default function TaskPage() {
         </div>
       </main>
 
-      {/* Instructions Dialog */}
       <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -176,11 +239,18 @@ export default function TaskPage() {
                 <li>When you are ready, click &quot;Submit Task&quot; to continue</li>
               </ul>
             </div>
+            {groupType === 'G2-HumanAndAI' && (
+              <div className="bg-amber-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-amber-800 mb-2">G2 - Human + AI Group</h4>
+                <p className="text-amber-700 text-sm">
+                  AI assistant and copy/paste features will be unlocked after 5 minutes.
+                </p>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Confirm Submit Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
