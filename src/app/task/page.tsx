@@ -26,20 +26,26 @@ export default function TaskPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
   
-  const userId = useAppStore((state) => state.userId)
-  const taskId = useAppStore((state) => state.taskId)
-  const taskContent = useAppStore((state) => state.taskContent)
-  const taskType = useAppStore((state) => state.taskType)
-  const allowCopy = useAppStore((state) => state.allowCopy)
-  const allowPaste = useAppStore((state) => state.allowPaste)
-  const allowChat = useAppStore((state) => state.allowChat)
-  const taskSubmission = useAppStore((state) => state.taskSubmission)
-  const chatMessages = useAppStore((state) => state.chatMessages)
-  const isChatOpen = useAppStore((state) => state.isChatOpen)
-  const groupType = useAppStore((state) => state.groupType)
-  const startTime = useAppStore((state) => state.startTime)
-  const unlockFeatures = useAppStore((state) => state.unlockFeatures)
-  const setTaskDuration = useAppStore((state) => state.setTaskDuration)
+  const { 
+    userId, taskId, taskContent, taskType, allowCopy, allowPaste, allowChat, taskSubmission, chatMessages, isChatOpen, startTime, setStartTime,
+    groupType, unlockFeatures, setTaskDuration
+  } = useAppStore((state) => ({
+    userId: state.userId,
+    taskId: state.taskId,
+    taskContent: state.taskContent,
+    taskType: state.taskType,
+    allowCopy: state.allowCopy,
+    allowPaste: state.allowPaste,
+    allowChat: state.allowChat, // Add allowChat
+    taskSubmission: state.taskSubmission,
+    chatMessages: state.chatMessages,
+    isChatOpen: state.isChatOpen,
+    startTime: state.startTime,
+    setStartTime: state.setStartTime,
+    groupType: state.groupType,
+    unlockFeatures: state.unlockFeatures,
+    setTaskDuration: state.setTaskDuration,
+  }))
 
   useEffect(() => {
     if (!userId || !taskId) {
@@ -197,7 +203,7 @@ export default function TaskPage() {
             <div className="flex justify-end">
               <Button 
                 onClick={handleSubmit} 
-                disabled={isSubmitting}
+                disabled={isSubmitting || (countdown !== null && countdown > 0)} // Disable if not yet 5 minutes
                 size="lg"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Task'}
