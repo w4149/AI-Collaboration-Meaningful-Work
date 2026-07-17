@@ -13,9 +13,11 @@ export default function EntryPage() {
   const searchParams = useSearchParams()
   const [agreed, setAgreed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const setUser = useAppStore((state) => state.setUser)
-  const setTask = useAppStore((state) => state.setTask)
-  const setStartTime = useAppStore((state) => state.setStartTime)
+  const { setUser, setTask, setStartTime } = useAppStore((state) => ({
+    setUser: state.setUser,
+    setTask: state.setTask,
+    setStartTime: state.setStartTime,
+  }))
 
   // Get PROLIFIC_PID from URL params
   const prolificId = searchParams.get('PROLIFIC_PID') || 'test_user_' + Date.now()
@@ -26,13 +28,27 @@ export default function EntryPage() {
     setIsLoading(true)
     
     try {
-      setUser(`test_user_${Date.now()}`, `session_${Date.now()}`, prolificId)
+      const response = await fetch('/api/auth/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prolificId }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to start session');
+      }
+
+      const { userId, sessionId, taskId, taskType, groupMode, taskContent, allowCopy, allowPaste, allowChat } = await response.json()
+      
+      setUser(userId, sessionId, prolificId, groupMode) // Pass groupMode
+      setTask(taskId, taskType, taskContent, allowCopy, allowPaste, allowChat) // Pass allowChat
       setStartTime(new Date())
       
-      router.push('/select-task')
-    } catch (error) {
+      router.push('/task') // Navigate to /task
+    } catch (error: any) {
       console.error('Error starting session:', error)
-      alert('Failed to start. Please try again.')
+      alert(`Failed to start: ${error.message}. Please try again.`)
     } finally {
       setIsLoading(false)
     }
