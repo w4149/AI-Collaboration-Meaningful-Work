@@ -15,7 +15,7 @@ interface AppState {
   userId: string | null
   sessionId: string | null
   prolificId: string | null
-  setUser: (userId: string, sessionId: string, prolificId: string, groupType: GroupType) => void // Modified setUser
+  setUser: (userId: string, sessionId: string, prolificId: string) => void
   
   // Task
   taskId: string | null
@@ -65,7 +65,7 @@ export const useAppStore = create<AppState>()(
       userId: null,
       sessionId: null,
       prolificId: null,
-      setUser: (userId, sessionId, prolificId, groupType) => set({ userId, sessionId, prolificId, groupType }), // Modified setUser
+      setUser: (userId, sessionId, prolificId) => set({ userId, sessionId, prolificId }),
       
       // Task
       taskId: null,

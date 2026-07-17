@@ -21,14 +21,11 @@ export default function SurveyPage() {
     additionalComments: '',
   })
 
-  const { userId, sessionId, taskDuration } = useAppStore((state) => ({
-    userId: state.userId,
-    sessionId: state.sessionId,
-    taskDuration: state.taskDuration, // Add taskDuration
-  }))
+  const userId = useAppStore((state) => state.userId)
+  const taskDuration = useAppStore((state) => state.taskDuration)
 
-  // Redirect if no user or session
-  if (!userId || !sessionId) {
+  // Redirect if no user
+  if (!userId) {
     router.push('/entry')
     return null
   }
@@ -49,12 +46,11 @@ export default function SurveyPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          sessionId, // Add sessionId to the payload
           age: formData.age ? parseInt(formData.age) : null,
           gender: formData.gender || null,
           education: formData.education || null,
           taskFamiliarity: parseInt(formData.taskFamiliarity),
-          taskDuration: taskDuration || null, // Use taskDuration from store
+          taskDuration,
           additionalComments: formData.additionalComments || null,
         }),
       })

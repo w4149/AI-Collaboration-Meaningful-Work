@@ -235,7 +235,7 @@ export async function POST(request: Request) {
 
     const { data: session, error: sessionError } = await supabaseServer
       .from('sessions')
-      .insert({ user_id: userId, group_mode: selectedGroupType }) // Store selectedGroupType
+      .insert({ user_id: userId })
       .select('id')
       .single()
 
@@ -266,7 +266,6 @@ export async function POST(request: Request) {
       sessionId: session.id,
       taskId: task.id,
       taskType: selectedTaskId,
-      groupMode: selectedGroupType, // Return selectedGroupType
       taskContent,
       allowCopy: config.allowCopy,
       allowPaste: config.allowPaste,
