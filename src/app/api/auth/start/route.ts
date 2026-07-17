@@ -265,11 +265,13 @@ export async function POST(request: Request) {
       userId,
       sessionId: session.id,
       taskId: task.id,
+      taskTypeId: taskType.id,
       taskType: selectedTaskId,
       taskContent,
       allowCopy: config.allowCopy,
       allowPaste: config.allowPaste,
       allowChat: config.allowChat,
+      groupType: selectedGroupType,
     })
   } catch (error) {
     console.error('Error in start session:', error)

@@ -19,12 +19,13 @@ interface AppState {
   
   // Task
   taskId: string | null
+  taskTypeId: string | null
   taskType: string | null
   taskContent: string | null
   allowCopy: boolean
   allowPaste: boolean
   allowChat: boolean
-  setTask: (taskId: string, taskType: string, taskContent: string, allowCopy: boolean, allowPaste: boolean, allowChat: boolean) => void
+  setTask: (taskId: string, taskTypeId: string, taskType: string, taskContent: string, allowCopy: boolean, allowPaste: boolean, allowChat: boolean) => void
   
   // Group Type
   groupType: GroupType
@@ -69,13 +70,14 @@ export const useAppStore = create<AppState>()(
       
       // Task
       taskId: null,
+      taskTypeId: null,
       taskType: null,
       taskContent: null,
       allowCopy: true,
       allowPaste: true,
       allowChat: true,
-      setTask: (taskId, taskType, taskContent, allowCopy, allowPaste, allowChat) => 
-        set({ taskId, taskType, taskContent, allowCopy, allowPaste, allowChat }),
+      setTask: (taskId, taskTypeId, taskType, taskContent, allowCopy, allowPaste, allowChat) => 
+        set({ taskId, taskTypeId, taskType, taskContent, allowCopy, allowPaste, allowChat }),
       
       // Group Type
       groupType: null,

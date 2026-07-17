@@ -25,6 +25,7 @@ export default function TaskPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
+  const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
@@ -59,6 +60,32 @@ export default function TaskPage() {
   }, [])
 
   useEffect(() => {
+    if (!startTime) {
+      setSubmitCountdown(null)
+      return
+    }
+
+    const targetTime = new Date(startTime.getTime() + 5 * 60 * 1000)
+    
+    const updateCountdown = () => {
+      const now = new Date()
+      const remaining = targetTime.getTime() - now.getTime()
+      
+      if (remaining <= 0) {
+        setSubmitCountdown(0)
+        return
+      }
+      
+      setSubmitCountdown(Math.ceil(remaining / 1000))
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+    
+    return () => clearInterval(interval)
+  }, [startTime])
+
+  useEffect(() => {
     if (groupType !== 'G2-HumanAndAI' || !startTime) {
       setCountdown(null)
       return
@@ -88,6 +115,11 @@ export default function TaskPage() {
   const handleSubmit = async () => {
     if (!taskSubmission.trim()) {
       alert('Please write a response before submitting.')
+      return
+    }
+    
+    if (submitCountdown !== null && submitCountdown > 0) {
+      alert(`You must wait at least 5 minutes before submitting. Time remaining: ${formatCountdown(submitCountdown)}`)
       return
     }
     
@@ -158,6 +190,19 @@ export default function TaskPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation onShowInstructions={() => setShowInstructions(true)} />
       
+      {submitCountdown !== null && submitCountdown > 0 && (
+        <div className="bg-blue-100 border-b border-blue-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-blue-500 text-white border-blue-500">
+              Minimum Time Required
+            </Badge>
+            <span className="text-blue-700 font-semibold">
+              You can submit in {formatCountdown(submitCountdown)}
+            </span>
+          </div>
+        </div>
+      )}
+
       {groupType === 'G2-HumanAndAI' && countdown !== null && countdown > 0 && (
         <div className="bg-amber-100 border-b border-amber-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
@@ -197,10 +242,10 @@ export default function TaskPage() {
             <div className="flex justify-end">
               <Button 
                 onClick={handleSubmit} 
-                disabled={isSubmitting}
+                disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
                 size="lg"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Task'}
+                {isSubmitting ? 'Submitting...' : (submitCountdown !== null && submitCountdown > 0 ? `Submit in ${formatCountdown(submitCountdown)}` : 'Submit Task')}
               </Button>
             </div>
           </div>

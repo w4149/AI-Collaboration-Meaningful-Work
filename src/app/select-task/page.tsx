@@ -93,7 +93,8 @@ export default function SelectTaskPage() {
       
       setUser(data.userId, data.sessionId, `test_user_${Date.now()}`)
       setTask(
-        data.taskId, 
+        data.taskId,
+        data.taskTypeId,
         data.taskType, 
         data.taskContent, 
         data.allowCopy, 

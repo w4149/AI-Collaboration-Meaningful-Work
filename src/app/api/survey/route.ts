@@ -3,7 +3,7 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const { userId, age, gender, education, taskFamiliarity, taskDuration, additionalComments } = await request.json()
+    const { userId, age, gender, education, taskFamiliarity, taskDuration, taskTypeId, groupMode, additionalComments } = await request.json()
 
     if (!userId || taskFamiliarity === undefined) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -18,6 +18,8 @@ export async function POST(request: Request) {
         education: education,
         task_familiarity: taskFamiliarity,
         task_duration: taskDuration,
+        task_type_id: taskTypeId,
+        group_mode: groupMode,
         additional_comments: additionalComments,
       })
       .select('id')

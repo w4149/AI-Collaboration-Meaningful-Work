@@ -23,6 +23,8 @@ export default function SurveyPage() {
 
   const userId = useAppStore((state) => state.userId)
   const taskDuration = useAppStore((state) => state.taskDuration)
+  const taskTypeId = useAppStore((state) => state.taskTypeId)
+  const groupType = useAppStore((state) => state.groupType)
 
   // Redirect if no user
   if (!userId) {
@@ -51,6 +53,8 @@ export default function SurveyPage() {
           education: formData.education || null,
           taskFamiliarity: parseInt(formData.taskFamiliarity),
           taskDuration,
+          taskTypeId,
+          groupMode: groupType,
           additionalComments: formData.additionalComments || null,
         }),
       })
