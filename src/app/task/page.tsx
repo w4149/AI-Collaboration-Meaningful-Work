@@ -223,19 +223,17 @@ export default function TaskPage() {
     return () => clearInterval(interval)
   }, [groupType, startTime, currentPhase, setCurrentPhase, unlockFeatures])
 
-  // Prevent leaving page before minimum time
+  // Prevent leaving task page (always warn)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (submitCountdown !== null && submitCountdown > 0) {
-        e.preventDefault()
-        e.returnValue = `You must stay on this page for at least ${submitMinutes} minutes.`
-        return e.returnValue
-      }
+      e.preventDefault()
+      e.returnValue = '确定要离开吗？你的作答进度将会丢失。'
+      return e.returnValue
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [submitCountdown, submitMinutes])
+  }, [])
 
   const handleSubmit = async () => {
     if (!taskSubmission.trim()) {
@@ -310,7 +308,6 @@ export default function TaskPage() {
       return (
         <div className="space-y-4 py-4">
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">组 1 · 纯人工（不使用人工智能）</h4>
             <p className="text-blue-700 text-sm">
               请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
             </p>
@@ -328,7 +325,6 @@ export default function TaskPage() {
       return (
         <div className="space-y-4 py-4">
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">组 2 · 被动使用（粘贴人工智能生成内容）</h4>
             <p className="text-blue-700 text-sm">
               请使用当前界面的 ChatGPT 人工智能工具，通过和AI的自由互动生成满意的答案，最后将你最终决定提交的AI生成内容粘贴到下方。
             </p>
@@ -347,7 +343,6 @@ export default function TaskPage() {
         return (
           <div className="space-y-4 py-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">组 3 · 主动协作 — 阶段 1（先独立写初稿）</h4>
               <p className="text-blue-700 text-sm">
                 请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
               </p>
@@ -363,7 +358,6 @@ export default function TaskPage() {
       return (
         <div className="space-y-4 py-4">
           <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-green-800 mb-2">组 3 · 主动协作 — 阶段 2（再用AI改进，产出终稿）</h4>
             <p className="text-green-700 text-sm">
               请使用当前页面的ChatGPT，把上一步撰写的初稿复制到对话框中，通过和AI的自由互动对刚才撰写的初稿进行审阅和修改，并将改进后的最终稿粘贴到下方。你可以对 AI 的修改再做任何你认为合适的调整，这一稿将作为你的最终提交。
             </p>
@@ -493,7 +487,7 @@ export default function TaskPage() {
       </Dialog>
 
       {/* Auto-Submit Warning Dialog */}
-      <Dialog open={showAutoSubmitWarning}>
+      <Dialog open={showAutoSubmitWarning} onOpenChange={setShowAutoSubmitWarning}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>⏰ 即将自动提交</DialogTitle>

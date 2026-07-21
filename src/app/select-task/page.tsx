@@ -80,11 +80,17 @@ export default function SelectTaskPage() {
   const setTask = useAppStore((state) => state.setTask)
   const setStartTime = useAppStore((state) => state.setStartTime)
   const setGroupType = useAppStore((state) => state.setGroupType)
+  const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
+  const reset = useAppStore((state) => state.reset)
 
   const handleStartTask = async () => {
     if (!selectedTask || !selectedGroup) return
     
     setIsLoading(true)
+    
+    // Reset previous session state
+    reset()
+    setTaskSubmitted(false)
     
     try {
       const response = await fetch('/api/auth/start', {

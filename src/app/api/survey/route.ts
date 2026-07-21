@@ -9,7 +9,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const { data, error } = await supabaseServer
+    // Try inserting with all columns first
+    let { data, error } = await supabaseServer
       .from('survey_responses')
       .insert({
         user_id: userId,
@@ -18,14 +19,34 @@ export async function POST(request: Request) {
         education: education,
         task_familiarity: taskFamiliarity,
         task_duration: taskDuration,
-        task_type_id: taskTypeId,
-        group_mode: groupMode,
+        task_type_id: taskTypeId || null,
+        group_mode: groupMode || null,
         additional_comments: additionalComments,
       })
       .select('id')
       .single()
 
+    // If error (e.g. columns don't exist), try with basic columns only
     if (error) {
+      console.warn('Full insert failed, trying basic columns:', error.message)
+      const result = await supabaseServer
+        .from('survey_responses')
+        .insert({
+          user_id: userId,
+          age: age,
+          gender: gender,
+          education: education,
+          task_familiarity: taskFamiliarity,
+          task_duration: taskDuration,
+          additional_comments: additionalComments,
+        })
+        .select('id')
+        .single()
+      data = result.data
+      error = result.error
+    }
+
+    if (error || !data) {
       console.error('Error saving survey response:', error)
       return NextResponse.json({ error: 'Failed to save survey response' }, { status: 500 })
     }

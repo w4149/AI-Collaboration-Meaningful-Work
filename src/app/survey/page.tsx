@@ -194,7 +194,7 @@ export default function SurveyPage() {
 
           <CardFooter className="flex justify-end">
             <Button type="submit" disabled={isSubmitting} size="lg">
-              {isSubmitting ? 'Submitting...' : 'Submit Survey'}
+              {isSubmitting ? 'Submitting...' : 'Next'}
             </Button>
           </CardFooter>
         </form>
