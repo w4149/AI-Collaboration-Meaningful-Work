@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface InfoDisplayProps {
@@ -128,6 +129,7 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
               style={{ userSelect: !allowCopy ? 'none' : 'text' }}
             >
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   table: ({ children }) => (
                     <div className="overflow-x-auto my-3">
@@ -163,6 +165,9 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
                   ),
                   strong: ({ children }) => (
                     <strong className="font-bold">{children}</strong>
+                  ),
+                  img: ({ src, alt }) => (
+                    <img src={src} alt={alt} className="max-w-[60%] h-auto rounded-lg my-3" />
                   ),
                   hr: () => (
                     <hr className="my-3 border-gray-300" />

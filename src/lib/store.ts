@@ -59,6 +59,10 @@ interface AppState {
   taskDuration: number | null
   setTaskDuration: (duration: number) => void
   
+  // Task submitted flag
+  taskSubmitted: boolean
+  setTaskSubmitted: (submitted: boolean) => void
+  
   // Reset
   reset: () => void
 }
@@ -122,6 +126,10 @@ export const useAppStore = create<AppState>()(
       taskDuration: null,
       setTaskDuration: (taskDuration) => set({ taskDuration }),
       
+      // Task submitted flag
+      taskSubmitted: false,
+      setTaskSubmitted: (taskSubmitted) => set({ taskSubmitted }),
+      
       // Reset
       reset: () => set({
         taskSubmission: '',
@@ -131,6 +139,7 @@ export const useAppStore = create<AppState>()(
         currentPhase: 1,
         unlockedAt: null,
         taskDuration: null,
+        taskSubmitted: false,
       }),
     }),
     {
@@ -141,6 +150,7 @@ export const useAppStore = create<AppState>()(
         groupType: state.groupType,
         currentPhase: state.currentPhase,
         startTime: state.startTime ? state.startTime.getTime() : null,
+        taskSubmitted: state.taskSubmitted,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>

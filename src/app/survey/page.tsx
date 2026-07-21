@@ -63,7 +63,7 @@ export default function SurveyPage() {
 
       // Clear local storage and redirect
       localStorage.removeItem('ai-collaboration-storage')
-      router.push('/thank-you')
+      router.push('/survey-part1')
     } catch (error) {
       console.error('Error submitting survey:', error)
       alert('Failed to submit survey. Please try again.')

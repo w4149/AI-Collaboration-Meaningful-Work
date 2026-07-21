@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,6 +34,8 @@ export default function TaskPage() {
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
   const [g3PhaseCountdown, setG3PhaseCountdown] = useState<number | null>(null)
+  const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
+  const autoSubmitTriggered = useRef(false)
 
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
@@ -51,12 +53,47 @@ export default function TaskPage() {
   const setTaskDuration = useAppStore((state) => state.setTaskDuration)
   const currentPhase = useAppStore((state) => state.currentPhase)
   const setCurrentPhase = useAppStore((state) => state.setCurrentPhase)
+  const taskSubmitted = useAppStore((state) => state.taskSubmitted)
+  const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
 
   const submitMinutes = groupType ? (SUBMIT_MINUTES[groupType] ?? 5) : 5
 
-  // Auto-submit when redirect timer hits 0
+  // Use refs to always have latest values for auto-submit
+  const taskSubmissionRef = useRef(taskSubmission)
+  const chatMessagesRef = useRef(chatMessages)
+  const isSubmittingRef = useRef(isSubmitting)
+
+  useEffect(() => { taskSubmissionRef.current = taskSubmission }, [taskSubmission])
+  useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
+  useEffect(() => { isSubmittingRef.current = isSubmitting }, [isSubmitting])
+
+  // Prevent re-entry after submission
+  useEffect(() => {
+    if (taskSubmitted) {
+      router.replace('/survey')
+    }
+  }, [taskSubmitted, router])
+
+  // Auto-show instructions on first entry
+  useEffect(() => {
+    if (userId && taskId && groupType) {
+      setShowInstructions(true)
+    }
+  }, [userId, taskId, groupType])
+
   const handleAutoSubmit = useCallback(async () => {
-    if (!taskSubmission.trim() || isSubmitting) return
+    if (autoSubmitTriggered.current) return
+    autoSubmitTriggered.current = true
+
+    const submission = taskSubmissionRef.current
+    const messages = chatMessagesRef.current
+
+    if (!submission.trim()) {
+      setTaskSubmitted(true)
+      router.replace('/survey')
+      return
+    }
+
     setIsSubmitting(true)
     try {
       if (startTime) {
@@ -64,7 +101,7 @@ export default function TaskPage() {
         const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
         setTaskDuration(duration)
       }
-      for (const msg of chatMessages) {
+      for (const msg of messages) {
         await fetch('/api/chat/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -80,13 +117,14 @@ export default function TaskPage() {
       await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, taskId, content: taskSubmission }),
+        body: JSON.stringify({ userId, taskId, content: submission }),
       })
-      router.push('/survey')
+      setTaskSubmitted(true)
+      router.replace('/survey')
     } catch (error) {
       console.error('Auto-submit error:', error)
     }
-  }, [taskSubmission, isSubmitting, startTime, chatMessages, userId, taskId, setTaskDuration, router])
+  }, [startTime, userId, taskId, setTaskDuration, setTaskSubmitted, router])
 
   // 10-minute auto-redirect timer (all groups)
   useEffect(() => {
@@ -95,14 +133,25 @@ export default function TaskPage() {
       return
     }
 
+    autoSubmitTriggered.current = false
+
     const targetTime = new Date(startTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
+    const warningTime = new Date(startTime.getTime() + (AUTO_REDIRECT_MINUTES - 1) * 60 * 1000)
+    let warningShown = false
 
     const updateCountdown = () => {
       const now = new Date()
       const remaining = targetTime.getTime() - now.getTime()
 
+      // Show 1-minute warning
+      if (!warningShown && now >= warningTime) {
+        warningShown = true
+        setShowAutoSubmitWarning(true)
+      }
+
       if (remaining <= 0) {
         setRedirectCountdown(0)
+        setShowAutoSubmitWarning(false)
         handleAutoSubmit()
         return
       }
@@ -239,7 +288,8 @@ export default function TaskPage() {
 
       if (!response.ok) throw new Error('Failed to submit')
 
-      router.push('/survey')
+      setTaskSubmitted(true)
+      router.replace('/survey')
     } catch (error) {
       console.error('Error submitting task:', error)
       alert('Failed to submit. Please try again.')
@@ -439,6 +489,18 @@ export default function TaskPage() {
             </DialogDescription>
           </DialogHeader>
           {getInstructions()}
+        </DialogContent>
+      </Dialog>
+
+      {/* Auto-Submit Warning Dialog */}
+      <Dialog open={showAutoSubmitWarning}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>⏰ 即将自动提交</DialogTitle>
+            <DialogDescription>
+              距离自动提交还剩 1 分钟。请尽快完成你的作答，时间到后系统将自动提交当前内容并跳转。
+            </DialogDescription>
+          </DialogHeader>
         </DialogContent>
       </Dialog>
 

@@ -19,7 +19,12 @@ interface TaskOption {
 const tasks: TaskOption[] = [
   {
     id: 'task1',
-    name: 'Task 1 - 新品推广方案',
+    name: 'Task 1 - 广告语写作',
+    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+  },
+  {
+    id: 'task1-2',
+    name: 'Task 1-2 - 特殊节日活动策划',
     groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
   },
   {
@@ -35,6 +40,11 @@ const tasks: TaskOption[] = [
   {
     id: 'task4',
     name: 'Task 4 - 投诉信回复',
+    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+  },
+  {
+    id: 'task4-2',
+    name: 'Task 4-2 - 双顾客投诉回复',
     groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
   },
 ]
