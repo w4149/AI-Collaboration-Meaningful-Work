@@ -5,7 +5,10 @@ export async function POST(request: Request) {
   try {
     const { userId, age, gender, education, taskFamiliarity, taskDuration, taskTypeId, groupMode, additionalComments, scaleResults } = await request.json()
 
+    console.log('Survey API received:', { userId, taskFamiliarity, taskDuration, taskTypeId, groupMode, scaleResultsLength: scaleResults?.length })
+
     if (!userId || taskFamiliarity === undefined) {
+      console.error('Missing required fields:', { userId, taskFamiliarity })
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 

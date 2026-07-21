@@ -154,12 +154,19 @@ export default function TaskPage() {
     }
   }, [taskSubmitted, router])
 
-  // Auto-show instructions on first entry
+  // Auto-show instructions on first entry and on G3 phase change
   useEffect(() => {
     if (userId && taskId && groupType) {
       setShowInstructions(true)
     }
   }, [userId, taskId, groupType])
+
+  // Auto-show instructions when G3 enters Phase 2
+  useEffect(() => {
+    if (groupType === 'G3-AI' && currentPhase === 2) {
+      setShowInstructions(true)
+    }
+  }, [groupType, currentPhase])
 
   // For G3, the effective timer base depends on current phase
   const effectiveStartTime = groupType === 'G3-AI' && currentPhase === 2 && phase2StartTime
