@@ -468,18 +468,15 @@ export default function TaskPage() {
             <div className="min-h-[250px]">
               <TaskInput allowPaste={allowPaste} />
             </div>
-            {/* G3 Phase 1: no submit button, auto-enters Phase 2 at 10min */}
-            {!(groupType === 'G3-AI' && currentPhase === 1) && (
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
-                  size="lg"
-                >
-                  {isSubmitting ? 'Submitting...' : 'Submit Task'}
-                </Button>
-              </div>
-            )}
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                size="lg"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Task'}
+              </Button>
+            </div>
           </div>
 
           {allowChat && isChatOpen && (
