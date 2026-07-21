@@ -41,20 +41,20 @@ const tasks: TaskOption[] = [
 
 const groupInfo: Record<TaskGroup, { label: string; description: string; icon: typeof Users; color: string }> = {
   'G1-Human': {
-    label: 'G1 - Human',
-    description: '全程禁用复制粘贴和AI交互',
+    label: 'G1 - 纯人工',
+    description: '全程禁用复制粘贴和AI，10分钟后可提交',
     icon: Users,
     color: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
   },
   'G2-HumanAndAI': {
-    label: 'G2 - Human + AI',
-    description: '前5分钟禁用，之后开放',
+    label: 'G2 - 被动使用AI',
+    description: '使用ChatGPT生成内容并粘贴，5分钟后可提交',
     icon: Users2,
     color: 'bg-amber-100 text-amber-700 hover:bg-amber-200',
   },
   'G3-AI': {
-    label: 'G3 - AI',
-    description: '完全开放复制粘贴和AI交互',
+    label: 'G3 - 主动协作',
+    description: '先独立写初稿(5min)，再用AI改进终稿',
     icon: Bot,
     color: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
   },
@@ -191,7 +191,7 @@ export default function SelectTaskPage() {
         </div>
 
         <div className="mt-8 bg-gray-100 rounded-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Group Definitions</h3>
+          <h3 className="font-semibold text-gray-900 mb-4">分组说明</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {Object.entries(groupInfo).map(([key, info]) => {
               const Icon = info.icon

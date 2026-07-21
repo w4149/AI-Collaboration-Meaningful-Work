@@ -31,6 +31,10 @@ interface AppState {
   groupType: GroupType
   setGroupType: (groupType: GroupType) => void
   
+  // Phase (for G3: 1=draft, 2=AI-improve)
+  currentPhase: 1 | 2
+  setCurrentPhase: (phase: 1 | 2) => void
+  
   // Unlock Time (for G2)
   unlockedAt: Date | null
   setUnlockedAt: (time: Date | null) => void
@@ -83,6 +87,10 @@ export const useAppStore = create<AppState>()(
       groupType: null,
       setGroupType: (groupType) => set({ groupType }),
       
+      // Phase
+      currentPhase: 1,
+      setCurrentPhase: (currentPhase) => set({ currentPhase }),
+      
       // Unlock Time
       unlockedAt: null,
       setUnlockedAt: (unlockedAt) => set({ unlockedAt }),
@@ -120,6 +128,7 @@ export const useAppStore = create<AppState>()(
         chatMessages: [],
         isChatOpen: true,
         groupType: null,
+        currentPhase: 1,
         unlockedAt: null,
         taskDuration: null,
       }),
@@ -130,6 +139,7 @@ export const useAppStore = create<AppState>()(
         taskSubmission: state.taskSubmission,
         chatMessages: state.chatMessages,
         groupType: state.groupType,
+        currentPhase: state.currentPhase,
         startTime: state.startTime ? state.startTime.getTime() : null,
       }),
       merge: (persistedState: unknown, currentState) => {

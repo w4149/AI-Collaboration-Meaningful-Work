@@ -155,14 +155,14 @@ const GROUP_CONFIG: Record<string, { allowCopy: boolean; allowPaste: boolean; al
     allowChat: false,
   },
   'G2-HumanAndAI': {
-    allowCopy: false,
-    allowPaste: false,
-    allowChat: false,
-  },
-  'G3-AI': {
     allowCopy: true,
     allowPaste: true,
     allowChat: true,
+  },
+  'G3-AI': {
+    allowCopy: false,
+    allowPaste: false,
+    allowChat: false,
   },
 }
 

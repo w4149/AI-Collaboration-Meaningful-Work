@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,16 +17,24 @@ import TaskInput from '@/components/TaskInput'
 import ChatWindow from '@/components/ChatWindow'
 import { useAppStore } from '@/lib/store'
 
-const UNLOCK_DELAY_MINUTES = 5
+const SUBMIT_MINUTES: Record<string, number> = {
+  'G1-Human': 10,
+  'G2-HumanAndAI': 5,
+  'G3-AI': 5,
+}
+
+const AUTO_REDIRECT_MINUTES = 10
+const G3_PHASE_SWITCH_MINUTES = 5
 
 export default function TaskPage() {
   const router = useRouter()
   const [showInstructions, setShowInstructions] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [countdown, setCountdown] = useState<number | null>(null)
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
-  
+  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
+  const [g3PhaseCountdown, setG3PhaseCountdown] = useState<number | null>(null)
+
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
   const taskContent = useAppStore((state) => state.taskContent)
@@ -41,88 +49,156 @@ export default function TaskPage() {
   const startTime = useAppStore((state) => state.startTime)
   const unlockFeatures = useAppStore((state) => state.unlockFeatures)
   const setTaskDuration = useAppStore((state) => state.setTaskDuration)
+  const currentPhase = useAppStore((state) => state.currentPhase)
+  const setCurrentPhase = useAppStore((state) => state.setCurrentPhase)
 
-  useEffect(() => {
-    if (!userId || !taskId) {
-      router.push('/entry')
+  const submitMinutes = groupType ? (SUBMIT_MINUTES[groupType] ?? 5) : 5
+
+  // Auto-submit when redirect timer hits 0
+  const handleAutoSubmit = useCallback(async () => {
+    if (!taskSubmission.trim() || isSubmitting) return
+    setIsSubmitting(true)
+    try {
+      if (startTime) {
+        const endTime = new Date()
+        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
+        setTaskDuration(duration)
+      }
+      for (const msg of chatMessages) {
+        await fetch('/api/chat/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            role: msg.role,
+            content: msg.content,
+            timestamp: msg.timestamp,
+          }),
+        })
+      }
+      await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, taskId, content: taskSubmission }),
+      })
+      router.push('/survey')
+    } catch (error) {
+      console.error('Auto-submit error:', error)
     }
-  }, [userId, taskId, router])
+  }, [taskSubmission, isSubmitting, startTime, chatMessages, userId, taskId, setTaskDuration, router])
 
+  // 10-minute auto-redirect timer (all groups)
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault()
-      e.returnValue = 'Your work will be lost if you leave this page. Are you sure?'
-      return e.returnValue
+    if (!startTime) {
+      setRedirectCountdown(null)
+      return
     }
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [])
+    const targetTime = new Date(startTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
 
+    const updateCountdown = () => {
+      const now = new Date()
+      const remaining = targetTime.getTime() - now.getTime()
+
+      if (remaining <= 0) {
+        setRedirectCountdown(0)
+        handleAutoSubmit()
+        return
+      }
+
+      setRedirectCountdown(Math.ceil(remaining / 1000))
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+
+    return () => clearInterval(interval)
+  }, [startTime, handleAutoSubmit])
+
+  // Minimum submit timer (all groups)
   useEffect(() => {
     if (!startTime) {
       setSubmitCountdown(null)
       return
     }
 
-    const targetTime = new Date(startTime.getTime() + 5 * 60 * 1000)
-    
+    const targetTime = new Date(startTime.getTime() + submitMinutes * 60 * 1000)
+
     const updateCountdown = () => {
       const now = new Date()
       const remaining = targetTime.getTime() - now.getTime()
-      
+
       if (remaining <= 0) {
         setSubmitCountdown(0)
         return
       }
-      
+
       setSubmitCountdown(Math.ceil(remaining / 1000))
     }
 
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
-    
-    return () => clearInterval(interval)
-  }, [startTime])
 
+    return () => clearInterval(interval)
+  }, [startTime, submitMinutes])
+
+  // G3 phase switch timer (5 min → Phase 2)
   useEffect(() => {
-    if (groupType !== 'G2-HumanAndAI' || !startTime) {
-      setCountdown(null)
+    if (groupType !== 'G3-AI' || !startTime) {
+      setG3PhaseCountdown(null)
       return
     }
 
-    const targetTime = new Date(startTime.getTime() + UNLOCK_DELAY_MINUTES * 60 * 1000)
-    
+    const targetTime = new Date(startTime.getTime() + G3_PHASE_SWITCH_MINUTES * 60 * 1000)
+
     const updateCountdown = () => {
       const now = new Date()
       const remaining = targetTime.getTime() - now.getTime()
-      
+
       if (remaining <= 0) {
-        setCountdown(0)
-        unlockFeatures()
+        setG3PhaseCountdown(0)
+        if (currentPhase === 1) {
+          setCurrentPhase(2)
+          unlockFeatures()
+        }
         return
       }
-      
-      setCountdown(Math.ceil(remaining / 1000))
+
+      setG3PhaseCountdown(Math.ceil(remaining / 1000))
     }
 
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
-    
+
     return () => clearInterval(interval)
-  }, [groupType, startTime, unlockFeatures])
+  }, [groupType, startTime, currentPhase, setCurrentPhase, unlockFeatures])
+
+  // Prevent leaving page before minimum time
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (submitCountdown !== null && submitCountdown > 0) {
+        e.preventDefault()
+        e.returnValue = `You must stay on this page for at least ${submitMinutes} minutes.`
+        return e.returnValue
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [submitCountdown, submitMinutes])
 
   const handleSubmit = async () => {
     if (!taskSubmission.trim()) {
       alert('Please write a response before submitting.')
       return
     }
-    
+
     if (submitCountdown !== null && submitCountdown > 0) {
-      alert(`You must wait at least 5 minutes before submitting. Time remaining: ${formatCountdown(submitCountdown)}`)
+      alert(`Please wait at least ${submitMinutes} minutes before submitting. Time remaining: ${formatCountdown(submitCountdown)}`)
       return
     }
-    
+
     setShowConfirmDialog(true)
   }
 
@@ -178,6 +254,82 @@ export default function TaskPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Instruction content per group
+  const getInstructions = () => {
+    if (groupType === 'G1-Human') {
+      return (
+        <div className="space-y-4 py-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">组 1 · 纯人工（不使用人工智能）</h4>
+            <p className="text-blue-700 text-sm">
+              请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
+            </p>
+          </div>
+          <div className="bg-amber-50 p-4 rounded-lg">
+            <p className="text-amber-700 text-sm">
+              *注：本输入框已禁用复制粘贴功能。作答未满 10 分钟无法切换页面，计时结束后页面将自动跳转。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评阅人会结合实际工作场景评判你的文稿。
+            </p>
+          </div>
+        </div>
+      )
+    }
+
+    if (groupType === 'G2-HumanAndAI') {
+      return (
+        <div className="space-y-4 py-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">组 2 · 被动使用（粘贴人工智能生成内容）</h4>
+            <p className="text-blue-700 text-sm">
+              请使用当前界面的 ChatGPT 人工智能工具，通过和AI的自由互动生成满意的答案，最后将你最终决定提交的AI生成内容粘贴到下方。
+            </p>
+          </div>
+          <div className="bg-amber-50 p-4 rounded-lg">
+            <p className="text-amber-700 text-sm">
+              *注：作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成操作。你的作答将由专业评审按照 1–7 分制进行评分。评阅人会结合实际工作场景评判你的文稿。
+            </p>
+          </div>
+        </div>
+      )
+    }
+
+    if (groupType === 'G3-AI') {
+      if (currentPhase === 1) {
+        return (
+          <div className="space-y-4 py-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-2">组 3 · 主动协作 — 阶段 1（先独立写初稿）</h4>
+              <p className="text-blue-700 text-sm">
+                请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
+              </p>
+            </div>
+            <div className="bg-amber-50 p-4 rounded-lg">
+              <p className="text-amber-700 text-sm">
+                *注：本输入框已禁用复制粘贴功能。作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+              </p>
+            </div>
+          </div>
+        )
+      }
+      return (
+        <div className="space-y-4 py-4">
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-green-800 mb-2">组 3 · 主动协作 — 阶段 2（再用AI改进，产出终稿）</h4>
+            <p className="text-green-700 text-sm">
+              请使用当前页面的ChatGPT，把上一步撰写的初稿复制到对话框中，通过和AI的自由互动对刚才撰写的初稿进行审阅和修改，并将改进后的最终稿粘贴到下方。你可以对 AI 的修改再做任何你认为合适的调整，这一稿将作为你的最终提交。
+            </p>
+          </div>
+          <div className="bg-amber-50 p-4 rounded-lg">
+            <p className="text-amber-700 text-sm">
+              *注：本输入框已开放复制粘贴功能。作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+            </p>
+          </div>
+        </div>
+      )
+    }
+
+    return null
+  }
+
   if (!userId || !taskId) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -189,7 +341,22 @@ export default function TaskPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation onShowInstructions={() => setShowInstructions(true)} />
-      
+
+      {/* Auto-redirect countdown banner */}
+      {redirectCountdown !== null && redirectCountdown > 0 && (
+        <div className="bg-purple-100 border-b border-purple-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-purple-500 text-white border-purple-500">
+              Auto-redirect
+            </Badge>
+            <span className="text-purple-700 font-semibold">
+              Page will auto-submit in {formatCountdown(redirectCountdown)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Submit countdown banner */}
       {submitCountdown !== null && submitCountdown > 0 && (
         <div className="bg-blue-100 border-b border-blue-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
@@ -203,45 +370,47 @@ export default function TaskPage() {
         </div>
       )}
 
-      {groupType === 'G2-HumanAndAI' && countdown !== null && countdown > 0 && (
+      {/* G3 Phase 1 countdown */}
+      {groupType === 'G3-AI' && g3PhaseCountdown !== null && g3PhaseCountdown > 0 && currentPhase === 1 && (
         <div className="bg-amber-100 border-b border-amber-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
             <Badge variant="outline" className="bg-amber-500 text-white border-amber-500">
-              AI Assistant Unlocking Soon
+              Phase 1 — Writing Draft
             </Badge>
             <span className="text-amber-700 font-semibold">
-              {formatCountdown(countdown)}
+              Phase 2 unlocks in {formatCountdown(g3PhaseCountdown)}
             </span>
           </div>
         </div>
       )}
 
-      {groupType === 'G2-HumanAndAI' && countdown === 0 && (
+      {/* G3 Phase 2 unlocked */}
+      {groupType === 'G3-AI' && currentPhase === 2 && (
         <div className="bg-green-100 border-b border-green-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
             <Badge variant="outline" className="bg-green-500 text-white border-green-500">
-              Unlocked!
+              Phase 2 — AI Improvement
             </Badge>
-            <span className="text-green-700">AI Assistant and copy/paste are now available</span>
+            <span className="text-green-700">ChatGPT and copy/paste are now available</span>
           </div>
         </div>
       )}
-      
+
       <main className="flex-1 flex flex-col p-4 lg:p-6">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
           <div className={`lg:col-span-7 ${!isChatOpen || !allowChat ? 'lg:col-span-12' : ''} flex flex-col gap-4`}>
             <div className="flex-1 min-h-[300px]">
-              <InfoDisplay 
-                content={taskContent} 
-                allowCopy={allowCopy} 
+              <InfoDisplay
+                content={taskContent}
+                allowCopy={allowCopy}
               />
             </div>
             <div className="min-h-[250px]">
               <TaskInput allowPaste={allowPaste} />
             </div>
             <div className="flex justify-end">
-              <Button 
-                onClick={handleSubmit} 
+              <Button
+                onClick={handleSubmit}
                 disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
                 size="lg"
               >
@@ -249,7 +418,7 @@ export default function TaskPage() {
               </Button>
             </div>
           </div>
-          
+
           {allowChat && isChatOpen && (
             <div className="lg:col-span-5">
               <div className="h-[calc(100vh-140px)] min-h-[500px]">
@@ -260,6 +429,7 @@ export default function TaskPage() {
         </div>
       </main>
 
+      {/* Instructions Dialog */}
       <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -268,34 +438,11 @@ export default function TaskPage() {
               Please review the instructions before continuing.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Your Task</h4>
-              <p className="text-blue-700 text-sm">
-                Read the text in the top-left panel carefully, then write your response in the box below it.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-semibold">Guidelines</h4>
-              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                <li>You may use the AI assistant for help and clarification</li>
-                <li>Take your time - there is no strict time limit</li>
-                <li>Your response will be saved automatically as you type</li>
-                <li>When you are ready, click &quot;Submit Task&quot; to continue</li>
-              </ul>
-            </div>
-            {groupType === 'G2-HumanAndAI' && (
-              <div className="bg-amber-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-amber-800 mb-2">G2 - Human + AI Group</h4>
-                <p className="text-amber-700 text-sm">
-                  AI assistant and copy/paste features will be unlocked after 5 minutes.
-                </p>
-              </div>
-            )}
-          </div>
+          {getInstructions()}
         </DialogContent>
       </Dialog>
 
+      {/* Confirm Submit Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
