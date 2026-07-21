@@ -20,11 +20,10 @@ import { useAppStore } from '@/lib/store'
 const SUBMIT_MINUTES: Record<string, number> = {
   'G1-Human': 10,
   'G2-HumanAndAI': 5,
-  'G3-AI': 10,
+  'G3-AI': 5,
 }
 
 const AUTO_REDIRECT_MINUTES = 10
-const G3_PHASE_SWITCH_MINUTES = 10
 
 export default function TaskPage() {
   const router = useRouter()
@@ -33,7 +32,6 @@ export default function TaskPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
-  const [g3PhaseCountdown, setG3PhaseCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const autoSubmitTriggered = useRef(false)
   const [phase2StartTime, setPhase2StartTime] = useState<Date | null>(null)
@@ -59,28 +57,41 @@ export default function TaskPage() {
 
   const submitMinutes = groupType ? (SUBMIT_MINUTES[groupType] ?? 5) : 5
 
-  // Use refs to always have latest values for auto-submit
-  const taskSubmissionRef = useRef(taskSubmission)
-  const chatMessagesRef = useRef(chatMessages)
-  const isSubmittingRef = useRef(isSubmitting)
+  const handlePhase1AutoSubmit = useCallback(async () => {
+    // Save Phase 1 submission and chat, then transition to Phase 2
+    const submission = taskSubmissionRef.current
+    const messages = chatMessagesRef.current
 
-  useEffect(() => { taskSubmissionRef.current = taskSubmission }, [taskSubmission])
-  useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
-  useEffect(() => { isSubmittingRef.current = isSubmitting }, [isSubmitting])
-
-  // Prevent re-entry after submission
-  useEffect(() => {
-    if (taskSubmitted) {
-      router.replace('/survey')
+    try {
+      if (submission.trim()) {
+        await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, taskId, content: submission }),
+        })
+      }
+      for (const msg of messages) {
+        await fetch('/api/chat/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            role: msg.role,
+            content: msg.content,
+            timestamp: msg.timestamp,
+          }),
+        })
+      }
+    } catch (error) {
+      console.error('Phase 1 auto-save error:', error)
     }
-  }, [taskSubmitted, router])
 
-  // Auto-show instructions on first entry
-  useEffect(() => {
-    if (userId && taskId && groupType) {
-      setShowInstructions(true)
-    }
-  }, [userId, taskId, groupType])
+    // Transition to Phase 2
+    setCurrentPhase(2)
+    unlockFeatures()
+    setPhase2StartTime(new Date())
+  }, [userId, taskId, setCurrentPhase, unlockFeatures])
 
   const handleAutoSubmit = useCallback(async () => {
     if (autoSubmitTriggered.current) return
@@ -127,108 +138,82 @@ export default function TaskPage() {
     }
   }, [startTime, userId, taskId, setTaskDuration, setTaskSubmitted, router])
 
+  // Use refs to always have latest values for auto-submit
+  const taskSubmissionRef = useRef(taskSubmission)
+  const chatMessagesRef = useRef(chatMessages)
+  const isSubmittingRef = useRef(isSubmitting)
+
+  useEffect(() => { taskSubmissionRef.current = taskSubmission }, [taskSubmission])
+  useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
+  useEffect(() => { isSubmittingRef.current = isSubmitting }, [isSubmitting])
+
+  // Prevent re-entry after submission
+  useEffect(() => {
+    if (taskSubmitted) {
+      router.replace('/survey')
+    }
+  }, [taskSubmitted, router])
+
+  // Auto-show instructions on first entry
+  useEffect(() => {
+    if (userId && taskId && groupType) {
+      setShowInstructions(true)
+    }
+  }, [userId, taskId, groupType])
+
   // For G3, the effective timer base depends on current phase
   const effectiveStartTime = groupType === 'G3-AI' && currentPhase === 2 && phase2StartTime
     ? phase2StartTime
     : startTime
 
-  // 10-minute auto-redirect timer
+  // Unified timer: auto-redirect countdown + minimum submit countdown
   useEffect(() => {
     if (!effectiveStartTime) {
       setRedirectCountdown(null)
+      setSubmitCountdown(null)
       return
     }
 
     autoSubmitTriggered.current = false
 
-    const targetTime = new Date(effectiveStartTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
+    const autoTargetTime = new Date(effectiveStartTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
+    const submitTargetTime = new Date(effectiveStartTime.getTime() + submitMinutes * 60 * 1000)
     const warningTime = new Date(effectiveStartTime.getTime() + (AUTO_REDIRECT_MINUTES - 1) * 60 * 1000)
     let warningShown = false
 
     const updateCountdown = () => {
       const now = new Date()
-      const remaining = targetTime.getTime() - now.getTime()
+      const autoRemaining = autoTargetTime.getTime() - now.getTime()
+      const submitRemaining = submitTargetTime.getTime() - now.getTime()
 
-      // Show 1-minute warning
+      // Show 1-minute warning before auto-submit
       if (!warningShown && now >= warningTime) {
         warningShown = true
         setShowAutoSubmitWarning(true)
       }
 
-      if (remaining <= 0) {
+      // Auto-submit / phase switch when time is up
+      if (autoRemaining <= 0) {
         setRedirectCountdown(0)
-        setShowAutoSubmitWarning(false)
-        handleAutoSubmit()
-        return
-      }
-
-      setRedirectCountdown(Math.ceil(remaining / 1000))
-    }
-
-    updateCountdown()
-    const interval = setInterval(updateCountdown, 1000)
-
-    return () => clearInterval(interval)
-  }, [effectiveStartTime, handleAutoSubmit])
-
-  // Minimum submit timer
-  useEffect(() => {
-    if (!effectiveStartTime) {
-      setSubmitCountdown(null)
-      return
-    }
-
-    const targetTime = new Date(effectiveStartTime.getTime() + submitMinutes * 60 * 1000)
-
-    const updateCountdown = () => {
-      const now = new Date()
-      const remaining = targetTime.getTime() - now.getTime()
-
-      if (remaining <= 0) {
         setSubmitCountdown(0)
-        return
-      }
-
-      setSubmitCountdown(Math.ceil(remaining / 1000))
-    }
-
-    updateCountdown()
-    const interval = setInterval(updateCountdown, 1000)
-
-    return () => clearInterval(interval)
-  }, [effectiveStartTime, submitMinutes])
-
-  // G3 phase switch timer (10 min → Phase 2)
-  useEffect(() => {
-    if (groupType !== 'G3-AI' || !startTime) {
-      setG3PhaseCountdown(null)
-      return
-    }
-
-    const targetTime = new Date(startTime.getTime() + G3_PHASE_SWITCH_MINUTES * 60 * 1000)
-
-    const updateCountdown = () => {
-      const now = new Date()
-      const remaining = targetTime.getTime() - now.getTime()
-
-      if (remaining <= 0) {
-        setG3PhaseCountdown(0)
-        if (currentPhase === 1) {
-          setCurrentPhase(2)
-          unlockFeatures()
-          setPhase2StartTime(new Date())
+        setShowAutoSubmitWarning(false)
+        if (groupType === 'G3-AI' && currentPhase === 1) {
+          handlePhase1AutoSubmit()
+        } else {
+          handleAutoSubmit()
         }
         return
       }
 
-      setG3PhaseCountdown(Math.ceil(remaining / 1000))
+      setRedirectCountdown(Math.ceil(autoRemaining / 1000))
+      setSubmitCountdown(submitRemaining > 0 ? Math.ceil(submitRemaining / 1000) : 0)
     }
 
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [groupType, startTime, currentPhase, setCurrentPhase, unlockFeatures])
+  }, [effectiveStartTime, submitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
   // Prevent leaving task page (always warn)
   useEffect(() => {
@@ -356,7 +341,7 @@ export default function TaskPage() {
             </div>
             <div className="bg-amber-50 p-4 rounded-lg">
               <p className="text-amber-700 text-sm">
-                *注：本输入框已禁用复制粘贴功能。作答未满 10 分钟无法进入第二阶段，计时满 10 分钟后自动进入第二阶段（可使用AI）。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+                *注：本输入框已禁用复制粘贴功能。作答未满 5 分钟无法提交，计时满 10 分钟后自动进入第二阶段（可使用AI）。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
               </p>
             </div>
           </div>
@@ -371,7 +356,7 @@ export default function TaskPage() {
           </div>
           <div className="bg-amber-50 p-4 rounded-lg">
             <p className="text-amber-700 text-sm">
-              *注：本输入框已开放复制粘贴功能。作答未满 10 分钟无法提交，计时满 10 分钟后页面将自动提交当前内容并跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+              *注：本输入框已开放复制粘贴功能。作答未满 5 分钟无法提交，计时满 10 分钟后页面将自动提交当前内容并跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
             </p>
           </div>
         </div>
@@ -393,21 +378,23 @@ export default function TaskPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation onShowInstructions={() => setShowInstructions(true)} />
 
-      {/* Auto-redirect countdown banner */}
+      {/* Countdown banner */}
       {redirectCountdown !== null && redirectCountdown > 0 && (
-        <div className="bg-purple-100 border-b border-purple-200 px-4 py-2">
+        <div className={`${groupType === 'G3-AI' && currentPhase === 1 ? 'bg-amber-100 border-amber-200' : 'bg-purple-100 border-purple-200'} border-b px-4 py-2`}>
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
-            <Badge variant="outline" className="bg-purple-500 text-white border-purple-500">
-              Auto-redirect
+            <Badge variant="outline" className={groupType === 'G3-AI' && currentPhase === 1 ? 'bg-amber-500 text-white border-amber-500' : 'bg-purple-500 text-white border-purple-500'}>
+              {groupType === 'G3-AI' && currentPhase === 1 ? 'Phase 1 — Writing Draft' : 'Auto-submit'}
             </Badge>
-            <span className="text-purple-700 font-semibold">
-              Page will auto-submit in {formatCountdown(redirectCountdown)}
+            <span className={`${groupType === 'G3-AI' && currentPhase === 1 ? 'text-amber-700' : 'text-purple-700'} font-semibold`}>
+              {groupType === 'G3-AI' && currentPhase === 1
+                ? `Phase 2 in ${formatCountdown(redirectCountdown)}`
+                : `Auto-submit in ${formatCountdown(redirectCountdown)}`}
             </span>
           </div>
         </div>
       )}
 
-      {/* Submit countdown banner */}
+      {/* Minimum submit time banner */}
       {submitCountdown !== null && submitCountdown > 0 && (
         <div className="bg-blue-100 border-b border-blue-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
@@ -421,21 +408,7 @@ export default function TaskPage() {
         </div>
       )}
 
-      {/* G3 Phase 1 countdown */}
-      {groupType === 'G3-AI' && g3PhaseCountdown !== null && g3PhaseCountdown > 0 && currentPhase === 1 && (
-        <div className="bg-amber-100 border-b border-amber-200 px-4 py-2">
-          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
-            <Badge variant="outline" className="bg-amber-500 text-white border-amber-500">
-              Phase 1 — Writing Draft
-            </Badge>
-            <span className="text-amber-700 font-semibold">
-              Phase 2 unlocks in {formatCountdown(g3PhaseCountdown)}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* G3 Phase 2 unlocked */}
+      {/* G3 Phase 2 banner */}
       {groupType === 'G3-AI' && currentPhase === 2 && (
         <div className="bg-green-100 border-b border-green-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
@@ -459,15 +432,18 @@ export default function TaskPage() {
             <div className="min-h-[250px]">
               <TaskInput allowPaste={allowPaste} />
             </div>
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
-                size="lg"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Task'}
-              </Button>
-            </div>
+            {/* G3 Phase 1: no submit button, auto-enters Phase 2 */}
+            {!(groupType === 'G3-AI' && currentPhase === 1) && (
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                  size="lg"
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Task'}
+                </Button>
+              </div>
+            )}
           </div>
 
           {allowChat && isChatOpen && (
