@@ -34,8 +34,8 @@ const perceivedTaskRealismQuestions = [
 export default function SurveyPart3Page() {
   const router = useRouter()
   const userId = useAppStore((state) => state.userId)
+  const setLikertResponses = useAppStore((state) => state.setLikertResponses)
   const [values, setValues] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!userId) {
     router.push('/entry')
@@ -54,30 +54,13 @@ export default function SurveyPart3Page() {
 
   const allAnswered = allQuestions.every((q) => values[q.id])
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     if (!allAnswered) {
       alert('请回答所有问题后再继续。')
       return
     }
-    setIsSubmitting(true)
-    try {
-      const response = await fetch('/api/survey-likert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          part: 3,
-          responses: values,
-        }),
-      })
-      if (!response.ok) throw new Error('Failed to save')
-      router.push('/survey-part4')
-    } catch (error) {
-      console.error('Error saving part 3:', error)
-      alert('保存失败，请重试。')
-    } finally {
-      setIsSubmitting(false)
-    }
+    setLikertResponses(values)
+    router.push('/survey-part4')
   }
 
   return (
@@ -89,32 +72,34 @@ export default function SurveyPart3Page() {
             请根据您刚刚完成任务的真实感受回答以下问题。所有题目均为必答。
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8">
+        <CardContent className="space-y-6">
           <LikertGroup
-            title="⑦ 心理所有权（Psychological Ownership）"
-            description="请根据您刚刚完成这项任务后的真实感受进行评价。"
+            title="心理所有权（Psychological Ownership）"
+            description="请根据您刚刚完成这项任务后的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={psychologicalOwnershipQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑧ 工作意义感（Work Meaningfulness）"
-            description="请根据您刚刚完成这项任务后的真实感受进行评价。"
+            title="工作意义感（Work Meaningfulness）"
+            description="请根据您刚刚完成这项任务后的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={workMeaningfulnessQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑨ 感知真实性（Perceived Task Realism）"
-            description="请根据您刚刚完成的任务体验进行评价。"
+            title="感知真实性（Perceived Task Realism）"
+            description="请根据您刚刚完成的任务体验进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={perceivedTaskRealismQuestions}
             values={values}
             onChange={handleChange}
           />
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleContinue} disabled={isSubmitting} size="lg">
-            {isSubmitting ? '保存中...' : 'Continue'}
+          <Button onClick={handleContinue} size="lg">
+            Continue
           </Button>
         </CardFooter>
       </Card>

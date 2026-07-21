@@ -63,6 +63,12 @@ interface AppState {
   taskSubmitted: boolean
   setTaskSubmitted: (submitted: boolean) => void
   
+  // Survey data (accumulated across pages)
+  surveyFormData: Record<string, string | number | null>
+  setSurveyFormData: (data: Record<string, string | number | null>) => void
+  likertResponses: Record<string, string>
+  setLikertResponses: (responses: Record<string, string>) => void
+  
   // Reset
   reset: () => void
 }
@@ -130,6 +136,14 @@ export const useAppStore = create<AppState>()(
       taskSubmitted: false,
       setTaskSubmitted: (taskSubmitted) => set({ taskSubmitted }),
       
+      // Survey data
+      surveyFormData: {},
+      setSurveyFormData: (surveyFormData) => set({ surveyFormData }),
+      likertResponses: {},
+      setLikertResponses: (likertResponses) => set((state) => ({
+        likertResponses: { ...state.likertResponses, ...likertResponses },
+      })),
+      
       // Reset
       reset: () => set({
         taskSubmission: '',
@@ -140,6 +154,8 @@ export const useAppStore = create<AppState>()(
         unlockedAt: null,
         taskDuration: null,
         taskSubmitted: false,
+        surveyFormData: {},
+        likertResponses: {},
       }),
     }),
     {
@@ -151,6 +167,8 @@ export const useAppStore = create<AppState>()(
         currentPhase: state.currentPhase,
         startTime: state.startTime ? state.startTime.getTime() : null,
         taskSubmitted: state.taskSubmitted,
+        surveyFormData: state.surveyFormData,
+        likertResponses: state.likertResponses,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>

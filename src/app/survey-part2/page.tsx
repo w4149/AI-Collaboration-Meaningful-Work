@@ -30,8 +30,8 @@ const socialImpactQuestions = [
 export default function SurveyPart2Page() {
   const router = useRouter()
   const userId = useAppStore((state) => state.userId)
+  const setLikertResponses = useAppStore((state) => state.setLikertResponses)
   const [values, setValues] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!userId) {
     router.push('/entry')
@@ -50,30 +50,13 @@ export default function SurveyPart2Page() {
 
   const allAnswered = allQuestions.every((q) => values[q.id])
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     if (!allAnswered) {
       alert('请回答所有问题后再继续。')
       return
     }
-    setIsSubmitting(true)
-    try {
-      const response = await fetch('/api/survey-likert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          part: 2,
-          responses: values,
-        }),
-      })
-      if (!response.ok) throw new Error('Failed to save')
-      router.push('/survey-part3')
-    } catch (error) {
-      console.error('Error saving part 2:', error)
-      alert('保存失败，请重试。')
-    } finally {
-      setIsSubmitting(false)
-    }
+    setLikertResponses(values)
+    router.push('/survey-part3')
   }
 
   return (
@@ -85,34 +68,36 @@ export default function SurveyPart2Page() {
             请根据您刚刚完成任务的真实感受回答以下问题。所有题目均为必答。
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8">
+        <CardContent className="space-y-6">
           <LikertGroup
-            title="④ 自主性（Autonomy）"
-            description="请根据您刚刚完成这项任务时的真实感受进行评价。"
+            title="自主性（Autonomy）"
+            description="请根据您刚刚完成这项任务时的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={autonomyQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑤ 技能利用（Skill Utilisation）"
-            description="请根据您刚刚完成的这项任务进行评价。这项任务在多大程度上让您能够……？"
+            title="技能利用（Skill Utilisation）"
+            description="请根据您刚刚完成的这项任务进行评价。这项任务在多大程度上让您能够……？（1 = 完全不能；7 = 非常能够）"
             scaleLabelLeft="完全不能"
             scaleLabelRight="非常能够"
             questions={skillUtilisationQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑥ 社会影响（Social Impact）"
-            description="请根据您刚刚完成这项任务后的真实感受进行评价。"
+            title="社会影响（Social Impact）"
+            description="请根据您刚刚完成这项任务后的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={socialImpactQuestions}
             values={values}
             onChange={handleChange}
           />
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleContinue} disabled={isSubmitting} size="lg">
-            {isSubmitting ? '保存中...' : 'Continue'}
+          <Button onClick={handleContinue} size="lg">
+            Continue
           </Button>
         </CardFooter>
       </Card>

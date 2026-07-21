@@ -64,7 +64,7 @@ const groupInfo: Record<TaskGroup, { label: string; description: string; icon: t
   },
   'G3-AI': {
     label: 'G3 - 主动协作',
-    description: '先独立写初稿(5min)，再用AI改进终稿',
+    description: '先独立写初稿(10min)，再用AI改进终稿(10min)',
     icon: Bot,
     color: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
   },

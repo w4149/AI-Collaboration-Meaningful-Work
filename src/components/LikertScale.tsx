@@ -24,7 +24,7 @@ export function LikertQuestion({
   return (
     <div className="space-y-2">
       <p className="text-sm text-gray-700">{label}</p>
-      <RadioGroup value={value} onValueChange={onChange} className="flex items-center gap-1">
+      <RadioGroup value={value} onValueChange={onChange} className="flex items-center justify-between">
         {[1, 2, 3, 4, 5, 6, 7].map((n) => (
           <div key={n} className="flex flex-col items-center gap-1">
             <RadioGroupItem value={n.toString()} id={`${id}-${n}`} />
@@ -61,13 +61,9 @@ export function LikertGroup({
 }: LikertGroupProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-        {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
-        <p className="text-xs text-gray-500 mt-1">
-          （{scaleLabelLeft} = 1；{scaleLabelRight} = 7）
-        </p>
-      </div>
+      {description && (
+        <p className="text-sm text-gray-600 italic">{description}</p>
+      )}
       {questions.map((q) => (
         <LikertQuestion
           key={q.id}

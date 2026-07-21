@@ -25,6 +25,7 @@ export default function SurveyPage() {
   const taskDuration = useAppStore((state) => state.taskDuration)
   const taskTypeId = useAppStore((state) => state.taskTypeId)
   const groupType = useAppStore((state) => state.groupType)
+  const setSurveyFormData = useAppStore((state) => state.setSurveyFormData)
 
   // Redirect if no user
   if (!userId) {
@@ -40,36 +41,20 @@ export default function SurveyPage() {
       return
     }
 
-    setIsSubmitting(true)
+    // Save survey data to store (will be submitted at the end with all Likert data)
+    setSurveyFormData({
+      userId,
+      age: formData.age ? parseInt(formData.age) : null,
+      gender: formData.gender || null,
+      education: formData.education || null,
+      taskFamiliarity: parseInt(formData.taskFamiliarity),
+      taskDuration,
+      taskTypeId,
+      groupMode: groupType,
+      additionalComments: formData.additionalComments || null,
+    })
 
-    try {
-      const response = await fetch('/api/survey', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          age: formData.age ? parseInt(formData.age) : null,
-          gender: formData.gender || null,
-          education: formData.education || null,
-          taskFamiliarity: parseInt(formData.taskFamiliarity),
-          taskDuration,
-          taskTypeId,
-          groupMode: groupType,
-          additionalComments: formData.additionalComments || null,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Failed to submit survey')
-
-      // Clear local storage and redirect
-      localStorage.removeItem('ai-collaboration-storage')
-      router.push('/survey-part1')
-    } catch (error) {
-      console.error('Error submitting survey:', error)
-      alert('Failed to submit survey. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    router.push('/survey-part1')
   }
 
   return (

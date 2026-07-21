@@ -20,11 +20,11 @@ import { useAppStore } from '@/lib/store'
 const SUBMIT_MINUTES: Record<string, number> = {
   'G1-Human': 10,
   'G2-HumanAndAI': 5,
-  'G3-AI': 5,
+  'G3-AI': 10,
 }
 
 const AUTO_REDIRECT_MINUTES = 10
-const G3_PHASE_SWITCH_MINUTES = 5
+const G3_PHASE_SWITCH_MINUTES = 10
 
 export default function TaskPage() {
   const router = useRouter()
@@ -36,6 +36,7 @@ export default function TaskPage() {
   const [g3PhaseCountdown, setG3PhaseCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const autoSubmitTriggered = useRef(false)
+  const [phase2StartTime, setPhase2StartTime] = useState<Date | null>(null)
 
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
@@ -126,17 +127,22 @@ export default function TaskPage() {
     }
   }, [startTime, userId, taskId, setTaskDuration, setTaskSubmitted, router])
 
-  // 10-minute auto-redirect timer (all groups)
+  // For G3, the effective timer base depends on current phase
+  const effectiveStartTime = groupType === 'G3-AI' && currentPhase === 2 && phase2StartTime
+    ? phase2StartTime
+    : startTime
+
+  // 10-minute auto-redirect timer
   useEffect(() => {
-    if (!startTime) {
+    if (!effectiveStartTime) {
       setRedirectCountdown(null)
       return
     }
 
     autoSubmitTriggered.current = false
 
-    const targetTime = new Date(startTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
-    const warningTime = new Date(startTime.getTime() + (AUTO_REDIRECT_MINUTES - 1) * 60 * 1000)
+    const targetTime = new Date(effectiveStartTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
+    const warningTime = new Date(effectiveStartTime.getTime() + (AUTO_REDIRECT_MINUTES - 1) * 60 * 1000)
     let warningShown = false
 
     const updateCountdown = () => {
@@ -163,16 +169,16 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [startTime, handleAutoSubmit])
+  }, [effectiveStartTime, handleAutoSubmit])
 
-  // Minimum submit timer (all groups)
+  // Minimum submit timer
   useEffect(() => {
-    if (!startTime) {
+    if (!effectiveStartTime) {
       setSubmitCountdown(null)
       return
     }
 
-    const targetTime = new Date(startTime.getTime() + submitMinutes * 60 * 1000)
+    const targetTime = new Date(effectiveStartTime.getTime() + submitMinutes * 60 * 1000)
 
     const updateCountdown = () => {
       const now = new Date()
@@ -190,9 +196,9 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [startTime, submitMinutes])
+  }, [effectiveStartTime, submitMinutes])
 
-  // G3 phase switch timer (5 min → Phase 2)
+  // G3 phase switch timer (10 min → Phase 2)
   useEffect(() => {
     if (groupType !== 'G3-AI' || !startTime) {
       setG3PhaseCountdown(null)
@@ -210,6 +216,7 @@ export default function TaskPage() {
         if (currentPhase === 1) {
           setCurrentPhase(2)
           unlockFeatures()
+          setPhase2StartTime(new Date())
         }
         return
       }
@@ -349,7 +356,7 @@ export default function TaskPage() {
             </div>
             <div className="bg-amber-50 p-4 rounded-lg">
               <p className="text-amber-700 text-sm">
-                *注：本输入框已禁用复制粘贴功能。作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+                *注：本输入框已禁用复制粘贴功能。作答未满 10 分钟无法进入第二阶段，计时满 10 分钟后自动进入第二阶段（可使用AI）。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
               </p>
             </div>
           </div>
@@ -364,7 +371,7 @@ export default function TaskPage() {
           </div>
           <div className="bg-amber-50 p-4 rounded-lg">
             <p className="text-amber-700 text-sm">
-              *注：本输入框已开放复制粘贴功能。作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+              *注：本输入框已开放复制粘贴功能。作答未满 10 分钟无法提交，计时满 10 分钟后页面将自动提交当前内容并跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
             </p>
           </div>
         </div>

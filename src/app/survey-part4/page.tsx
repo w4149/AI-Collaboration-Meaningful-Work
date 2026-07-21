@@ -29,6 +29,10 @@ const intrinsicMotivationQuestions = [
 export default function SurveyPart4Page() {
   const router = useRouter()
   const userId = useAppStore((state) => state.userId)
+  const setLikertResponses = useAppStore((state) => state.setLikertResponses)
+  const likertResponses = useAppStore((state) => state.likertResponses)
+  const surveyFormData = useAppStore((state) => state.surveyFormData)
+  const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
   const [values, setValues] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -55,21 +59,49 @@ export default function SurveyPart4Page() {
       return
     }
     setIsSubmitting(true)
+
+    // Merge Part 4 values with all previous Likert responses
+    const allLikert = { ...likertResponses, ...values }
+    setLikertResponses(values)
+
+    // Build scale_results: all answers in order across all 4 parts
+    const allQuestionOrder = [
+      // Part 1
+      'me1',
+      'tc1', 'tc2', 'tc3', 'tc4',
+      'te1', 'te2', 'te3', 'te4',
+      // Part 2
+      'au1', 'au2', 'au3', 'au4',
+      'su1', 'su2', 'su3', 'su4',
+      'si1', 'si2', 'si3',
+      // Part 3
+      'po1', 'po2', 'po3', 'po4', 'po5',
+      'wm1', 'wm2', 'wm3', 'wm4', 'wm5', 'wm6',
+      'ptr1', 'ptr2', 'ptr3', 'ptr4',
+      // Part 4
+      'se_ai1', 'se_ai2', 'se_ai3',
+      'se_no1', 'se_no2', 'se_no3',
+      'im1', 'im2', 'im3', 'im4',
+    ]
+    const scaleResults = allQuestionOrder.map(id => allLikert[id] || '').join(',')
+
     try {
-      const response = await fetch('/api/survey-likert', {
+      const response = await fetch('/api/survey', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId,
-          part: 4,
-          responses: values,
+          ...surveyFormData,
+          scaleResults,
         }),
       })
-      if (!response.ok) throw new Error('Failed to save')
+      if (!response.ok) throw new Error('Failed to submit')
+
+      setTaskSubmitted(true)
+      localStorage.removeItem('ai-collaboration-storage')
       router.push('/thank-you')
     } catch (error) {
-      console.error('Error saving part 4:', error)
-      alert('保存失败，请重试。')
+      console.error('Error submitting survey:', error)
+      alert('提交失败，请重试。')
     } finally {
       setIsSubmitting(false)
     }
@@ -84,23 +116,26 @@ export default function SurveyPart4Page() {
             请根据您刚刚完成任务的真实感受回答以下问题。所有题目均为必答。
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8">
+        <CardContent className="space-y-6">
           <LikertGroup
-            title="⑩ 自我效能（Self-efficacy）— A. 使用 AI 时"
-            description="请根据您刚刚完成这项任务后的真实感受进行评价。"
+            title="自我效能（Self-efficacy）— A. 使用 AI 时"
+            description="请根据您刚刚完成这项任务后的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={selfEfficacyAIQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑩ 自我效能（Self-efficacy）— B. 不使用 AI 时"
+            title="自我效能（Self-efficacy）— B. 不使用 AI 时"
+            description="请根据您刚刚完成这项任务后的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={selfEfficacyNoAIQuestions}
             values={values}
             onChange={handleChange}
           />
+          <hr className="border-gray-200" />
           <LikertGroup
-            title="⑪ 内在动机（Intrinsic Motivation）"
-            description="请根据您刚刚完成这项任务时的真实感受进行评价。"
+            title="内在动机（Intrinsic Motivation）"
+            description="请根据您刚刚完成这项任务时的真实感受进行评价。（1 = 非常不同意；7 = 非常同意）"
             questions={intrinsicMotivationQuestions}
             values={values}
             onChange={handleChange}
