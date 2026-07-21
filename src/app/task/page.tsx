@@ -414,7 +414,7 @@ export default function TaskPage() {
                 disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
                 size="lg"
               >
-                {isSubmitting ? 'Submitting...' : (submitCountdown !== null && submitCountdown > 0 ? `Submit in ${formatCountdown(submitCountdown)}` : 'Submit Task')}
+                {isSubmitting ? 'Submitting...' : 'Submit Task'}
               </Button>
             </div>
           </div>

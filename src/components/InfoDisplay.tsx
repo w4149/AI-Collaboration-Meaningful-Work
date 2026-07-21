@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface InfoDisplayProps {
@@ -122,11 +123,54 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
       >
         <div className="prose prose-sm max-w-none">
           {content ? (
-            <div 
-              className="whitespace-pre-wrap text-gray-700 leading-relaxed"
+            <div
+              className="text-gray-700 leading-relaxed"
               style={{ userSelect: !allowCopy ? 'none' : 'text' }}
             >
-              {content}
+              <ReactMarkdown
+                components={{
+                  table: ({ children }) => (
+                    <div className="overflow-x-auto my-3">
+                      <table className="min-w-full border border-gray-300 text-sm">{children}</table>
+                    </div>
+                  ),
+                  thead: ({ children }) => (
+                    <thead className="bg-gray-100">{children}</thead>
+                  ),
+                  th: ({ children }) => (
+                    <th className="border border-gray-300 px-3 py-2 text-left font-semibold">{children}</th>
+                  ),
+                  td: ({ children }) => (
+                    <td className="border border-gray-300 px-3 py-2">{children}</td>
+                  ),
+                  tr: ({ children }) => (
+                    <tr className="border-b border-gray-200">{children}</tr>
+                  ),
+                  h4: ({ children }) => (
+                    <h4 className="font-semibold text-gray-900 mt-3 mb-1">{children}</h4>
+                  ),
+                  p: ({ children }) => (
+                    <p className="mb-2">{children}</p>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>
+                  ),
+                  li: ({ children }) => (
+                    <li>{children}</li>
+                  ),
+                  strong: ({ children }) => (
+                    <strong className="font-bold">{children}</strong>
+                  ),
+                  hr: () => (
+                    <hr className="my-3 border-gray-300" />
+                  ),
+                }}
+              >
+                {content}
+              </ReactMarkdown>
             </div>
           ) : (
             <p className="text-gray-400 italic">Loading task content...</p>
