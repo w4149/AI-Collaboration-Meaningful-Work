@@ -245,6 +245,42 @@ export default function TaskPage() {
     setIsSubmitting(true)
     setShowConfirmDialog(false)
 
+    // G3 Phase 1: save and transition to Phase 2
+    if (groupType === 'G3-AI' && currentPhase === 1) {
+      try {
+        if (taskSubmission.trim()) {
+          await fetch('/api/submissions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, taskId, content: taskSubmission }),
+          })
+        }
+        for (const msg of chatMessages) {
+          await fetch('/api/chat/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId,
+              taskId,
+              role: msg.role,
+              content: msg.content,
+              timestamp: msg.timestamp,
+            }),
+          })
+        }
+        setCurrentPhase(2)
+        unlockFeatures()
+        setPhase2StartTime(new Date())
+      } catch (error) {
+        console.error('Error transitioning to Phase 2:', error)
+        alert('Failed to proceed. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
+      return
+    }
+
+    // Normal submit (Phase 2 or non-G3 groups) → survey
     try {
       if (startTime) {
         const endTime = new Date()
@@ -432,7 +468,7 @@ export default function TaskPage() {
             <div className="min-h-[250px]">
               <TaskInput allowPaste={allowPaste} />
             </div>
-            {/* G3 Phase 1: no submit button, auto-enters Phase 2 */}
+            {/* G3 Phase 1: no submit button, auto-enters Phase 2 at 10min */}
             {!(groupType === 'G3-AI' && currentPhase === 1) && (
               <div className="flex justify-end">
                 <Button
