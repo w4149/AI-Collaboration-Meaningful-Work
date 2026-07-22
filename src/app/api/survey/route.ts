@@ -3,9 +3,9 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const { userId, age, gender, education, taskFamiliarity, taskDuration, taskTypeId, groupMode, additionalComments, scaleResults } = await request.json()
+    const { userId, age, gender, education, taskFamiliarity, taskDuration, taskTypeId, taskType, groupMode, additionalComments, scaleResults } = await request.json()
 
-    console.log('Survey API received:', { userId, taskFamiliarity, taskDuration, taskTypeId, groupMode, scaleResultsLength: scaleResults?.length })
+    console.log('Survey API received:', { userId, taskFamiliarity, taskDuration, taskTypeId, taskType, groupMode, scaleResultsLength: scaleResults?.length })
 
     if (!userId || taskFamiliarity === undefined) {
       console.error('Missing required fields:', { userId, taskFamiliarity })
@@ -15,8 +15,8 @@ export async function POST(request: Request) {
     // Map group mode to DB-compatible values
     const groupModeMap: Record<string, string> = {
       'G1-Human': 'Human',
-      'G2-HumanAndAI': 'HumanAndAI',
-      'G3-AI': 'AI',
+      'G2-HumanAndAI': 'AI',
+      'G3-AI': 'HumanAndAI',
     }
     const mappedGroupMode = groupMode ? (groupModeMap[groupMode] || groupMode) : null
 
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         task_familiarity: taskFamiliarity,
         task_duration: taskDuration,
         task_type_id: taskTypeId || null,
+        task_type: taskType || null,
         group_mode: mappedGroupMode,
         additional_comments: additionalComments,
         scale_results: scaleResults || null,
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
           education: education,
           task_familiarity: taskFamiliarity,
           task_duration: taskDuration,
+          task_type: taskType || null,
           additional_comments: additionalComments,
           scale_results: scaleResults || null,
           group_mode: mappedGroupMode,

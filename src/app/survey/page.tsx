@@ -24,6 +24,7 @@ export default function SurveyPage() {
   const userId = useAppStore((state) => state.userId)
   const taskDuration = useAppStore((state) => state.taskDuration)
   const taskTypeId = useAppStore((state) => state.taskTypeId)
+  const taskType = useAppStore((state) => state.taskType)
   const groupType = useAppStore((state) => state.groupType)
   const setSurveyFormData = useAppStore((state) => state.setSurveyFormData)
 
@@ -50,6 +51,7 @@ export default function SurveyPage() {
       taskFamiliarity: parseInt(formData.taskFamiliarity),
       taskDuration,
       taskTypeId,
+      taskType,
       groupMode: groupType,
       additionalComments: formData.additionalComments || null,
     })
