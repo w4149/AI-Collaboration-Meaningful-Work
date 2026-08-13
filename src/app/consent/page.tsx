@@ -9,7 +9,7 @@ export default function ConsentRoutePage() {
 
   const handleAgree = () => {
     const params = searchParams.toString()
-    router.push(params ? `/entry?${params}` : '/entry')
+    router.push(params ? `/pre-survey?${params}` : '/pre-survey')
   }
 
   return (
@@ -48,7 +48,7 @@ export default function ConsentRoutePage() {
           content: 'All data will remain confidential, and no personally identifiable information will be shared in any research publications.',
         },
       ]}
-      checkboxText="I have carefully read and understood the above study information, meet the eligibility requirements (aged 18\u201364 and currently residing in the United States), agree to complete the study task as required, promise to fill in demographic information truthfully, and allow the provided data to be used for scientific research."
+      checkboxText="I have carefully read and understood the above study information, meet the eligibility requirements (aged 18-64 and currently residing in the United States), agree to complete the study task as required, promise to fill in demographic information truthfully, and allow the provided data to be used for scientific research."
       buttonText="Continue"
       onAgree={handleAgree}
     />

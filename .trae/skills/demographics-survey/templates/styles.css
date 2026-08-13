@@ -1,0 +1,572 @@
+/* ====================================================================
+   Demographics Survey - Stylesheet
+   人口学调查问卷 样式表
+
+   使用方式：
+   1. 复制到项目前端目录
+   2. 在 HTML 中 <link rel="stylesheet" href="styles.css">
+   3. 如需与主站样式整合，可将 .question-section 等类名前缀加一个命名空间
+
+   设计原则：
+   - 配色：主色蓝 (#3498db) + 错误红 (#e74c3c) + 中性灰
+   - 移动端优先：max-width: 768px 有响应式样式
+   - 可访问性：足够的间距、label 与 input 关联、焦点可见
+   ==================================================================== */
+
+/* ====================================================================
+   全局重置
+   ==================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f5f7fa;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+    color: #2c3e50;
+}
+
+/* ====================================================================
+   容器
+   ==================================================================== */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+}
+
+/* ====================================================================
+   标题
+   ==================================================================== */
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+h2 {
+    color: #34495e;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+/* ====================================================================
+   问题区块
+   ==================================================================== */
+.question-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+    transition: border-left-color 0.2s ease;
+}
+
+/* 验证失败时的高亮（可选：JS动态添加 has-error 类） */
+.question-section.has-error {
+    border-left-color: #e74c3c;
+    background-color: #fff5f5;
+}
+
+.question {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+/* ====================================================================
+   选项组 & 选项行
+   ==================================================================== */
+.option-group {
+    margin-left: 20px;
+}
+
+.option {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.option input[type="radio"],
+.option input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+    flex-shrink: 0; /* 防止缩放后挤压 */
+}
+
+.option label {
+    cursor: pointer;
+    font-size: 1rem;
+    color: #2c3e50;
+    user-select: none; /* 防止双击选中文字 */
+}
+
+/* 焦点可见性（键盘导航时） */
+.option input[type="radio"]:focus,
+.option input[type="checkbox"]:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* ====================================================================
+   颜色色卡（Monk Skin Tone Scale）
+   ==================================================================== */
+.monk-scale {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 15px;
+}
+
+.monk-scale-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.monk-scale-item:hover {
+    background-color: #e9ecef;
+}
+
+.monk-scale-color {
+    width: 40px;
+    height: 60px;
+    border-radius: 4px;
+    border: 2px solid #333;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.monk-scale-color:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 选中时高亮（需要JS配合给 .monk-scale-item 加 .selected） */
+.monk-scale-item.selected .monk-scale-color {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.monk-scale-label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* ====================================================================
+   下拉框
+   ==================================================================== */
+select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-top: 10px;
+    cursor: pointer;
+    color: #2c3e50;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none; /* 去除原生下拉箭头的样式 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px; /* 给箭头留空间 */
+}
+
+select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* ====================================================================
+   滑块（Range Input）
+   ==================================================================== */
+.slider-container {
+    margin-top: 20px;
+    padding: 0 5px; /* 防止 thumb 超出容器被裁切 */
+}
+
+.slider {
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #d6dbdf, #d6dbdf);
+    outline: none;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+/* WebKit thumb（Chrome/Safari/Edge） */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
+}
+
+.slider::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+}
+
+/* Firefox thumb */
+.slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+.slider-value {
+    text-align: center;
+    margin: 12px 0;
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #3498db;
+    min-height: 1.8rem; /* 占位，避免空值时跳动 */
+}
+
+/* ====================================================================
+   其他文本输入框
+   ==================================================================== */
+.other-input {
+    margin-left: 30px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.other-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.other-input::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* ====================================================================
+   错误提示
+   ==================================================================== */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: none;
+    font-weight: 500;
+    padding: 4px 0;
+    line-height: 1.4;
+}
+
+/* 通用错误提示（表单底部） */
+#general-error {
+    background-color: #fdecea;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 12px;
+    color: #721c24;
+    font-weight: 500;
+}
+
+/* ====================================================================
+   加载状态
+   ==================================================================== */
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #6c757d;
+    margin-top: 20px;
+    padding: 16px;
+    display: none;
+    background-color: #fff3cd;
+    border-radius: 4px;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    font-weight: 500;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ====================================================================
+   工具类：隐藏
+   ==================================================================== */
+.hidden {
+    display: none !important;
+}
+
+/* ====================================================================
+   按钮（通用）
+   ==================================================================== */
+.button-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.button {
+    padding: 12px 36px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover:not(:disabled) {
+    background-color: #1976D2;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* 次级按钮（如取消） */
+.button.secondary {
+    background-color: #6c757d;
+}
+.button.secondary:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
+/* 危险按钮 */
+.button.danger {
+    background-color: #e74c3c;
+}
+.button.danger:hover:not(:disabled) {
+    background-color: #c0392b;
+}
+
+/* ====================================================================
+   确认弹窗（Confirm Popup）基础样式
+   与 common.js 中的 showConfirmPopup 函数配合
+   ==================================================================== */
+.confirm-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.confirm-popup {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: popupIn 0.2s ease-out;
+}
+
+@keyframes popupIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.confirm-popup-message {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+.confirm-popup-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* ====================================================================
+   信息确认页面（info-confirm.html）专用样式
+   ==================================================================== */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.birth-date-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.birth-date-container select {
+    flex: 1;
+    min-width: 100px;
+    margin-top: 0;
+}
+
+/* ====================================================================
+   响应式（移动端）
+   ==================================================================== */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px 16px;
+        border-radius: 6px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+
+    .question-section {
+        padding: 16px 14px;
+        margin-bottom: 20px;
+        border-left-width: 3px;
+    }
+
+    .question {
+        font-size: 1rem;
+    }
+
+    .option-group {
+        margin-left: 8px;
+    }
+
+    .option label {
+        font-size: 0.95rem;
+    }
+
+    .monk-scale {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .monk-scale-color {
+        width: 36px;
+        height: 54px;
+    }
+
+    .button {
+        width: 100%;
+        padding: 14px;
+        font-size: 1.05rem;
+    }
+
+    .confirm-popup-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .confirm-popup-buttons .button {
+        width: 100%;
+    }
+
+    .birth-date-container {
+        flex-direction: column;
+    }
+
+    .birth-date-container select {
+        width: 100%;
+    }
+}
+
+/* 超小屏（360px以下） */
+@media (max-width: 360px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .monk-scale-color {
+        width: 30px;
+        height: 48px;
+    }
+}

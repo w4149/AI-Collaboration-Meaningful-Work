@@ -69,6 +69,10 @@ interface AppState {
   likertResponses: Record<string, string>
   setLikertResponses: (responses: Record<string, string>) => void
   
+  // Pre-survey completion flag
+  preSurveyCompleted: boolean
+  setPreSurveyCompleted: (completed: boolean) => void
+  
   // Reset
   reset: () => void
 }
@@ -144,6 +148,10 @@ export const useAppStore = create<AppState>()(
         likertResponses: { ...state.likertResponses, ...likertResponses },
       })),
       
+      // Pre-survey completion flag
+      preSurveyCompleted: false,
+      setPreSurveyCompleted: (preSurveyCompleted) => set({ preSurveyCompleted }),
+      
       // Reset
       reset: () => set({
         taskSubmission: '',
@@ -156,6 +164,7 @@ export const useAppStore = create<AppState>()(
         taskSubmitted: false,
         surveyFormData: {},
         likertResponses: {},
+        preSurveyCompleted: false,
       }),
     }),
     {
@@ -169,6 +178,7 @@ export const useAppStore = create<AppState>()(
         taskSubmitted: state.taskSubmitted,
         surveyFormData: state.surveyFormData,
         likertResponses: state.likertResponses,
+        preSurveyCompleted: state.preSurveyCompleted,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>

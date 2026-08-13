@@ -14,18 +14,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const openaiApiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPENROUTER_API_KEY
 
-    if (!openaiApiKey) {
-      const mockResponse = `[模拟AI] 您说的是: "${message}"\n\n这是一个模拟的AI回复，用于测试。当您配置了真实的OPENAI_API_KEY后，这里会显示真实的AI回复。`
+    if (!apiKey) {
+      const mockResponse = `[模拟AI] 您说的是: "${message}"\n\n这是一个模拟的AI回复，用于测试。当您配置了真实的OPENROUTER_API_KEY后，这里会显示真实的AI回复。`
       return NextResponse.json({ message: mockResponse })
     }
 
+    const baseURL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
+    const model = process.env.OPENROUTER_MODEL || 'openai/gpt-5'
+
     const OpenAI = (await import('openai')).default
-    const openai = new OpenAI({
-      apiKey: openaiApiKey,
-      baseURL: process.env.OPENAI_BASE_URL || 'https://aigc-api.hkust-gz.edu.cn/v1',
-    })
+    const client = new OpenAI({ apiKey, baseURL })
 
     // Get task content for context
     const { data: task } = await supabaseServer
@@ -38,8 +38,8 @@ export async function POST(request: Request) {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: 'system',
-        content: `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task. 
-        
+        content: `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task.
+
 Rules:
 - Keep your responses relatively concise (1-3 paragraphs max)
 - Don't write the response for the participant - help them think through ideas
@@ -61,7 +61,7 @@ Rules:
       })
     }
 
-    // Add history with limit — keep only last N messages for context isolation & cost control
+    // Add history with limit
     if (history && history.length > 0) {
       const trimmedHistory = history.slice(-MAX_HISTORY_MESSAGES)
       messages.push(...trimmedHistory)
@@ -70,13 +70,13 @@ Rules:
     // Add current message
     messages.push({ role: 'user', content: message })
 
-    // Call OpenAI GPT-4 with timeout
+    // Call OpenRouter with timeout
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 15000) // 15s timeout
+    const timeout = setTimeout(() => controller.abort(), 30000) // 30s timeout for larger models
 
     try {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4',
+      const completion = await client.chat.completions.create({
+        model,
         messages,
         temperature: 0.7,
         max_tokens: MAX_COMPLETION_TOKENS,
@@ -88,12 +88,12 @@ Rules:
     } catch (apiError: any) {
       clearTimeout(timeout)
       const errMsg = apiError?.message || String(apiError)
-      console.error('OpenAI API error:', errMsg)
+      console.error('OpenRouter API error:', errMsg)
       if (apiError?.name === 'AbortError') {
         return NextResponse.json({ error: 'AI response timed out. Please try again.' }, { status: 504 })
       }
       if (errMsg.includes('ENOTFOUND') || errMsg.includes('Connection error')) {
-        return NextResponse.json({ error: 'AI service is currently unreachable. Please check your network connection (VPN required).' }, { status: 503 })
+        return NextResponse.json({ error: 'AI service is currently unreachable. Please check your network connection.' }, { status: 503 })
       }
       throw apiError
     }

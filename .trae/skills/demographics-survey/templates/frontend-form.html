@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demographic Information Survey</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Demographic Information</h1>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Please complete the following questions to help us understand the diversity of our participants.
+        </p>
+        
+        <form id="demographicsForm">
+            <!-- ========== 问题1：单选题（性别） ========== -->
+            <div class="question-section">
+                <div class="question">1. What is your gender?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="gender-man" name="gender" value="man" required>
+                        <label for="gender-man">(a) Male</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="gender-woman" name="gender" value="woman">
+                        <label for="gender-woman">(b) Female</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="gender-nonbinary" name="gender" value="nonbinary">
+                        <label for="gender-nonbinary">(c) Nonbinary / Something else</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="gender-transgender" name="gender" value="transgender">
+                        <label for="gender-transgender">(d) Transgender</label>
+                    </div>
+                </div>
+                <div class="error-message" id="gender-error"></div>
+            </div>
+            
+            <!-- ========== 问题2：多选题 + 条件单选题（种族） ========== -->
+            <div class="question-section">
+                <div class="question">2. What is your race and/or ethnicity? (Select all that apply.)</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="checkbox" id="race-american-indian" name="race" value="american-indian">
+                        <label for="race-american-indian">(a) American Indian or Alaska Native</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-asian" name="race" value="asian">
+                        <label for="race-asian">(b) Asian</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-black" name="race" value="black">
+                        <label for="race-black">(c) Black or African American</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-hispanic" name="race" value="hispanic">
+                        <label for="race-hispanic">(d) Hispanic or Latino</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-middle-eastern" name="race" value="middle-eastern">
+                        <label for="race-middle-eastern">(e) Middle Eastern or North African</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-native-hawaiian" name="race" value="native-hawaiian">
+                        <label for="race-native-hawaiian">(f) Native Hawaiian or Pacific Islander</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="race-white" name="race" value="white">
+                        <label for="race-white">(g) White</label>
+                    </div>
+                </div>
+                <div class="error-message" id="race-error">Please select at least one race.</div>
+                
+                <!-- 条件问题：多选时显示 -->
+                <div id="race-primary-section" class="hidden">
+                    <div class="question" style="margin-top: 20px;">2a. If you had to choose, which race do you identify most with?</div>
+                    <div class="option-group">
+                        <div class="option">
+                            <input type="radio" id="race-primary-american-indian" name="race-primary" value="american-indian">
+                            <label for="race-primary-american-indian">(a) American Indian or Alaska Native</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-asian" name="race-primary" value="asian">
+                            <label for="race-primary-asian">(b) Asian</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-black" name="race-primary" value="black">
+                            <label for="race-primary-black">(c) Black or African American</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-hispanic" name="race-primary" value="hispanic">
+                            <label for="race-primary-hispanic">(d) Hispanic or Latino</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-middle-eastern" name="race-primary" value="middle-eastern">
+                            <label for="race-primary-middle-eastern">(e) Middle Eastern or North African</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-native-hawaiian" name="race-primary" value="native-hawaiian">
+                            <label for="race-primary-native-hawaiian">(f) Native Hawaiian or Pacific Islander</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="race-primary-white" name="race-primary" value="white">
+                            <label for="race-primary-white">(g) White</label>
+                        </div>
+                    </div>
+                    <div class="error-message" id="race-primary-error">Please select the race you identify most with.</div>
+                </div>
+            </div>
+            
+            <!-- ========== 问题3：颜色色卡（肤色 Monk Scale） ========== -->
+            <div class="question-section">
+                <div class="question">3. Based on this color scale, what do you consider to be your skin tone?</div>
+                <div class="monk-scale">
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #f6ede4;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-1" name="skin" value="1" required>
+                            <label for="skin-1" class="monk-scale-label">1</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #f3e7db;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-2" name="skin" value="2">
+                            <label for="skin-2" class="monk-scale-label">2</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #f7ead0;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-3" name="skin" value="3">
+                            <label for="skin-3" class="monk-scale-label">3</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #eadaba;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-4" name="skin" value="4">
+                            <label for="skin-4" class="monk-scale-label">4</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #d7bd96;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-5" name="skin" value="5">
+                            <label for="skin-5" class="monk-scale-label">5</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #a07e56;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-6" name="skin" value="6">
+                            <label for="skin-6" class="monk-scale-label">6</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #825c43;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-7" name="skin" value="7">
+                            <label for="skin-7" class="monk-scale-label">7</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #604134;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-8" name="skin" value="8">
+                            <label for="skin-8" class="monk-scale-label">8</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #3a312a;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-9" name="skin" value="9">
+                            <label for="skin-9" class="monk-scale-label">9</label>
+                        </div>
+                    </div>
+                    <div class="monk-scale-item">
+                        <div class="monk-scale-color" style="background-color: #292420;"></div>
+                        <div class="option">
+                            <input type="radio" id="skin-10" name="skin" value="10">
+                            <label for="skin-10" class="monk-scale-label">10</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="error-message" id="skin-error"></div>
+            </div>
+            
+            <!-- ========== 问题4：静态下拉框（美国州） ========== -->
+            <div class="question-section">
+                <div class="question">4. In which U.S. state do you currently reside?</div>
+                <select id="state" name="state" required>
+                    <option value="">Please select a state</option>
+                    <option value="AL">Alabama</option><option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option><option value="AR">Arkansas</option>
+                    <option value="CA">California</option><option value="CO">Colorado</option>
+                    <option value="CT">Connecticut</option><option value="DE">Delaware</option>
+                    <option value="FL">Florida</option><option value="GA">Georgia</option>
+                    <option value="HI">Hawaii</option><option value="ID">Idaho</option>
+                    <option value="IL">Illinois</option><option value="IN">Indiana</option>
+                    <option value="IA">Iowa</option><option value="KS">Kansas</option>
+                    <option value="KY">Kentucky</option><option value="LA">Louisiana</option>
+                    <option value="ME">Maine</option><option value="MD">Maryland</option>
+                    <option value="MA">Massachusetts</option><option value="MI">Michigan</option>
+                    <option value="MN">Minnesota</option><option value="MS">Mississippi</option>
+                    <option value="MO">Missouri</option><option value="MT">Montana</option>
+                    <option value="NE">Nebraska</option><option value="NV">Nevada</option>
+                    <option value="NH">New Hampshire</option><option value="NJ">New Jersey</option>
+                    <option value="NM">New Mexico</option><option value="NY">New York</option>
+                    <option value="NC">North Carolina</option><option value="ND">North Dakota</option>
+                    <option value="OH">Ohio</option><option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option><option value="PA">Pennsylvania</option>
+                    <option value="RI">Rhode Island</option><option value="SC">South Carolina</option>
+                    <option value="SD">South Dakota</option><option value="TN">Tennessee</option>
+                    <option value="TX">Texas</option><option value="UT">Utah</option>
+                    <option value="VT">Vermont</option><option value="VA">Virginia</option>
+                    <option value="WA">Washington</option><option value="WV">West Virginia</option>
+                    <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+                    <option value="DC">District of Columbia</option><option value="PR">Puerto Rico</option>
+                </select>
+                <div class="error-message" id="state-error"></div>
+            </div>
+            
+            <!-- ========== 问题5：单选题（教育程度） ========== -->
+            <div class="question-section">
+                <div class="question">5. What is the highest level of education you have completed?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="education-less-than-high" name="education" value="less-than-high" required>
+                        <label for="education-less-than-high">(a) Less than high school</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-high-school" name="education" value="high-school">
+                        <label for="education-high-school">(b) High school diploma or equivalent (e.g., GED)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-some-college" name="education" value="some-college">
+                        <label for="education-some-college">(c) Some college but no degree</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-associate" name="education" value="associate">
+                        <label for="education-associate">(d) Associate degree</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-bachelor" name="education" value="bachelor">
+                        <label for="education-bachelor">(e) Bachelor's degree</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-master" name="education" value="master">
+                        <label for="education-master">(f) Master's degree</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="education-doctoral" name="education" value="doctoral">
+                        <label for="education-doctoral">(g) Doctoral or professional degree (PhD, JD, MD, etc.)</label>
+                    </div>
+                </div>
+                <div class="error-message" id="education-error"></div>
+            </div>
+            
+            <!-- ========== 问题6：滑块（收入等级） ========== -->
+            <div class="question-section">
+                <div class="question">6. This is an income scale from 1 to 10, where 1 indicates the lowest income group and 10 the highest income group. In which group would you place your household?</div>
+                <div class="slider-container">
+                    <input type="range" min="1" max="10" class="slider" id="income" name="income" required>
+                    <div class="slider-value" id="income-value"></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #6c757d;">
+                        <span>Lowest Group</span>
+                        <span>Highest Group</span>
+                    </div>
+                </div>
+                <div class="error-message" id="income-error"></div>
+            </div>
+            
+            <!-- ========== 问题7：单选题 + 条件下拉框（是否美国出生 + 移民年份） ========== -->
+            <div class="question-section">
+                <div class="question">7. Were you born in the United States?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="born-us-yes" name="born-us" value="yes" required>
+                        <label for="born-us-yes">(a) Yes</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="born-us-no" name="born-us" value="no">
+                        <label for="born-us-no">(b) No</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="born-us-unsure" name="born-us" value="unsure">
+                        <label for="born-us-unsure">(c) Don't know</label>
+                    </div>
+                </div>
+                <div class="error-message" id="born-us-error"></div>
+                
+                <!-- 条件问题：选No时显示 -->
+                <div id="immigration-year-section" class="hidden">
+                    <div class="question" style="margin-top: 20px;">7a. In what year did you migrate to the United States?</div>
+                    <select id="immigration-year" name="immigration-year">
+                        <option value="">Please select a year</option>
+                        <!-- 通过JS动态生成 -->
+                    </select>
+                    <div class="error-message" id="immigration-year-error"></div>
+                </div>
+            </div>
+            
+            <!-- ========== 问题8：单选题（政治党派） ========== -->
+            <div class="question-section">
+                <div class="question">8. Generally speaking, do you usually think of yourself as a Republican, a Democrat, an Independent, or what?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="politics-republican" name="politics" value="republican" required>
+                        <label for="politics-republican">(a) Republican</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="politics-democrat" name="politics" value="democrat">
+                        <label for="politics-democrat">(b) Democrat</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="politics-independent" name="politics" value="independent">
+                        <label for="politics-independent">(c) Independent</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="politics-other" name="politics" value="other">
+                        <label for="politics-other">(d) Other</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="politics-no-preference" name="politics" value="no-preference">
+                        <label for="politics-no-preference">(e) No Preference</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="politics-unsure" name="politics" value="unsure">
+                        <label for="politics-unsure">(f) Don't know</label>
+                    </div>
+                </div>
+                <div class="error-message" id="politics-error"></div>
+            </div>
+            
+            <!-- ========== 问题9：7点量表单选（政治倾向） ========== -->
+            <div class="question-section">
+                <div class="question">9. Here is a seven-point scale from extremely liberal (point 1) to extremely conservative (point 7). Where would you place yourself?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="political-scale-1" name="political-scale" value="1" required>
+                        <label for="political-scale-1">(1) Extremely liberal</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-2" name="political-scale" value="2">
+                        <label for="political-scale-2">(2) Liberal</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-3" name="political-scale" value="3">
+                        <label for="political-scale-3">(3) Slightly liberal</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-4" name="political-scale" value="4">
+                        <label for="political-scale-4">(4) Moderate, middle of the road</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-5" name="political-scale" value="5">
+                        <label for="political-scale-5">(5) Slightly conservative</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-6" name="political-scale" value="6">
+                        <label for="political-scale-6">(6) Conservative</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-7" name="political-scale" value="7">
+                        <label for="political-scale-7">(7) Extremely conservative</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="political-scale-8" name="political-scale" value="8">
+                        <label for="political-scale-8">(8) Don't know</label>
+                    </div>
+                </div>
+                <div class="error-message" id="political-scale-error"></div>
+            </div>
+            
+            <!-- ========== 问题10：频率单选（社会互动） ========== -->
+            <div class="question-section">
+                <div class="question">10. How often do you have social interactions with people of a different race or ethnicity than your own?</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="radio" id="social-every-day" name="social-interaction" value="every-day" required>
+                        <label for="social-every-day">(a) Every day or almost every day</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="social-few-times-week" name="social-interaction" value="few-times-week">
+                        <label for="social-few-times-week">(b) A few times a week</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="social-few-times-month" name="social-interaction" value="few-times-month">
+                        <label for="social-few-times-month">(c) A few times a month</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="social-two-times-year" name="social-interaction" value="two-times-year">
+                        <label for="social-two-times-year">(d) Two to a few times a year</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="social-once-year" name="social-interaction" value="once-year">
+                        <label for="social-once-year">(e) Once a year or less</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="social-never" name="social-interaction" value="never">
+                        <label for="social-never">(f) Never</label>
+                    </div>
+                </div>
+                <div class="error-message" id="social-interaction-error"></div>
+            </div>
+            
+            <!-- ========== 问题11：多选 + 其他文本输入 ========== -->
+            <div class="question-section">
+                <div class="question">11. Why did you select "Unsure" during the task? (Select all that apply.)</div>
+                <div class="option-group">
+                    <div class="option">
+                        <input type="checkbox" id="unsure-a" name="unsure-reasons" value="a">
+                        <label for="unsure-a">(a) The image quality made it difficult to judge</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="unsure-b" name="unsure-reasons" value="b">
+                        <label for="unsure-b">(b) I was uncertain between two or more categories</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="unsure-c" name="unsure-reasons" value="c">
+                        <label for="unsure-c">(c) I believed the person belonged to multiple categories</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="unsure-g" name="unsure-reasons" value="g">
+                        <label for="unsure-g">(g) Other</label>
+                    </div>
+                    <input type="text" id="unsure-other" class="other-input" 
+                           placeholder="Please specify your reason" style="display: none;">
+                </div>
+                <div class="error-message" id="unsure-error"></div>
+            </div>
+            
+            <!-- 总体错误提示 -->
+            <div class="error-message" id="general-error" style="text-align: center; margin-top: 20px;">
+                Please complete all required fields before submitting.
+            </div>
+            
+            <div class="button-container">
+                <button type="button" class="button submit" id="submitButton">Submit</button>
+            </div>
+        </form>
+        
+        <div class="loading" id="loadingMessage">Processing your submission...</div>
+    </div>
+    
+    <!-- ========== JavaScript 逻辑 ========== -->
+    <script>
+    // ============ 页面初始化 ============
+    window.addEventListener('DOMContentLoaded', init);
+    
+    function init() {
+        generateImmigrationYearOptions();
+        addEventListeners();
+    }
+    
+    // 动态生成移民年份选项
+    function generateImmigrationYearOptions() {
+        const select = document.getElementById('immigration-year');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear; year >= 1900; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            select.appendChild(option);
+        }
+    }
+    
+    // ============ 事件监听器 ============
+    function addEventListeners() {
+        // 种族多选 - 控制条件问题显示
+        document.querySelectorAll('input[name="race"]').forEach(cb => {
+            cb.addEventListener('change', handleRaceChange);
+        });
+        
+        // 滑块 - 实时显示值
+        const incomeSlider = document.getElementById('income');
+        const incomeValue = document.getElementById('income-value');
+        incomeValue.textContent = ''; // 初始为空，强制用户操作
+        incomeSlider.addEventListener('input', function() {
+            incomeValue.textContent = this.value;
+        });
+        
+        // 是否美国出生 - 控制移民年份
+        document.querySelectorAll('input[name="born-us"]').forEach(r => {
+            r.addEventListener('change', handleBornUsChange);
+        });
+        
+        // 其他选项文本框显示
+        document.getElementById('unsure-g').addEventListener('change', function() {
+            const otherInput = document.getElementById('unsure-other');
+            otherInput.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) otherInput.value = '';
+        });
+        
+        // 提交按钮
+        document.getElementById('submitButton').addEventListener('click', function() {
+            if (validateForm()) {
+                // 如果有全局confirm函数，调用它；否则直接提交
+                if (typeof showConfirmPopup === 'function') {
+                    showConfirmPopup(
+                        'Are you sure to proceed? Previous answers will be unchangeable.',
+                        handleSubmit
+                    );
+                } else {
+                    handleSubmit();
+                }
+            }
+        });
+    }
+    
+    // ============ 条件显示逻辑 ============
+    function handleRaceChange() {
+        const count = document.querySelectorAll('input[name="race"]:checked').length;
+        const section = document.getElementById('race-primary-section');
+        const radios = document.querySelectorAll('input[name="race-primary"]');
+        
+        if (count > 1) {
+            section.classList.remove('hidden');
+            radios.forEach(r => r.setAttribute('required', 'required'));
+        } else {
+            section.classList.add('hidden');
+            radios.forEach(r => {
+                r.removeAttribute('required');
+                r.checked = false;
+            });
+        }
+    }
+    
+    function handleBornUsChange() {
+        const val = document.querySelector('input[name="born-us"]:checked').value;
+        const section = document.getElementById('immigration-year-section');
+        const select = document.getElementById('immigration-year');
+        
+        if (val === 'no') {
+            section.classList.remove('hidden');
+            select.setAttribute('required', 'required');
+        } else {
+            section.classList.add('hidden');
+            select.removeAttribute('required');
+            select.value = '';
+        }
+    }
+    
+    // ============ 表单验证 ============
+    function validateForm() {
+        let isValid = true;
+        let firstErrorField = null;
+        
+        // 先隐藏所有错误
+        ['general-error','gender-error','race-error','race-primary-error','skin-error',
+         'state-error','education-error','income-error','born-us-error','immigration-year-error',
+         'politics-error','political-scale-error','social-interaction-error','unsure-error'
+        ].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; el.textContent = ''; }
+        });
+        
+        function setError(fieldId, msg) {
+            if (!firstErrorField) {
+                const el = document.getElementById(fieldId + '-error');
+                if (el) { el.textContent = msg; el.style.display = 'block'; }
+                firstErrorField = fieldId;
+            }
+            isValid = false;
+        }
+        
+        // Q1 性别
+        if (!document.querySelector('input[name="gender"]:checked')) {
+            setError('gender', 'Please select your gender.');
+        }
+        
+        // Q2 种族
+        const races = document.querySelectorAll('input[name="race"]:checked');
+        if (races.length === 0) {
+            setError('race', 'Please select at least one race.');
+        } else if (races.length > 1 && !document.querySelector('input[name="race-primary"]:checked')) {
+            setError('race-primary', 'Please select the race you identify most with.');
+        }
+        
+        // Q3 肤色
+        if (!document.querySelector('input[name="skin"]:checked')) {
+            setError('skin', 'Please select your skin tone.');
+        }
+        
+        // Q4 州
+        if (!document.getElementById('state').value) {
+            setError('state', 'Please select your state of residence.');
+        }
+        
+        // Q5 教育
+        if (!document.querySelector('input[name="education"]:checked')) {
+            setError('education', 'Please select your highest level of education.');
+        }
+        
+        // Q6 收入滑块
+        if (!document.getElementById('income-value').textContent) {
+            setError('income', 'Please select your income group.');
+        }
+        
+        // Q7 是否美国出生
+        const bornUs = document.querySelector('input[name="born-us"]:checked');
+        if (!bornUs) {
+            setError('born-us', 'Please answer whether you were born in the United States.');
+        } else if (bornUs.value === 'no' && !document.getElementById('immigration-year').value) {
+            setError('immigration-year', 'Please select the year you migrated to the U.S.');
+        }
+        
+        // Q8 政治党派
+        if (!document.querySelector('input[name="politics"]:checked')) {
+            setError('politics', 'Please select your political party affiliation.');
+        }
+        
+        // Q9 政治倾向
+        if (!document.querySelector('input[name="political-scale"]:checked')) {
+            setError('political-scale', 'Please select your political orientation.');
+        }
+        
+        // Q10 社会互动
+        if (!document.querySelector('input[name="social-interaction"]:checked')) {
+            setError('social-interaction', 'Please select how often you have cross-race social interactions.');
+        }
+        
+        // 显示总错误并滚动
+        if (!isValid) {
+            document.getElementById('general-error').style.display = 'block';
+            const errEl = document.querySelector(`#${firstErrorField}-error`);
+            if (errEl) errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        return isValid;
+    }
+    
+    // ============ 数据收集 ============
+    function collectFormData() {
+        const form = document.getElementById('demographicsForm');
+        const fd = new FormData(form);
+        const d = {};
+        
+        // 单选和下拉
+        d.gender = fd.get('gender');
+        d.skin = fd.get('skin');
+        d.state = fd.get('state');
+        d.education = fd.get('education');
+        d.income = fd.get('income');
+        d.bornUs = fd.get('born-us');
+        d.politics = fd.get('politics');
+        d.politicalScale = fd.get('political-scale');
+        d.socialInteraction = fd.get('social-interaction');
+        
+        // 条件字段
+        if (fd.get('immigration-year')) {
+            d.immigrationYear = fd.get('immigration-year');
+        }
+        const rp = fd.get('race-primary');
+        if (rp) d.racePrimary = rp;
+        
+        // 多选
+        d.races = Array.from(document.querySelectorAll('input[name="race"]:checked')).map(cb => cb.value);
+        
+        // 其他原因（多选 + 文本）
+        d.unsureReasons = Array.from(document.querySelectorAll('input[name="unsure-reasons"]:checked')).map(cb => cb.value);
+        d.unsureOtherText = document.getElementById('unsure-other').value || null;
+        
+        return d;
+    }
+    
+    // ============ 准备发送到后端的数据 ============
+    function prepareBackendData(formData) {
+        // 从localStorage获取上下文（如没有则设默认）
+        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+        
+        // 多选原因转文本
+        const reasonMap = {
+            'a': 'The image quality made it difficult to judge',
+            'b': 'I was uncertain between two or more categories',
+            'c': 'I believed the person belonged to multiple categories',
+            'g': 'Other'
+        };
+        const unsureReasonsText = convertReasonsToText(formData.unsureReasons, formData.unsureOtherText, reasonMap);
+        
+        return {
+            // 追踪ID
+            prolific_id: localStorage.getItem('workerId') || 'unknown',
+            study_id: localStorage.getItem('studyId') || 'unknown',
+            session_id: localStorage.getItem('sessionId') || 'unknown',
+            group: parseInt(localStorage.getItem('group') || '1'),
+            
+            // 出生日期
+            birthYear: userInfo.birthYear ? parseInt(userInfo.birthYear) : null,
+            birthMonth: userInfo.birthMonth ? parseInt(userInfo.birthMonth) : null,
+            birthDay: userInfo.birthDay ? parseInt(userInfo.birthDay) : null,
+            residenceCountry: userInfo.country || null,
+            
+            // 人口学数据
+            gender: formData.gender,
+            race: formData.races.join(', '),
+            racePrimary: formData.racePrimary || null,
+            skinTone: formData.skin,
+            residenceState: formData.state,
+            education: formData.education,
+            income: parseInt(formData.income),
+            bornUs: formData.bornUs,
+            immigrationYear: formData.immigrationYear ? parseInt(formData.immigrationYear) : null,
+            politics: formData.politics,
+            politicalScale: formData.politicalScale,
+            socialInteraction: formData.socialInteraction,
+            
+            // 补充数据
+            unsureReasonsText: unsureReasonsText,
+            
+            // 时间戳
+            timestamp: localStorage.getItem('annotationTimestamp') || new Date().toISOString()
+        };
+    }
+    
+    function convertReasonsToText(reasons, otherText, reasonMap) {
+        if (!Array.isArray(reasons) || reasons.length === 0) return null;
+        return reasons.map(r => {
+            const text = reasonMap[r] || r;
+            if (r === 'g') return `(${r}) ${text}${otherText ? `: ${otherText}` : ''}`;
+            return `(${r}) ${text}`;
+        }).join(', ');
+    }
+    
+    // ============ 提交到后端 ============
+    async function handleSubmit() {
+        if (!validateForm()) return;
+        
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('submitButton').disabled = true;
+        
+        try {
+            const formData = collectFormData();
+            const backendData = prepareBackendData(formData);
+            
+            // 本地保存（备用）
+            localStorage.setItem('demographicsData', JSON.stringify(formData));
+            
+            console.log('准备发送的数据:', backendData);
+            
+            const response = await fetch('/api/demographics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(backendData)
+            });
+            
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || 'Failed to submit data');
+            }
+            
+            // 成功：跳转下一页
+            window.location.href = 'completion.html';
+            
+        } catch (error) {
+            console.error('提交失败:', error);
+            alert('Failed to submit demographic information. Please try again.');
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('submitButton').disabled = false;
+        }
+    }
+    </script>
+</body>
+</html>
