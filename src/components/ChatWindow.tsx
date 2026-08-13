@@ -3,10 +3,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Send, X, MessageSquare, Loader2 } from 'lucide-react'
 import ChatMessage from './ChatMessage'
 import { useAppStore } from '@/lib/store'
+
+// Max input: ~400 words (≈ 2000 chars, avg 5 chars/word for English)
+const MAX_INPUT_CHARS = 2000
 
 export default function ChatWindow() {
   const [input, setInput] = useState('')
@@ -82,7 +85,8 @@ export default function ChatWindow() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Enter = 换行，不再发送；仅点击发送按钮（或 Ctrl/Cmd+Enter）才发送
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault()
       handleSend()
     }
@@ -145,19 +149,21 @@ export default function ChatWindow() {
         </div>
         
         <div className="p-4 border-t">
-          <div className="flex gap-2">
-            <Input
+          <div className="flex gap-2 items-end">
+            <Textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_CHARS))}
               onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
+              placeholder="Type your message... (Press Enter to go to a new line)"
               disabled={isLoading}
-              className="flex-1"
+              rows={4}
+              className="flex-1 resize-none min-h-[108px] max-h-[200px] overflow-y-auto"
             />
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
               size="icon"
+              className="h-10 w-10 shrink-0"
             >
               <Send className="h-4 w-4" />
             </Button>

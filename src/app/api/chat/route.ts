@@ -6,6 +6,11 @@ import type { ChatCompletionMessageParam } from 'openai/resources/chat'
 const MAX_HISTORY_MESSAGES = 10
 const MAX_COMPLETION_TOKENS = 500
 
+// === TEMPORARILY DISABLED: System prompt & task content injection ===
+// To re-enable, set these to true
+const ENABLE_SYSTEM_PROMPT = false
+const ENABLE_TASK_INJECTION = false
+
 export async function POST(request: Request) {
   try {
     const { userId, taskId, message, history } = await request.json()
@@ -27,16 +32,22 @@ export async function POST(request: Request) {
     const OpenAI = (await import('openai')).default
     const client = new OpenAI({ apiKey, baseURL })
 
-    // Get task content for context
-    const { data: task } = await supabaseServer
-      .from('tasks')
-      .select('content_to_display')
-      .eq('id', taskId)
-      .single()
+    // Get task content for context (skipped when disabled)
+    let task: { content_to_display?: string } | null = null
+    if (ENABLE_TASK_INJECTION) {
+      const result = await supabaseServer
+        .from('tasks')
+        .select('content_to_display')
+        .eq('id', taskId)
+        .single()
+      task = result.data
+    }
 
     // Build messages array
-    const messages: ChatCompletionMessageParam[] = [
-      {
+    const messages: ChatCompletionMessageParam[] = []
+
+    if (ENABLE_SYSTEM_PROMPT) {
+      messages.push({
         role: 'system',
         content: `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task.
 
@@ -46,11 +57,11 @@ Rules:
 - Be encouraging and supportive
 - If asked about the task itself, you can discuss general approaches but don't provide a complete answer
 - Keep your tone professional but approachable
-- Respond in the same language the participant uses (if they write in Chinese, respond in Chinese)`,
-      },
-    ]
+- Respond in the same language the participant uses (if they write in English, respond in English)`,
+      })
+    }
 
-    if (task?.content_to_display) {
+    if (ENABLE_TASK_INJECTION && task?.content_to_display) {
       // Truncate task content if too long (first 2000 chars)
       const taskSnippet = task.content_to_display.length > 2000
         ? task.content_to_display.substring(0, 2000) + '...'
