@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
 
 const TASK_CONTENTS = {
-  'task1': `**广告语写作**
+  'task1': `You work at Lucky Coffee, an affordable coffee chain known for its comfortable stores and relaxed vibe. Its main customers are nearby office workers and students. The manager wants to celebrate the store's third anniversary with **an/a series of** in-store event and has asked you to plan it.
 
-你是 Lucky Coffee 的员工，下周店里要上架一款新饮品——枫糖肉桂燕麦拿铁（Maple Cinnamon Oat Latte），店长请你为该饮品写一段广告推荐语，要求如下：
+Design an anniversary event that meets the following requirements:
 
-1. 该推荐语目标发布在社交媒体上
-2. 内容新颖，让人一看就想尝一尝`,
+1. Goals: Bring customers into the store and encourage them to stay, motivate them to take and share photos, and significantly boost the store's sales and brand awareness.
+
+2. What to include: **Describe what the event is?Describe the activities included in the event**, how it works, and/or how customers would take part.`,
 
   'task1-2': `
 
