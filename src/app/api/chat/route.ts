@@ -4,7 +4,6 @@ import type { ChatCompletionMessageParam } from 'openai/resources/chat'
 
 // Context length limit: keep last N user/assistant messages to control token costs
 const MAX_HISTORY_MESSAGES = 10
-const MAX_COMPLETION_TOKENS = 500
 
 // === TEMPORARILY DISABLED: System prompt & task content injection ===
 // To re-enable, set these to true
@@ -90,7 +89,6 @@ Rules:
         model,
         messages,
         temperature: 0.7,
-        max_tokens: MAX_COMPLETION_TOKENS,
       }, { signal: controller.signal })
       clearTimeout(timeout)
 

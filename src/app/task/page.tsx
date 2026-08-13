@@ -102,7 +102,7 @@ export default function TaskPage() {
 
     if (!submission.trim()) {
       setTaskSubmitted(true)
-      router.replace('/survey')
+      router.replace('/thank-you')
       return
     }
 
@@ -132,7 +132,7 @@ export default function TaskPage() {
         body: JSON.stringify({ userId, taskId, content: submission }),
       })
       setTaskSubmitted(true)
-      router.replace('/survey')
+      router.replace('/thank-you')
     } catch (error) {
       console.error('Auto-submit error:', error)
     }
@@ -150,7 +150,7 @@ export default function TaskPage() {
   // Prevent re-entry after submission
   useEffect(() => {
     if (taskSubmitted) {
-      router.replace('/survey')
+      router.replace('/thank-you')
     }
   }, [taskSubmitted, router])
 
@@ -322,7 +322,7 @@ export default function TaskPage() {
       if (!response.ok) throw new Error('Failed to submit')
 
       setTaskSubmitted(true)
-      router.replace('/survey')
+      router.replace('/thank-you')
     } catch (error) {
       console.error('Error submitting task:', error)
       alert('Failed to submit. Please try again.')
