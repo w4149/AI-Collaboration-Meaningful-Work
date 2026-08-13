@@ -67,6 +67,7 @@ export default function PreSurveyPage() {
   const userId = useAppStore((state) => state.userId)
   const setUser = useAppStore((state) => state.setUser)
   const setStartTime = useAppStore((state) => state.setStartTime)
+  const setPreSurveyCompleted = useAppStore((state) => state.setPreSurveyCompleted)
 
   const [birthYear, setBirthYear] = useState<string>('')
   const [gender, setGender] = useState<string>('')
@@ -133,18 +134,13 @@ export default function PreSurveyPage() {
     setIsLoading(true)
     try {
       const prolificId = searchParams.get('PROLIFIC_PID') || `test_user_${Date.now()}`
-      const finalUserId = userId || `user_${Date.now()}`
-      const sessionId = `session_${Date.now()}`
-
-      if (!userId) {
-        setUser(finalUserId, sessionId, prolificId)
-      }
 
       const response = await fetch('/api/pre-survey', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: finalUserId,
+          userId: userId || '',
+          prolificId,
           birthYear: birthYear ? parseInt(birthYear, 10) : null,
           gender,
           ethnicBackgrounds,
@@ -159,6 +155,13 @@ export default function PreSurveyPage() {
         throw new Error('Failed to save pre-survey responses.')
       }
 
+      const data = await response.json()
+      // Use the real DB userId returned from the API
+      if (data.userId) {
+        const sessionId = `session_${Date.now()}`
+        setUser(data.userId, sessionId, prolificId)
+      }
+      setPreSurveyCompleted(true)
       setStartTime(new Date())
       const params = searchParams.toString()
       router.push(params ? `/entry?${params}` : '/entry')
