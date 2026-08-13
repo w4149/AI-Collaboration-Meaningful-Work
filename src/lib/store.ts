@@ -8,7 +8,7 @@ interface ChatMessage {
   timestamp: Date
 }
 
-type GroupType = 'G1-Human' | 'G2-HumanAndAI' | 'G3-AI' | null
+type GroupType = 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI' | null
 
 interface AppState {
   // User & Session

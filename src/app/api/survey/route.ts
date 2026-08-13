@@ -15,8 +15,8 @@ export async function POST(request: Request) {
     // Map group mode to DB-compatible values
     const groupModeMap: Record<string, string> = {
       'G1-Human': 'Human',
-      'G2-HumanAndAI': 'AI',
-      'G3-AI': 'HumanAndAI',
+      'G2-AI': 'AI',
+      'G3-HumanAndAI': 'HumanAndAI',
     }
     const mappedGroupMode = groupMode ? (groupModeMap[groupMode] || groupMode) : null
 

@@ -19,8 +19,8 @@ import { useAppStore } from '@/lib/store'
 
 const SUBMIT_MINUTES: Record<string, number> = {
   'G1-Human': 10,
-  'G2-HumanAndAI': 5,
-  'G3-AI': 5,
+  'G2-AI': 5,
+  'G3-HumanAndAI': 5,
 }
 
 const AUTO_REDIRECT_MINUTES = 10
@@ -163,13 +163,13 @@ export default function TaskPage() {
 
   // Auto-show instructions when G3 enters Phase 2
   useEffect(() => {
-    if (groupType === 'G3-AI' && currentPhase === 2) {
+    if (groupType === 'G3-HumanAndAI' && currentPhase === 2) {
       setShowInstructions(true)
     }
   }, [groupType, currentPhase])
 
   // For G3, the effective timer base depends on current phase
-  const effectiveStartTime = groupType === 'G3-AI' && currentPhase === 2 && phase2StartTime
+  const effectiveStartTime = groupType === 'G3-HumanAndAI' && currentPhase === 2 && phase2StartTime
     ? phase2StartTime
     : startTime
 
@@ -204,7 +204,7 @@ export default function TaskPage() {
         setRedirectCountdown(0)
         setSubmitCountdown(0)
         setShowAutoSubmitWarning(false)
-        if (groupType === 'G3-AI' && currentPhase === 1) {
+        if (groupType === 'G3-HumanAndAI' && currentPhase === 1) {
           handlePhase1AutoSubmit()
         } else {
           handleAutoSubmit()
@@ -253,7 +253,7 @@ export default function TaskPage() {
     setShowConfirmDialog(false)
 
     // G3 Phase 1: save and transition to Phase 2
-    if (groupType === 'G3-AI' && currentPhase === 1) {
+    if (groupType === 'G3-HumanAndAI' && currentPhase === 1) {
       try {
         if (taskSubmission.trim()) {
           await fetch('/api/submissions', {
@@ -344,47 +344,47 @@ export default function TaskPage() {
         <div className="space-y-4 py-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-blue-700 text-sm">
-              请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
+              Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. Do not use any assistance (e.g., Al tools, search engines, etc.). Use YOUR OWN knowledge and skills to complete the task from start to finish. 
             </p>
           </div>
           <div className="bg-amber-50 p-4 rounded-lg">
             <p className="text-amber-700 text-sm">
-              *注：本输入框已禁用复制粘贴功能。作答未满 10 分钟无法切换页面，计时结束后页面将自动跳转。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评阅人会结合实际工作场景评判你的文稿。
+              [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 10 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
         </div>
       )
     }
 
-    if (groupType === 'G2-HumanAndAI') {
+    if (groupType === 'G2-AI') {
       return (
         <div className="space-y-4 py-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-blue-700 text-sm">
-              请使用当前界面的 ChatGPT 人工智能工具，通过和AI的自由互动生成满意的答案，最后将你最终决定提交的AI生成内容粘贴到下方。
+              Your response will be graded by professional evaluators based on real-world work scenarios. Please use the ChatGPT AI tool available in this interface, interacting freely with the AI until you arrive at an answer you&apos;re satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
             </p>
           </div>
           <div className="bg-amber-50 p-4 rounded-lg">
             <p className="text-amber-700 text-sm">
-              *注：作答未满 5 分钟无法切换页面，计时满 10 分钟后页面将自动跳转。请在此期间认真完成操作。你的作答将由专业评审按照 1–7 分制进行评分。评阅人会结合实际工作场景评判你的文稿。
+              [Note: You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
         </div>
       )
     }
 
-    if (groupType === 'G3-AI') {
+    if (groupType === 'G3-HumanAndAI') {
       if (currentPhase === 1) {
         return (
           <div className="space-y-4 py-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-blue-700 text-sm">
-                请在下方撰写修改您的回答，并根据内容适当分段方便阅读。禁止使用包括人工智能和搜索引擎在内的任何工具，全程依靠自身知识与能力独立完成。
+                Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, do not use any assistance (e.g., Al tools, search engines, etc.). Use **YOUR OWN** knowledge and skills to complete the task from start to finish. 
               </p>
             </div>
             <div className="bg-amber-50 p-4 rounded-lg">
               <p className="text-amber-700 text-sm">
-                *注：本输入框已禁用复制粘贴功能。作答未满 5 分钟无法提交，计时满 10 分钟后自动进入第二阶段（可使用AI）。请在此期间认真完成写作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+                [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
               </p>
             </div>
           </div>
@@ -394,12 +394,12 @@ export default function TaskPage() {
         <div className="space-y-4 py-4">
           <div className="bg-green-50 p-4 rounded-lg">
             <p className="text-green-700 text-sm">
-              请使用当前页面的ChatGPT，把上一步撰写的初稿复制到对话框中，通过和AI的自由互动对刚才撰写的初稿进行审阅和修改，并将改进后的最终稿粘贴到下方。你可以对 AI 的修改再做任何你认为合适的调整，这一稿将作为你的最终提交。
+              Please use ChatGPT on this page, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
             </p>
           </div>
           <div className="bg-amber-50 p-4 rounded-lg">
             <p className="text-amber-700 text-sm">
-              *注：本输入框已开放复制粘贴功能。作答未满 5 分钟无法提交，计时满 10 分钟后页面将自动提交当前内容并跳转。请在此期间认真完成写作&amp;操作。你的作答将由专业评审按照 1–7 分制进行评分。评审会结合实际工作场景评判你的文稿。
+              [Note: Copy and paste is enabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
         </div>
@@ -423,13 +423,13 @@ export default function TaskPage() {
 
       {/* Countdown banner */}
       {redirectCountdown !== null && redirectCountdown > 0 && (
-        <div className={`${groupType === 'G3-AI' && currentPhase === 1 ? 'bg-amber-100 border-amber-200' : 'bg-purple-100 border-purple-200'} border-b px-4 py-2`}>
+        <div className={`${groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'bg-amber-100 border-amber-200' : 'bg-purple-100 border-purple-200'} border-b px-4 py-2`}>
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
-            <Badge variant="outline" className={groupType === 'G3-AI' && currentPhase === 1 ? 'bg-amber-500 text-white border-amber-500' : 'bg-purple-500 text-white border-purple-500'}>
-              {groupType === 'G3-AI' && currentPhase === 1 ? 'Phase 1 — Writing Draft' : 'Auto-submit'}
+            <Badge variant="outline" className={groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'bg-amber-500 text-white border-amber-500' : 'bg-purple-500 text-white border-purple-500'}>
+              {groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'Phase 1 — Writing Draft' : 'Auto-submit'}
             </Badge>
-            <span className={`${groupType === 'G3-AI' && currentPhase === 1 ? 'text-amber-700' : 'text-purple-700'} font-semibold`}>
-              {groupType === 'G3-AI' && currentPhase === 1
+            <span className={`${groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'text-amber-700' : 'text-purple-700'} font-semibold`}>
+              {groupType === 'G3-HumanAndAI' && currentPhase === 1
                 ? `Phase 2 in ${formatCountdown(redirectCountdown)}`
                 : `Auto-submit in ${formatCountdown(redirectCountdown)}`}
             </span>
@@ -452,7 +452,7 @@ export default function TaskPage() {
       )}
 
       {/* G3 Phase 2 banner */}
-      {groupType === 'G3-AI' && currentPhase === 2 && (
+      {groupType === 'G3-HumanAndAI' && currentPhase === 2 && (
         <div className="bg-green-100 border-b border-green-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
             <Badge variant="outline" className="bg-green-500 text-white border-green-500">

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowRight, Users, Bot, Users2 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 
-type TaskGroup = 'G1-Human' | 'G2-HumanAndAI' | 'G3-AI'
+type TaskGroup = 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI'
 
 interface TaskOption {
   id: string
@@ -20,32 +20,32 @@ const tasks: TaskOption[] = [
   {
     id: 'task1',
     name: 'Task 1 - 广告语写作',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
   {
     id: 'task1-2',
     name: 'Task 1-2 - 特殊节日活动策划',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
   {
     id: 'task2',
     name: 'Task 2 - 竞争分析报告',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
   {
     id: 'task3',
     name: 'Task 3 - 顾客留言整理',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
   {
     id: 'task4',
     name: 'Task 4 - 投诉信回复',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
   {
     id: 'task4-2',
     name: 'Task 4-2 - 双顾客投诉回复',
-    groups: ['G1-Human', 'G2-HumanAndAI', 'G3-AI'],
+    groups: ['G1-Human', 'G2-AI', 'G3-HumanAndAI'],
   },
 ]
 
@@ -56,13 +56,13 @@ const groupInfo: Record<TaskGroup, { label: string; description: string; icon: t
     icon: Users,
     color: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
   },
-  'G2-HumanAndAI': {
+  'G2-AI': {
     label: 'G2 - 被动使用AI',
     description: '使用ChatGPT生成内容并粘贴，5分钟后可提交',
     icon: Users2,
     color: 'bg-amber-100 text-amber-700 hover:bg-amber-200',
   },
-  'G3-AI': {
+  'G3-HumanAndAI': {
     label: 'G3 - 主动协作',
     description: '先独立写初稿(10min)，再用AI改进终稿(10min)',
     icon: Bot,
