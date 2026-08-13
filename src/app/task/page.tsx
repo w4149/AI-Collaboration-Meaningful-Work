@@ -154,14 +154,8 @@ export default function TaskPage() {
     }
   }, [taskSubmitted, router])
 
-  // Auto-show instructions on first entry and on G3 phase change
-  useEffect(() => {
-    if (userId && taskId && groupType) {
-      setShowInstructions(true)
-    }
-  }, [userId, taskId, groupType])
-
-  // Auto-show instructions when G3 enters Phase 2
+  // Instructions are now shown on the entry page — dialog only opens on manual request
+  // G3 Phase 2 transition still auto-shows since it introduces new rules
   useEffect(() => {
     if (groupType === 'G3-HumanAndAI' && currentPhase === 2) {
       setShowInstructions(true)
@@ -226,7 +220,7 @@ export default function TaskPage() {
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault()
-      e.returnValue = '确定要离开吗？你的作答进度将会丢失。'
+      e.returnValue = 'Are you sure you want to leave? Your progress will be lost.'
       return e.returnValue
     }
 
@@ -513,9 +507,9 @@ export default function TaskPage() {
       <Dialog open={showAutoSubmitWarning} onOpenChange={setShowAutoSubmitWarning}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>⏰ 即将自动提交</DialogTitle>
+            <DialogTitle>⏰ Auto‑submit soon</DialogTitle>
             <DialogDescription>
-              距离自动提交还剩 1 分钟。请尽快完成你的作答，时间到后系统将自动提交当前内容并跳转。
+              1 minute left until automatic submission. Please finish your answer as soon as possible. Once the time is up, the system will automatically submit the current content and redirect.
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

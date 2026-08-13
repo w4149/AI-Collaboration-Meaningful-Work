@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -8,7 +9,7 @@ interface ChatMessageProps {
   timestamp: Date
 }
 
-export default function ChatMessage({ role, content, timestamp }: ChatMessageProps) {
+function ChatMessage({ role, content, timestamp }: ChatMessageProps) {
   const isUser = role === 'user'
 
   return (
@@ -88,3 +89,5 @@ export default function ChatMessage({ role, content, timestamp }: ChatMessagePro
     </div>
   )
 }
+
+export default memo(ChatMessage)

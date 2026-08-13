@@ -14,8 +14,10 @@ const TASK_CONTENTS = {
 You work at Lucky Coffee, an affordable coffee chain known for its comfortable stores and relaxed vibe. Its main customers are nearby office workers and students. The manager wants to celebrate the store's third anniversary with **an/a series of** in-store event and has asked you to plan it.
 
 Design an anniversary event that meets the following requirements:
-1.Goals: Bring customers into the store and encourage them to stay, motivate them to take and share photos, and significantly boost the store's sales and brand awareness.
-2.What to include: **Describe what the event is?Describe the activities included in the event**, how it works, and/or how customers would take part.`,
+
+1. Goals: Bring customers into the store and encourage them to stay, motivate them to take and share photos, and significantly boost the store's sales and brand awareness.
+
+2. What to include: **Describe what the event is?Describe the activities included in the event**, how it works, and/or how customers would take part.`,
 
   'task2': `你是 Lucky 咖啡店的员工。附近有1家 Bingo 咖啡店和你们形成长期竞争。店长想要你根据下面三份资料做一些分析，并对你所在咖啡店的未来规划提出建议。要求如下：
 

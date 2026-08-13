@@ -69,48 +69,47 @@ export async function POST(request: Request) {
     let saved = false
 
     // Step 2: Try inserting into pre_survey_responses table
-    if (dbUserId) {
-      const { data, error } = await supabaseServer
-        .from('pre_survey_responses')
-        .insert({ user_id: dbUserId, ...surveyData, submitted_at: new Date().toISOString() })
-        .select('id')
-        .single()
-
-      if (!error && data) {
-        saved = true
-        console.log('[Pre-Survey] saved to pre_survey_responses table')
-      } else {
-        console.warn('[Pre-Survey] pre_survey_responses insert failed:', error?.message)
-      }
+    // Allow nullable user_id so inserts succeed even without a valid user record
+    const insertPayload: Record<string, unknown> = {
+      ...surveyData,
+      submitted_at: new Date().toISOString(),
     }
+    if (dbUserId) insertPayload.user_id = dbUserId
 
-    // Step 3: Fallback - try updating users table with pre_* columns
-    if (!saved && dbUserId) {
-      const { error: updateError } = await supabaseServer
-        .from('users')
-        .update({
-          pre_birth_year: surveyData.birth_year,
-          pre_gender: surveyData.gender,
-          pre_ethnic_background: surveyData.ethnic_background,
-          pre_ethnic_other_text: surveyData.ethnic_other_text,
-          pre_education: surveyData.education,
-          pre_employment: surveyData.employment,
-          pre_employment_other_text: surveyData.employment_other_text,
-        })
-        .eq('id', dbUserId)
+    const { data, error } = await supabaseServer
+      .from('pre_survey_responses')
+      .insert(insertPayload)
+      .select('id')
+      .single()
 
-      if (!updateError) {
-        saved = true
-        console.log('[Pre-Survey] saved to users table columns')
-      } else {
-        console.warn('[Pre-Survey] users table update failed:', updateError.message)
+    if (!error && data) {
+      saved = true
+      console.log('[Pre-Survey] saved to pre_survey_responses table, id:', data.id)
+    } else {
+      console.error('[Pre-Survey] pre_survey_responses insert failed:', error?.message)
+
+      // Step 3: Fallback - try updating users table with pre_* columns
+      if (dbUserId) {
+        const { error: updateError } = await supabaseServer
+          .from('users')
+          .update({
+            pre_birth_year: surveyData.birth_year,
+            pre_gender: surveyData.gender,
+            pre_ethnic_background: surveyData.ethnic_background,
+            pre_ethnic_other_text: surveyData.ethnic_other_text,
+            pre_education: surveyData.education,
+            pre_employment: surveyData.employment,
+            pre_employment_other_text: surveyData.employment_other_text,
+          })
+          .eq('id', dbUserId)
+
+        if (!updateError) {
+          saved = true
+          console.log('[Pre-Survey] saved to users table columns')
+        } else {
+          console.error('[Pre-Survey] users table update failed:', updateError.message)
+        }
       }
-    }
-
-    // Step 4: Don't block the user flow even if DB save fails
-    // Data is also stored in localStorage via the store
-    if (!saved) {
-      console.warn('[Pre-Survey] DB save failed, proceeding anyway (data in localStorage)')
     }
 
     return NextResponse.json({

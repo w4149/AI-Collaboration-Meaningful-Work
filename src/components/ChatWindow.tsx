@@ -24,9 +24,13 @@ export default function ChatWindow() {
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom only when a new message is added (not on every chatMessages change)
+  const messageCountRef = useRef(0)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (chatMessages.length > messageCountRef.current) {
+      messageCountRef.current = chatMessages.length
+      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+    }
   }, [chatMessages])
 
   const handleSend = async () => {
@@ -134,7 +138,7 @@ export default function ChatWindow() {
                 key={msg.id}
                 role={msg.role}
                 content={msg.content}
-                timestamp={new Date(msg.timestamp)}
+                timestamp={typeof msg.timestamp === 'string' ? new Date(msg.timestamp) : msg.timestamp}
               />
             ))
           )}

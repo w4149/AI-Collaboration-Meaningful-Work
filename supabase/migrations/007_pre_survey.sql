@@ -4,7 +4,7 @@
 -- ====================================================================
 
 CREATE TABLE IF NOT EXISTS public.pre_survey_responses (
-    id UUID NOT NULL DEFAULT extensions.uuid_generate_v4() PRIMARY KEY,
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID,
     birth_year SMALLINT,
     gender VARCHAR(50),
@@ -13,13 +13,16 @@ CREATE TABLE IF NOT EXISTS public.pre_survey_responses (
     education VARCHAR(100),
     employment VARCHAR(100),
     employment_other_text VARCHAR(500),
-    submitted_at TIMESTAMPTZ DEFAULT NOW(),
-    CONSTRAINT pre_survey_responses_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.users (id) ON DELETE CASCADE
+    submitted_at TIMESTAMPTZ DEFAULT NOW()
 ) TABLESPACE pg_default;
 
 CREATE INDEX IF NOT EXISTS idx_pre_survey_responses_user_id
     ON public.pre_survey_responses (user_id);
+
+-- Enable RLS so server-side (service_role) can write freely
+ALTER TABLE public.pre_survey_responses ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all operations on pre_survey_responses" ON pre_survey_responses;
+CREATE POLICY "Allow all operations on pre_survey_responses" ON pre_survey_responses FOR ALL USING (true);
 
 -- ====================================================================
 -- Alternative: add columns directly to users table (used as API fallback)
