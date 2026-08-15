@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { useAppStore } from '@/lib/store'
+import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 
 type QuestionErrors = {
   birthYear?: string
@@ -68,6 +69,22 @@ export default function PreSurveyPage() {
   const setUser = useAppStore((state) => state.setUser)
   const setStartTime = useAppStore((state) => state.setStartTime)
   const setPreSurveyCompleted = useAppStore((state) => state.setPreSurveyCompleted)
+
+  // Skip pre-survey when disabled
+  useEffect(() => {
+    if (!FLOW_CONFIG.preSurvey) {
+      sessionStorage.setItem('preSurveyCompleted', 'true')
+      // Also mock a user so downstream works
+      const mockProlificId = searchParams.get('PROLIFIC_PID') || 'skip_user'
+      if (!userId) {
+        setUser(`skip_${Date.now()}`, `session_${Date.now()}`, mockProlificId)
+      }
+      setPreSurveyCompleted(true)
+      setStartTime(new Date())
+      const skip = getSkipRouteWithParams('preSurvey', searchParams)
+      if (skip) router.replace(skip)
+    }
+  }, [router, searchParams, userId, setUser, setPreSurveyCompleted, setStartTime])
 
   const [birthYear, setBirthYear] = useState<string>('')
   const [gender, setGender] = useState<string>('')
@@ -163,6 +180,16 @@ export default function PreSurveyPage() {
       }
       setPreSurveyCompleted(true)
       setStartTime(new Date())
+
+      // Check if entry is disabled
+      if (!FLOW_CONFIG.entry) {
+        const skip = getSkipRouteWithParams('entry', searchParams)
+        if (skip) {
+          router.push(skip)
+          return
+        }
+      }
+
       const params = searchParams.toString()
       router.push(params ? `/entry?${params}` : '/entry')
     } catch (error) {
@@ -182,7 +209,7 @@ export default function PreSurveyPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Background Information</CardTitle>
           <CardDescription className="text-center">
-            Thank you for participating in our study. First of all, please give us a little bit of background about yourself.
+            Thank you for considering participating in our study. First of all, please give us a little bit of background about yourself.
           </CardDescription>
         </CardHeader>
 

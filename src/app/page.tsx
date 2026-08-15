@@ -1,15 +1,38 @@
 "use client"
 
+import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { getSkipRouteWithParams, FLOW_CONFIG, getFirstEnabledStep, STEP_ROUTES } from '@/lib/flow-config'
 
 export default function WelcomePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // Auto-skip when welcome is disabled
+  useEffect(() => {
+    if (!FLOW_CONFIG.welcome) {
+      const skip = getSkipRouteWithParams('welcome', searchParams)
+      if (skip) {
+        router.replace(skip)
+      } else {
+        // welcome disabled, but it's the only step somehow
+        const first = STEP_ROUTES[getFirstEnabledStep()]
+        const qs = searchParams.toString()
+        router.replace(qs ? `${first}?${qs}` : first)
+      }
+    }
+  }, [router, searchParams])
+
   const handleNext = () => {
-    const params = searchParams.toString()
-    router.push(params ? `/consent?${params}` : '/consent')
+    // When welcome is enabled, still compute next step correctly
+    const skip = getSkipRouteWithParams('welcome', searchParams)
+    if (skip) {
+      router.push(skip)
+    } else {
+      const params = searchParams.toString()
+      router.push(params ? `/screen?${params}` : '/screen')
+    }
   }
 
   return (
@@ -18,7 +41,7 @@ export default function WelcomePage() {
         <div className="space-y-4">
           <h1 className="text-4xl font-bold text-gray-900">Café Task Study</h1>
           <p className="text-lg text-gray-600 leading-relaxed">
-            Thank you for participating in our study.
+            Thank you for considering participating in our study.
           </p>
         </div>
 

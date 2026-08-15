@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { useAppStore } from '@/lib/store'
+import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 
 export default function EntryPage() {
   const router = useRouter()
@@ -27,6 +28,48 @@ export default function EntryPage() {
 
   // If task and group are in URL, skip select-task and start directly
   const hasUrlAssignment = !!(urlTask && urlGroup)
+
+  // Skip entry when disabled: auto-start task with URL params or defaults
+  useEffect(() => {
+    if (!FLOW_CONFIG.entry) {
+      const taskId = urlTask || 'task1'
+      const group = (urlGroup || 'G1-Human') as 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI'
+
+      // Setup minimal state to enter task page
+      reset()
+      setTaskSubmitted(false)
+      setUser(`skip_${Date.now()}`, `session_${Date.now()}`, prolificId)
+      setGroupType(group)
+      setStartTime(new Date())
+
+      // Try to load task via API if possible, otherwise use mock
+      fetch('/api/auth/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prolificId, taskId, groupType: group }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data && data.taskId) {
+            setUser(data.userId, data.sessionId || `session_${Date.now()}`, prolificId)
+            setTask(
+              data.taskId,
+              data.taskTypeId || '',
+              data.taskType || '',
+              data.taskContent || '',
+              data.allowCopy ?? false,
+              data.allowPaste ?? false,
+              data.allowChat ?? false
+            )
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          const params = searchParams.toString()
+          router.replace(params ? `/task?${params}` : '/task')
+        })
+    }
+  }, [router, searchParams, urlTask, urlGroup, prolificId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
 
   const handleStart = async () => {
     if (!agreed) return
@@ -92,11 +135,11 @@ export default function EntryPage() {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2 text-gray-700">
-              <p className="text-blue-700 text-sm leading-relaxed">
+              <p className="text-black-700 text-md leading-relaxed">
               You will then enter the task interface, where you can view task information in the left panel. <br />
               You need to complete the task within the specified time (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
-              When you are finished, click &quot;Submit Task&quot; and complete a supplemental survey. <br />
-              We would like you to take them seriously and treat them as if they are part of your real job.
+              When you are finished, click **Submit Task** and complete a supplemental survey. <br />
+              We would like you to take your response seriously and treat it as if it is part of your real job.
               </p>  
             </div>
           </div>
@@ -133,6 +176,15 @@ export default function EntryPage() {
                     [Note: You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
+                <div className="bg-green-50 p-3 rounded">
+                  <p className="text-green-700 text-sm">
+                    <strong>Using the AI Assistant</strong> <br />
+                    During the task, you will be able to communicate with an Al assistant using the chat box provided in the right panel.<br />
+                    Type a message in the chat box and click **Send** to send it to the Al assistant. You may send multiple messages and follow up on previous responses.<br />
+                    You may use the Al assistant in any way you find helpful for completing the task.<br />
+                    You are responsible for submitting your final response.
+                  </p>
+                </div>
               </div>
             )}
 
@@ -157,6 +209,15 @@ export default function EntryPage() {
                 <div className="bg-amber-50 p-3 rounded">
                   <p className="text-amber-700 text-sm">
                     [Note: Copy and paste is enabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                  </p>
+                </div>
+                <div className="bg-green-50 p-3 rounded">
+                  <p className="text-green-700 text-sm">
+                    <strong>Using the AI Assistant</strong> <br />
+                    During the Phase 2, you will be able to communicate with an Al assistant using the chat box provided in the right panel.<br />
+                    Type a message in the chat box and click **Send** to send it to the Al assistant. You may send multiple messages and follow up on previous responses.<br />
+                    You may use the Al assistant in any way you find helpful for completing the task.<br />
+                    You are responsible for submitting your final response.
                   </p>
                 </div>
               </div>

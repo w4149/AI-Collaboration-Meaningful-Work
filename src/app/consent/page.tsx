@@ -2,7 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import ConsentPage from '@/components/ConsentPage'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
+import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 
 type ConsentConfig = {
   title: string
@@ -138,12 +139,40 @@ export default function ConsentRoutePage() {
   const searchParams = useSearchParams()
   const group = searchParams.get('group')
 
+  // Skip consent when disabled, or require screening completion
+  useEffect(() => {
+    if (!FLOW_CONFIG.consent) {
+      const skip = getSkipRouteWithParams('consent', searchParams)
+      if (skip) router.replace(skip)
+      return
+    }
+
+    const completed = sessionStorage.getItem('screeningCompleted')
+    const passed = sessionStorage.getItem('screeningPassed')
+    if (completed !== 'true' || passed !== 'true') {
+      const params = searchParams.toString()
+      const qs = params ? `?${params}` : ''
+      router.replace(`/screen${qs}`)
+    }
+  }, [router, searchParams])
+
   const config = useMemo(() => {
     if (group && CONSENT_MAP[group]) return CONSENT_MAP[group]
     return DEFAULT_CONSENT
   }, [group])
 
   const handleAgree = () => {
+    // Mark consent as agreed for downstream guards
+    sessionStorage.setItem('consentAgreed', 'true')
+
+    // Check if preSurvey is disabled
+    if (!FLOW_CONFIG.preSurvey) {
+      const skip = getSkipRouteWithParams('preSurvey', searchParams)
+      if (skip) {
+        router.push(skip)
+        return
+      }
+    }
     const params = searchParams.toString()
     router.push(params ? `/pre-survey?${params}` : '/pre-survey')
   }
