@@ -6,9 +6,9 @@ const TASK_CONTENTS = {
 
 Design an anniversary event that meets the following requirements:
 
-1.Goals: Bring customers into the store and encourage them to stay, motivate them to take and share photos, and significantly boost the store's sales and brand awareness.
+1. Goals: Bring customers into the store and encourage them to stay, motivate them to take and share photos, and significantly boost the store's sales and brand awareness.
 
-2.What to include: Describe the activities included in the event, how it works, and/or how customers would take part.`,
+2. What to include: Describe the activities included in the event, how it works, and/or how customers would take part.`,
 
   'task1-2': `
 
