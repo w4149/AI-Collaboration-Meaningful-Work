@@ -89,7 +89,7 @@ export default function ScreenPage() {
       <Card className="max-w-2xl w-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Study Screening
+            Pre‑questionss
           </CardTitle>
         </CardHeader>
 

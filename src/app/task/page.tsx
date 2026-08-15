@@ -341,15 +341,15 @@ export default function TaskPage() {
   const getInstructions = () => {
     if (groupType === 'G1-Human') {
       return (
-        <div className="space-y-4 py-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-blue-50 p-3 rounded">
             <p className="text-blue-700 text-sm">
-              Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. Do not use any assistance (e.g., Al tools, search engines, etc.). Use YOUR OWN knowledge and skills to complete the task from start to finish. 
+              Please write and revise your response below, breaking it into paragraphs as appropriate for readability. <strong>Do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
             </p>
           </div>
-          <div className="bg-amber-50 p-4 rounded-lg">
+          <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 10 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>10</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
         </div>
@@ -358,15 +358,24 @@ export default function TaskPage() {
 
     if (groupType === 'G2-AI') {
       return (
-        <div className="space-y-4 py-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-blue-50 p-3 rounded">
             <p className="text-blue-700 text-sm">
-              Your response will be graded by professional evaluators based on real-world work scenarios. Please use the ChatGPT AI tool available in this interface, interacting freely with the AI until you arrive at an answer you&apos;re satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
+              Please use the ChatGPT AI tool available <strong>in this interface</strong>, interacting freely with the AI until you arrive at an answer you are satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
             </p>
           </div>
-          <div className="bg-amber-50 p-4 rounded-lg">
+          <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+            </p>
+          </div>
+          <div className="bg-green-50 p-3 rounded">
+            <p className="text-green-700 text-sm">
+              <strong>Using the AI Assistant</strong> <br />
+              During the task, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
+              Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
+              You may use the AI assistant in any way you find helpful for completing the task.<br />
+              You are responsible for submitting your final response.
             </p>
           </div>
         </div>
@@ -376,30 +385,39 @@ export default function TaskPage() {
     if (groupType === 'G3-HumanAndAI') {
       if (currentPhase === 1) {
         return (
-          <div className="space-y-4 py-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="border rounded-lg overflow-hidden">
+            <div className="bg-blue-50 p-3 rounded">
               <p className="text-blue-700 text-sm">
-                Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, do not use any assistance (e.g., Al tools, search engines, etc.). Use **YOUR OWN** knowledge and skills to complete the task from start to finish. 
+                <strong>Phase 1 — Draft:</strong> Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, <strong>do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
               </p>
             </div>
-            <div className="bg-amber-50 p-4 rounded-lg">
+            <div className="bg-amber-50 p-3 rounded">
               <p className="text-amber-700 text-sm">
-                [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
               </p>
             </div>
           </div>
         )
       }
       return (
-        <div className="space-y-4 py-4">
-          <div className="bg-green-50 p-4 rounded-lg">
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-green-50 p-3 rounded">
             <p className="text-green-700 text-sm">
-              Please use ChatGPT on this page, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
+              <strong>Phase 2 — Revise with AI:</strong> Please use ChatGPT <strong>in this interface</strong>, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
             </p>
           </div>
-          <div className="bg-amber-50 p-4 rounded-lg">
+          <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: Copy and paste is enabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: Copy and paste is <strong>enabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+            </p>
+          </div>
+          <div className="bg-green-50 p-3 rounded">
+            <p className="text-green-700 text-sm">
+              <strong>Using the AI Assistant</strong> <br />
+              During the Phase 2, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
+              Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
+              You may use the AI assistant in any way you find helpful for completing the task.<br />
+              You are responsible for submitting your final response.
             </p>
           </div>
         </div>

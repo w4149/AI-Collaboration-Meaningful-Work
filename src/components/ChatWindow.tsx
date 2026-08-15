@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Send, X, MessageSquare, Loader2 } from 'lucide-react'
+import { X, MessageSquare, Loader2 } from 'lucide-react'
 import ChatMessage from './ChatMessage'
 import { useAppStore } from '@/lib/store'
 
@@ -166,10 +166,10 @@ export default function ChatWindow() {
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              size="icon"
-              className="h-10 w-10 shrink-0"
+              size="sm"
+              className="shrink-0"
             >
-              <Send className="h-4 w-4" />
+              Send
             </Button>
           </div>
         </div>

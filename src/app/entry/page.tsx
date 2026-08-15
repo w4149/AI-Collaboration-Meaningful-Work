@@ -136,10 +136,10 @@ export default function EntryPage() {
           <div className="space-y-4">
             <div className="space-y-2 text-gray-700">
               <p className="text-black-700 text-md leading-relaxed">
-              You will then enter the task interface, where you can view task information in the left panel. <br />
-              You need to complete the task within the specified time (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
-              When you are finished, click **Submit Task** and complete a supplemental survey. <br />
-              We would like you to take your response seriously and treat it as if it is part of your real job.
+              You will then enter the task interface, where you can view <strong>task information in the left panel</strong>. <br />
+              You need to complete the task within the <strong>specified time</strong> (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
+              When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey. <br />
+              Your response will be graded by professional evaluators based on real-world work scenarios. We would like you to <strong>take your response seriously</strong> and treat it as if it is part of your real job.
               </p>  
             </div>
           </div>
@@ -152,12 +152,12 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. Do not use any assistance (e.g., AI tools, search engines, etc.). Use YOUR OWN knowledge and skills to complete the task from start to finish.
+                    Please write and revise your response below, breaking it into paragraphs as appropriate for readability. <strong>Do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
                   <p className="text-amber-700 text-sm">
-                    [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 10 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                    [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>10</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
               </div>
@@ -168,20 +168,20 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    Your response will be graded by professional evaluators based on real-world work scenarios. Please use the ChatGPT AI tool available in this interface, interacting freely with the AI until you arrive at an answer you&apos;re satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
+                    Please use the ChatGPT AI tool available <strong>in this interface</strong>, interacting freely with the AI until you arrive at an answer you are satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
                   <p className="text-amber-700 text-sm">
-                    [Note: You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                    [Note: You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
                   <p className="text-green-700 text-sm">
                     <strong>Using the AI Assistant</strong> <br />
-                    During the task, you will be able to communicate with an Al assistant using the chat box provided in the right panel.<br />
-                    Type a message in the chat box and click **Send** to send it to the Al assistant. You may send multiple messages and follow up on previous responses.<br />
-                    You may use the Al assistant in any way you find helpful for completing the task.<br />
+                    During the task, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
+                    Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
+                    You may use the AI assistant in any way you find helpful for completing the task.<br />
                     You are responsible for submitting your final response.
                   </p>
                 </div>
@@ -193,30 +193,30 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    <strong>Phase 1 — Draft:</strong> Your response will be graded by professional evaluators based on real-world work scenarios. Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, do not use any assistance (e.g., AI tools, search engines, etc.). Use YOUR OWN knowledge and skills to complete the task from start to finish.
+                    <strong>Phase 1 — Draft:</strong> Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, <strong>do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
                   <p className="text-amber-700 text-sm">
-                    [Note: copy and paste function is disabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                    [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
                   <p className="text-green-700 text-sm">
-                    <strong>Phase 2 — Revise with AI:</strong> Please use ChatGPT on this page, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
+                    <strong>Phase 2 — Revise with AI:</strong> Please use ChatGPT <strong>in this interface</strong>, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
                   <p className="text-amber-700 text-sm">
-                    [Note: Copy and paste is enabled for this text box. You will not be allowed to advance before 5 minutes, and the page will advance automatically at 10 minutes. Please dedicate your full effort to the writing task during this period.]
+                    [Note: Copy and paste is <strong>enabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
                   <p className="text-green-700 text-sm">
                     <strong>Using the AI Assistant</strong> <br />
-                    During the Phase 2, you will be able to communicate with an Al assistant using the chat box provided in the right panel.<br />
-                    Type a message in the chat box and click **Send** to send it to the Al assistant. You may send multiple messages and follow up on previous responses.<br />
-                    You may use the Al assistant in any way you find helpful for completing the task.<br />
+                    During the Phase 2, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
+                    Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
+                    You may use the AI assistant in any way you find helpful for completing the task.<br />
                     You are responsible for submitting your final response.
                   </p>
                 </div>
