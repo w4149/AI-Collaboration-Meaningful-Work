@@ -34,9 +34,9 @@ function ChatMessage({ role, content, timestamp }: ChatMessageProps) {
                 h1: ({ children }) => <h1 className="text-lg font-bold mb-2 mt-3">{children}</h1>,
                 h2: ({ children }) => <h2 className="text-base font-bold mb-2 mt-3">{children}</h2>,
                 h3: ({ children }) => <h3 className="text-sm font-bold mb-1 mt-2">{children}</h3>,
-                ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                li: ({ children }) => <li className="marker:text-gray-500">{children}</li>,
+                ul: ({ children }) => <ul className="list-disc list-outside pl-6 mb-2 space-y-1">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-outside pl-6 mb-2 space-y-1">{children}</ol>,
+                li: ({ children }) => <li className="list-item marker:text-gray-500">{children}</li>,
                 code: ({ children, node, ...props }: any) => {
                   const isInline = node?.position?.start?.line !== node?.position?.end?.line
                   if (isInline) {

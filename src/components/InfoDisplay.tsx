@@ -98,13 +98,13 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
             <p className="mb-2">{children}</p>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
+            <ul className="list-disc list-outside pl-6 mb-2 space-y-1">{children}</ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>
+            <ol className="list-decimal list-outside pl-6 mb-2 space-y-1">{children}</ol>
           ),
           li: ({ children }) => (
-            <li>{children}</li>
+            <li className="list-item">{children}</li>
           ),
           strong: ({ children }) => (
             <strong className="font-bold">{children}</strong>
