@@ -78,7 +78,7 @@ export default function TaskInput({ allowPaste }: TaskInputProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">Your Response</CardTitle>
           <span className="text-sm text-gray-500">
-            {taskSubmission.length} characters
+            {taskSubmission.trim() ? taskSubmission.trim().split(/\s+/).length : 0} words
           </span>
         </div>
         {!allowPaste && (

@@ -128,7 +128,7 @@ export default function EntryPage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <Card className="max-w-3xl w-full">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Café Task Study</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Everyday Work Task Study</CardTitle>
           <CardDescription className="text-center">Please read the following instructions carefully</CardDescription>
         </CardHeader>
         

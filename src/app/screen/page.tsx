@@ -26,8 +26,12 @@ const QUESTIONS = [
     text: 'Is your current residence in the United States?',
   },
   {
+    id: 'english_fluent',
+    text: 'Are you fluent in English?',
+  },
+  {
     id: 'ai_experience',
-    text: 'Do you have experience using an AI chatbox?',
+    text: 'Do you have experience using generative AI chatbots (for example, ChatGPT, Gemini, Claude, or similar tools)?',
   },
 ] as const
 

@@ -36,12 +36,7 @@ export default function Navigation({ onShowInstructions }: NavigationProps) {
     <nav className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-gray-900">Café Task Study</h1>
-          {taskType && (
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-              Task: {taskType}
-            </span>
-          )}
+          <h1 className="text-xl font-bold text-gray-900">Everyday Work Task Study</h1>
         </div>
 
         <div className="flex items-center gap-4">

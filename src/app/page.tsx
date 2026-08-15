@@ -39,7 +39,7 @@ export default function WelcomePage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="max-w-xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">Café Task Study</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Everyday Work Task Study</h1>
           <p className="text-lg text-gray-600 leading-relaxed">
             Thank you for considering participating in our study.
           </p>

@@ -14,7 +14,7 @@ type ConsentConfig = {
 }
 
 const CONSENT_1: ConsentConfig = {
-  title: 'Café Task Study',
+  title: 'Everyday Work Task Study',
   description: 'Please read the following study information carefully before proceeding.',
   sections: [
     {
@@ -39,7 +39,7 @@ Your research data will be kept confidential, and no personally identifiable inf
 }
 
 const CONSENT_2: ConsentConfig = {
-  title: 'Café Task Study',
+  title: 'Everyday Work Task Study',
   description: 'Please read the following study information carefully before proceeding.',
   sections: [
     {
@@ -64,7 +64,7 @@ Your research data, including your interactions with the AI assistant, will be k
 }
 
 const CONSENT_3: ConsentConfig = {
-  title: 'Café Task Study',
+  title: 'Everyday Work Task Study',
   // description: '[Consent 3 placeholder — G3 Human + AI Two Phases]',
   description: 'Please read the following study information carefully before proceeding.',
   sections: [
@@ -90,13 +90,13 @@ const CONSENT_3: ConsentConfig = {
 }
 
 const DEFAULT_CONSENT: ConsentConfig = {
-  title: 'Café Task Study',
+  title: 'Everyday Work Task Study',
   description: 'Please read the following study information carefully before proceeding.',
   sections: [
     {
       type: 'info',
       title: 'Study Overview',
-      content: 'You are invited to participate in a research study titled "Café Task Study", which explores people\u2019s experiences when completing everyday work-related writing tasks.',
+      content: 'You are invited to participate in a research study titled "Everyday Work Task Study", which explores people\u2019s experiences when completing everyday work-related writing tasks.',
     },
     {
       type: 'plain',
