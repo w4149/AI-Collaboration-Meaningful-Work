@@ -93,9 +93,9 @@ export default function EntryPage() {
           <div className="space-y-4">
             <div className="space-y-2 text-gray-700">
               <p className="text-blue-700 text-sm leading-relaxed">
-              You will then enter the task interface, where you can view task information in the left panel.
-              You need to complete the task within the specified time (It will be displayed at the top of the task interface) and write a response in the submission box below.
-              When you are finished, click &quot;Submit Task&quot; and complete a supplemental survey.
+              You will then enter the task interface, where you can view task information in the left panel. <br />
+              You need to complete the task within the specified time (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
+              When you are finished, click &quot;Submit Task&quot; and complete a supplemental survey. <br />
               We would like you to take them seriously and treat them as if they are part of your real job.
               </p>  
             </div>

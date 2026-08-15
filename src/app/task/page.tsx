@@ -34,6 +34,7 @@ export default function TaskPage() {
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const autoSubmitTriggered = useRef(false)
+  const skipBeforeUnload = useRef(false)
   const [phase2StartTime, setPhase2StartTime] = useState<Date | null>(null)
 
   const userId = useAppStore((state) => state.userId)
@@ -101,6 +102,7 @@ export default function TaskPage() {
     const messages = chatMessagesRef.current
 
     if (!submission.trim()) {
+      skipBeforeUnload.current = true
       setTaskSubmitted(true)
       router.replace('/thank-you')
       return
@@ -131,6 +133,7 @@ export default function TaskPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, taskId, content: submission }),
       })
+      skipBeforeUnload.current = true
       setTaskSubmitted(true)
       router.replace('/thank-you')
     } catch (error) {
@@ -150,6 +153,7 @@ export default function TaskPage() {
   // Prevent re-entry after submission
   useEffect(() => {
     if (taskSubmitted) {
+      skipBeforeUnload.current = true
       router.replace('/thank-you')
     }
   }, [taskSubmitted, router])
@@ -216,9 +220,10 @@ export default function TaskPage() {
     return () => clearInterval(interval)
   }, [effectiveStartTime, submitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
-  // Prevent leaving task page (always warn)
+  // Prevent leaving task page (skip during auto-submit)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (skipBeforeUnload.current) return
       e.preventDefault()
       e.returnValue = 'Are you sure you want to leave? Your progress will be lost.'
       return e.returnValue
@@ -315,6 +320,7 @@ export default function TaskPage() {
 
       if (!response.ok) throw new Error('Failed to submit')
 
+      skipBeforeUnload.current = true
       setTaskSubmitted(true)
       router.replace('/thank-you')
     } catch (error) {

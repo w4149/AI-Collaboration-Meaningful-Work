@@ -20,53 +20,89 @@ Design an anniversary event that meets the following requirements:
 
 2. What to include: **Describe what the event is?Describe the activities included in the event**, how it works, and/or how customers would take part.`,
 
-  'task2': `你是 Lucky 咖啡店的员工。附近有1家 Bingo 咖啡店和你们形成长期竞争。店长想要你根据下面三份资料做一些分析，并对你所在咖啡店的未来规划提出建议。要求如下：
+  'task2': `You work at Lucky Coffee. Over the past few months, two changes have occurred: a nearby competitor, Bingo Coffee, opened, and Lucky Coffee later reduced the number of employees working during the afternoon by one. During this period, Lucky Coffee’s afternoon drink sales declined.
 
-1. 你和竞争对手的主要优点和缺点分别（优劣势）是什么，用资料里的信息支持你的建议（根据材料得出，不要脱离现实和材料空想）
-2. 不少于200字
+  Two possible explanations have been suggested:
 
----
+  **Explanation A:** The opening of Bingo Coffee contributed to the decline by attracting some of Lucky Coffee’s customers.
 
-#### 📊 资料一：销售数据对比图
+  **Explanation B:** The reduction in afternoon staffing contributed to the decline by making customers less willing to visit Lucky Coffee.
 
-（蓝色：工作日早间；橙色：周末下午晚些时候）
+  The manager has asked you to review the available information and assess how well each explanation is supported by the evidence and which appears to be the more important explanation for the decline.
 
-![销售数据对比图](/task2-chart.png)
+  Use the four materials below to make your assessment.
 
----
+  Please:
+  
+  1. Give your overall assessment of the two explanations. 
 
-#### 📝 资料二：顾客评价汇总
+  2. Explain the reasons for your assessment. 
 
-**Lucky Coffee 评价：**
+  3. Use evidence from all four materials. 
 
-| 顾客 | 评价内容 |
-|------|----------|
-| Olivia | 价格便宜，出餐快，上班路上买一杯提神醒脑。 |
-| Emma | 咖啡味道还不错！ |
-| Sophia | 服务员态度太冷淡了，问个问题都爱答不理，连个植物奶都没有。 |
-| James | 价格低出餐快，味道一般般，能喝就行。 |
-| Liam | 座位少得可怜，进去没地方坐，环境也太差了。 |
-
-**Bingo Coffee 评价：**
-
-| 顾客 | 评价内容 |
-|------|----------|
-| Noah | 买咖啡居然还送蛋糕和徽章，也太划算了吧！ |
-| Ethan | 出品质量很好，装修有格调，跟朋友来聊天坐一下午都不想走。 |
-| Ava | 咖啡豆香气足，用料认真。 |
-| Chloe | 经常做活动，买年卡真的十分优惠！ |
-| Ryan | 我等了快二十分钟，太慢了吧，害我迟到了。 |
+  4. Base your answer only on the information provided. 
 
 ---
 
-#### 📋 资料三：本地顾客的小调查（回收 200 份）
+#### Material 1: Afternoon Drink Sales
 
-| 需求 | 占比 |
-|------|------|
-| 希望有一个安静、能坐下来工作或学习的地方 | 70% |
-| 在意价格 & 赠品 | 60% |
-| 希望多一些吃的（不只是喝的） | 50% |
-| 想要燕麦奶等植物奶的选择，适配自己的素食需求 | 40% |
+Bingo Coffee opened near Lucky Coffee. Lucky Coffee kept its afternoon staffing unchanged for the next two months. At the beginning of the third month after Bingo Coffee opened, Lucky Coffee reduced its afternoon staffing by one employee.
+
+Lucky Coffee’s average weekday drink sales between 2:00 and 5:00 p.m. were:
+
+1. Before Bingo Coffee opened: 120 drinks 
+
+2. First month after Bingo Coffee opened: 118 drinks 
+
+3. Second month after Bingo Coffee opened: 116 drinks 
+
+4. First month after Lucky Coffee reduced its afternoon staffing: 95 drinks 
+
+Bingo Coffee’s average weekday afternoon drink sales were about **75 drinks in its first month** and **84 drinks in its third month**.
+
+---
+
+#### Material 2: Waiting Time After the Staffing Change
+
+After Lucky Coffee reduced its afternoon staffing:
+
+1. Average customer waiting time increased from about **4 minutes** to **9 minutes**. 
+
+2. Drink prices remained unchanged. 
+
+3. The menu remained unchanged. 
+
+4. Store seating remained unchanged. 
+
+---
+
+#### Material 3: Customer Survey
+
+Lucky Coffee surveyed 60 customers who said they had recently started visiting the store less often between 2:00 and 5:00 p.m.
+
+When asked for the main reason they were visiting less often:
+
+1. **24** said the waiting time had become too long. 
+
+2. **14** said they had started going to Bingo Coffee more often. 
+
+3. **12** said their work or class schedule had changed. 
+
+4. **6** said they were drinking less coffee in general. 
+
+5. **4** gave other reasons. 
+
+---
+
+#### Material 4: Customer Groups
+
+Lucky Coffee also compared changes in afternoon visits among two groups of regular customers after the staffing change:
+
+- Among customers who usually **ordered at the counter**, afternoon visits decreased by **22%**. 
+
+- Among customers who usually **ordered ahead through the app**, afternoon visits decreased by **5%**. 
+
+Both groups had access to Bingo Coffee. Customers who ordered ahead through the app could usually pick up their drinks without waiting in the in-store ordering line.
 `,
 
   'task3': `You work at Lucky Coffee. The store manager has collected customer comments from an online review site and needs you to sort them into categories.

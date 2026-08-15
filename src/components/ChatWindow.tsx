@@ -8,8 +8,8 @@ import { Send, X, MessageSquare, Loader2 } from 'lucide-react'
 import ChatMessage from './ChatMessage'
 import { useAppStore } from '@/lib/store'
 
-// Max input: ~400 words (≈ 2000 chars, avg 5 chars/word for English)
-const MAX_INPUT_CHARS = 2000
+// Max input: ~6000 words (≈ 30000 chars, avg 5 chars/word for English)
+const MAX_INPUT_CHARS = 30000
 
 export default function ChatWindow() {
   const [input, setInput] = useState('')
