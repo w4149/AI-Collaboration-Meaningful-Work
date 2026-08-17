@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import ConsentPage from '@/components/ConsentPage'
 import { useMemo, useEffect } from 'react'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
+import { getParam, encodedQuery } from '@/lib/url-cipher'
 
 type ConsentConfig = {
   title: string
@@ -137,7 +138,7 @@ const CONSENT_MAP: Record<string, ConsentConfig> = {
 export default function ConsentRoutePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const group = searchParams.get('group')
+  const group = getParam(searchParams, 'group')
 
   // Skip consent when disabled, or require screening completion
   useEffect(() => {
@@ -150,8 +151,8 @@ export default function ConsentRoutePage() {
     const completed = sessionStorage.getItem('screeningCompleted')
     const passed = sessionStorage.getItem('screeningPassed')
     if (completed !== 'true' || passed !== 'true') {
-      const params = searchParams.toString()
-      const qs = params ? `?${params}` : ''
+      const eq = encodedQuery(searchParams)
+      const qs = eq ? eq : ''
       router.replace(`/screen${qs}`)
     }
   }, [router, searchParams])
@@ -173,8 +174,8 @@ export default function ConsentRoutePage() {
         return
       }
     }
-    const params = searchParams.toString()
-    router.push(params ? `/pre-survey?${params}` : '/pre-survey')
+    const eq = encodedQuery(searchParams)
+    router.push(eq ? `/pre-survey${eq}` : '/pre-survey')
   }
 
   return (

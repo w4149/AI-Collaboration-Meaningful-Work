@@ -315,15 +315,13 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 
 Yesterday I ordered a hot latte. I get that it was busy, but I waited over 30 minutes with zero explanation. Worse, the drink was cold and turned out to be an Americano, not a latte.
 
-I flagged it down with one of the staff, and all I got back was "we're pretty swamped right now, so either hang tight for a remake or we can just refund you." After already losing 30 minutes, I'm supposed to wait another 30? And a refund doesn't give me my time back. I was so frustrated that I just left the coffee there and walked out.
+I raised it with a staff member, and all I got back was, "We're pretty swamped right now, so either wait for a remake or you can just get a refund." After already losing 30 minutes, I'm supposed to wait another 30? And a refund doesn't give me my time back. I was so frustrated that I just left the coffee there and walked out.
 
-I've always trusted Lucky Coffee and been a regular here. This really let me down, and I don't think I'll be back. Either way, I feel like I deserve an explanation.
+I've always trusted Lucky Coffee and been a regular here. This really let me down, and I don't think I'll be back. Either way, I deserve an explanation.
 
-—— Tony
+——Tony
 
----
-
-Requirements: 200‑300 words`,
+---`,
 
   'task4-2': `你是 Lucky Coffee 客服团队的一名员工。今天，两位顾客在店内发生了争执，值班店员没及时介入。事后，两人分别写了投诉信给门店，希望门店给个说法。下面是他们的投诉信。
 

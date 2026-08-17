@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
+import { encodedQuery } from '@/lib/url-cipher'
 
 const GENDER_OPTIONS = [
   { value: 'man', label: 'Man' },
@@ -135,8 +136,8 @@ export default function DemographicsSurveyPage() {
     setIsSubmitting(true)
     setError('')
 
-    const params = searchParams.toString()
-    const qs = params ? `?${params}` : ''
+    const eq = encodedQuery(searchParams)
+    const qs = eq ? eq : ''
 
     try {
       const response = await fetch('/api/demographics-survey', {

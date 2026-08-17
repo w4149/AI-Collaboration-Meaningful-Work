@@ -2,6 +2,8 @@
 // Set any flag to false to skip that step and auto-forward.
 // ALL flags default to true for production.
 
+import { encodedQuery } from './url-cipher'
+
 export const FLOW_CONFIG = {
   welcome: true,
   screen: true,
@@ -93,14 +95,15 @@ export function getSkipRoute(current: StepKey): string | null {
 
 /**
  * Get the skip route for a given step including query params preservation.
+ * Params are encoded (ciphered) before being passed to the next page.
  */
 export function getSkipRouteWithParams(current: StepKey, searchParams: URLSearchParams): string | null {
   const base = getSkipRoute(current)
   if (!base) return null
-  const qs = searchParams.toString()
-  if (qs) {
+  const eq = encodedQuery(searchParams)
+  if (eq) {
     const sep = base.includes('?') ? '&' : '?'
-    return `${base}${sep}${qs}`
+    return `${base}${sep}${eq.slice(1)}`
   }
   return base
 }

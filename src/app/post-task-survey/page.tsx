@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
+import { encodedQuery } from '@/lib/url-cipher'
 
 const TASK_TYPE_LABELS: Record<string, string> = {
   'task1': 'event design tasks',
@@ -154,8 +155,8 @@ export default function PostTaskSurveyPage() {
     setShowConfirmDialog(false)
     setIsSubmitting(true)
 
-    const params = searchParams.toString()
-    const qs = params ? `?${params}` : ''
+    const eq = encodedQuery(searchParams)
+    const qs = eq ? eq : ''
 
     try {
       const response = await fetch('/api/post-task-survey', {

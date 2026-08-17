@@ -16,6 +16,7 @@ import InfoDisplay from '@/components/InfoDisplay'
 import TaskInput from '@/components/TaskInput'
 import ChatWindow from '@/components/ChatWindow'
 import { useAppStore } from '@/lib/store'
+import { encodedQuery } from '@/lib/url-cipher'
 
 const SUBMIT_MINUTES: Record<string, number> = {
   'G1-Human': 10,
@@ -28,8 +29,10 @@ const AUTO_REDIRECT_MINUTES = 10
 export default function TaskPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const qs = searchParams.toString()
-  const withParams = (path: string) => (qs ? `${path}?${qs}` : path)
+  const withParams = (path: string) => {
+    const eq = encodedQuery(searchParams)
+    return eq ? `${path}${eq}` : path
+  }
   const [showInstructions, setShowInstructions] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
@@ -406,7 +409,13 @@ export default function TaskPage() {
         <div className="border rounded-lg overflow-hidden">
           <div className="bg-green-50 p-3 rounded">
             <p className="text-green-700 text-sm">
-              <strong>Phase 2 — Revise with AI:</strong> Please use ChatGPT <strong>in this interface</strong>, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
+              <strong>Phase 2 — Revise with AI:</strong> <br />
+              You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
+              <br /> <br />
+              When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
+              <br /> <br />
+              Your response will be graded by professional evaluators based on real-world work scenarios.
+              Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
             </p>
           </div>
           <div className="bg-amber-50 p-3 rounded">
@@ -417,10 +426,8 @@ export default function TaskPage() {
           <div className="bg-green-50 p-3 rounded">
             <p className="text-green-700 text-sm">
               <strong>Using the AI Assistant</strong> <br />
-              During the Phase 2, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
-              Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
-              You may use the AI assistant in any way you find helpful for completing the task.<br />
-              You are responsible for submitting your final response.
+              The AI assistant will appear in the <strong>right panel</strong>. Type your message in the chat box and click <strong>Send</strong>.<br />
+              You may send multiple messages and follow up on previous responses.
             </p>
           </div>
         </div>

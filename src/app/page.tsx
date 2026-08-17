@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { getSkipRouteWithParams, FLOW_CONFIG, getFirstEnabledStep, STEP_ROUTES } from '@/lib/flow-config'
+import { encodedQuery } from '@/lib/url-cipher'
 
 export default function WelcomePage() {
   const router = useRouter()
@@ -16,22 +17,20 @@ export default function WelcomePage() {
       if (skip) {
         router.replace(skip)
       } else {
-        // welcome disabled, but it's the only step somehow
         const first = STEP_ROUTES[getFirstEnabledStep()]
-        const qs = searchParams.toString()
-        router.replace(qs ? `${first}?${qs}` : first)
+        const eq = encodedQuery(searchParams)
+        router.replace(eq ? `${first}?${eq.slice(1)}` : first)
       }
     }
   }, [router, searchParams])
 
   const handleNext = () => {
-    // When welcome is enabled, still compute next step correctly
     const skip = getSkipRouteWithParams('welcome', searchParams)
     if (skip) {
       router.push(skip)
     } else {
-      const params = searchParams.toString()
-      router.push(params ? `/screen?${params}` : '/screen')
+      const eq = encodedQuery(searchParams)
+      router.push(eq ? `/screen?${eq.slice(1)}` : '/screen')
     }
   }
 

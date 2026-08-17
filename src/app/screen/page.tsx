@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { encodedQuery } from '@/lib/url-cipher'
 import {
   Dialog,
   DialogContent,
@@ -54,8 +55,8 @@ export default function ScreenPage() {
     const completed = sessionStorage.getItem('screeningCompleted')
     if (completed === 'true') {
       const passed = sessionStorage.getItem('screeningPassed') === 'true'
-      const params = searchParams.toString()
-      const qs = params ? `?${params}` : ''
+      const eq = encodedQuery(searchParams)
+      const qs = eq ? eq : ''
       router.replace(passed ? `/consent${qs}` : `/reject${qs}`)
     }
   }, [router, searchParams])
@@ -70,8 +71,8 @@ export default function ScreenPage() {
 
   const handleConfirm = () => {
     setShowConfirm(false)
-    const params = searchParams.toString()
-    const qs = params ? `?${params}` : ''
+    const eq = encodedQuery(searchParams)
+    const qs = eq ? eq : ''
 
     // Lock the screening result so back button cannot bypass
     sessionStorage.setItem('screeningCompleted', 'true')

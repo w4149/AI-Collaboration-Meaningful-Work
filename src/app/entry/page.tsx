@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
+import { getParam, encodedQuery } from '@/lib/url-cipher'
 
 export default function EntryPage() {
   const router = useRouter()
@@ -21,9 +22,9 @@ export default function EntryPage() {
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
   const reset = useAppStore((state) => state.reset)
 
-  // Get params from URL
-  const urlTask = searchParams.get('task')
-  const urlGroup = searchParams.get('group')
+  // Get params from URL (decoded from cipher)
+  const urlTask = getParam(searchParams, 'task')
+  const urlGroup = getParam(searchParams, 'group')
   const prolificId = searchParams.get('PROLIFIC_PID') || 'test_user_' + Date.now()
 
   // If task and group are in URL, skip select-task and start directly
@@ -65,8 +66,8 @@ export default function EntryPage() {
         })
         .catch(() => {})
         .finally(() => {
-          const params = searchParams.toString()
-          router.replace(params ? `/task?${params}` : '/task')
+          const eq = encodedQuery(searchParams)
+          router.replace(eq ? `/task${eq}` : '/task')
         })
     }
   }, [router, searchParams, urlTask, urlGroup, prolificId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
@@ -156,7 +157,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>10 minutes</strong> to complete the task and enter your response in the submission box. Please complete the task <strong>without using AI tools, search engines, or other outside assistance</strong>.
+                    You will have <strong>10 minutes</strong> to complete the task and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
@@ -174,7 +175,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will use the <strong>AI assistant available in the interface</strong> to complete the task. You will have <strong>up to 10 minutes</strong> to complete the task and enter your response in the submission box.
+                    You will use the <strong>AI assistant available in the interface</strong> to complete the task. You will have <strong>up to 10 minutes</strong> to complete the task and paste the AI-generated response into the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
@@ -202,10 +203,10 @@ export default function EntryPage() {
                     You will complete the task in <strong>two phases:</strong>
                     <br /> <br />
                     <strong>Phase 1 — Draft:</strong> <br />
-                    You will have <strong>up to 10 minutes</strong> to write and revise an initial draft <strong>without using AI tools, search engines, or other outside assistance.</strong>
+                    You will have <strong>up to 10 minutes</strong> to write an initial draft independently, <strong>without using AI tools, search engines, or other outside assistance.</strong>
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
-                    You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise your draft.
+                    You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />

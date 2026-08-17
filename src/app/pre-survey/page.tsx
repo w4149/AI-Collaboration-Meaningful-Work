@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
+import { encodedQuery } from '@/lib/url-cipher'
 
 type QuestionErrors = {
   birthYear?: string
@@ -190,8 +191,8 @@ export default function PreSurveyPage() {
         }
       }
 
-      const params = searchParams.toString()
-      router.push(params ? `/entry?${params}` : '/entry')
+      const eq = encodedQuery(searchParams)
+      router.push(eq ? `/entry${eq}` : '/entry')
     } catch (error) {
       console.error('Pre-survey submit error:', error)
       alert('Failed to save your responses. Please try again.')
