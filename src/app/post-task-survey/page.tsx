@@ -196,13 +196,19 @@ export default function PostTaskSurveyPage() {
     onChange: (v: string) => void
   ) => (
     <RadioGroup value={value !== undefined ? String(value) : ''} onValueChange={onChange}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="flex justify-between gap-1">
         {options.map((opt) => (
-          <div key={opt.value} className="flex items-start gap-2">
-            <RadioGroupItem value={String(opt.value)} id={`${name}-${opt.value}`} className="mt-1" />
-            <Label htmlFor={`${name}-${opt.value}`} className="cursor-pointer text-sm leading-tight">
-              {opt.label}
+          <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
+            <RadioGroupItem value={String(opt.value)} id={`${name}-${opt.value}`} className="sr-only peer" />
+            <Label
+              htmlFor={`${name}-${opt.value}`}
+              className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-xs font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+            >
+              {opt.value}
             </Label>
+            <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
+              {opt.label.replace(/^\d+\s*[—-]\s*/, '')}
+            </span>
           </div>
         ))}
       </div>
@@ -269,23 +275,24 @@ export default function PostTaskSurveyPage() {
               {AGREEMENT_ITEMS.map((item) => (
                 <div key={item.id} className="space-y-2">
                   <p className="text-sm text-gray-700">{item.text}</p>
-                  <div className="overflow-x-auto">
-                    <RadioGroup
-                      value={answers.agreement[item.id] !== undefined ? String(answers.agreement[item.id]) : ''}
-                      onValueChange={(v) => setAgreement(item.id, v)}
-                    >
-                      <div className="flex gap-2 min-w-max">
-                        {AGREEMENT_OPTIONS.map((opt) => (
-                          <div key={opt.value} className="flex items-center gap-1.5 shrink-0">
-                            <RadioGroupItem value={String(opt.value)} id={`${item.id}-${opt.value}`} />
-                            <Label htmlFor={`${item.id}-${opt.value}`} className="cursor-pointer text-xs whitespace-nowrap">
-                              {opt.value}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </RadioGroup>
-                  </div>
+                  <RadioGroup
+                    value={answers.agreement[item.id] !== undefined ? String(answers.agreement[item.id]) : ''}
+                    onValueChange={(v) => setAgreement(item.id, v)}
+                  >
+                    <div className="flex justify-between gap-1">
+                      {AGREEMENT_OPTIONS.map((opt) => (
+                        <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
+                          <RadioGroupItem value={String(opt.value)} id={`${item.id}-${opt.value}`} className="sr-only peer" />
+                          <Label
+                            htmlFor={`${item.id}-${opt.value}`}
+                            className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+                          >
+                            {opt.value}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </RadioGroup>
                 </div>
               ))}
             </div>
