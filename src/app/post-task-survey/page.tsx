@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 
@@ -101,6 +102,7 @@ export default function PostTaskSurveyPage() {
   })
   const [error, setError] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
   // Skip survey when disabled
   useEffect(() => {
@@ -124,14 +126,18 @@ export default function PostTaskSurveyPage() {
     return true
   }
 
-  const handleSubmit = async () => {
+  const handleNext = () => {
     if (!allRequiredAnswered()) {
-      setError('Please answer all required questions before submitting.')
+      setError('Please answer all required questions before proceeding.')
       return
     }
-
-    setIsSubmitting(true)
     setError('')
+    setShowConfirmDialog(true)
+  }
+
+  const handleConfirmSubmit = async () => {
+    setShowConfirmDialog(false)
+    setIsSubmitting(true)
 
     const params = searchParams.toString()
     const qs = params ? `?${params}` : ''
@@ -153,10 +159,10 @@ export default function PostTaskSurveyPage() {
         router.replace(`/demographics-survey${qs}`)
       } else {
         setError('Failed to save your responses. Please try again.')
+        setIsSubmitting(false)
       }
     } catch {
       setError('Network error. Please try again.')
-    } finally {
       setIsSubmitting(false)
     }
   }
@@ -288,15 +294,35 @@ export default function PostTaskSurveyPage() {
 
         <div className="px-6 pb-6">
           <Button
-            onClick={handleSubmit}
+            onClick={handleNext}
             disabled={isSubmitting}
             size="lg"
             className="w-full"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit & Finish'}
+            Next
           </Button>
         </div>
       </Card>
+
+      {/* Confirm Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Proceed to Next Step?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to proceed to the next step? Your previous answers cannot be changed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Yes, Proceed'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

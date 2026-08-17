@@ -396,7 +396,7 @@ export default function TaskPage() {
             </div>
             <div className="bg-amber-50 p-3 rounded">
               <p className="text-amber-700 text-sm">
-                [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+                [Note: Copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
               </p>
             </div>
           </div>

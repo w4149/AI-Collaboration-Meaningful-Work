@@ -116,20 +116,19 @@ Both groups had the option of visiting Bingo Coffee. However, customers who orde
 
 Your job: for each review, choose the **ONE label that fits best** from the three below.
 
-**Service**: What the staff do (e.g., assistance, order handling, or other staff behavior)
+- **Service**: What the staff do (e.g., assistance, order handling, or other staff behavior)
 
-**Environment**: What the store is like (e.g., space, facilities, or cleanliness)
+- **Environment**: What the store is like (e.g., space, facilities, or cleanliness)
 
-**Product**: What the drink is like (e.g., taste, temperature, sweetness, or strength)
+- **Product**: What the drink is like (e.g., taste, temperature, sweetness, or strength)
 
 
 
 For each comment, enter the review number and corresponding label on a separate line using the following format: 
 
+> Number, Label
 
-Number, Label
-
-
+For example:
 
 1,Service
 
@@ -140,9 +139,9 @@ Number, Label
 
 Work through the reviews in order, starting with Review 1. Complete as many reviews as you can within the time available.
 
-
 ---
 
+|Number|Review|
 |------|------|
 | 1 | The barista gave me a quick recommendation when I said I wanted something not too sweet. |
 | 2 | My latte was a little too milky today — couldn't really taste the coffee. |

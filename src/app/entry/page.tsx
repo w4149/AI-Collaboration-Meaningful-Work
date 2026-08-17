@@ -152,21 +152,16 @@ export default function EntryPage() {
             {/* G1-Human */}
             {(!hasUrlAssignment || urlGroup === 'G1-Human') && (
               <div className="border rounded-lg overflow-hidden">
-                <div className="bg-blue-50 p-3 rounded">
+                <div className="bg-blue-50 p-4 rounded">
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
-                    <br />
+                    <br /> <br />
                     You will have <strong>10 minutes</strong> to complete the task and enter your response in the submission box. Please complete the task <strong>without using AI tools, search engines, or other outside assistance</strong>.
-                    <br />
+                    <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br />
+                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
-                  </p>
-                </div>
-                <div className="bg-amber-50 p-3 rounded">
-                  <p className="text-amber-700 text-sm">
-                    [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>10</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
               </div>
@@ -175,21 +170,16 @@ export default function EntryPage() {
             {/* G2-AI */}
             {(!hasUrlAssignment || urlGroup === 'G2-AI') && (
               <div className="border rounded-lg overflow-hidden">
-                <div className="bg-blue-50 p-3 rounded">
+                <div className="bg-blue-50 p-4 rounded">
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
-                    <br />
+                    <br /> <br />
                     You will use the <strong>AI assistant available in the interface</strong> to complete the task. You will have <strong>up to 10 minutes</strong> to complete the task and enter your response in the submission box.
-                    <br />
+                    <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br />
+                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
-                  </p>
-                </div>
-                <div className="bg-amber-50 p-3 rounded">
-                  <p className="text-amber-700 text-sm">
-                    [Note: You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
                   </p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
@@ -205,20 +195,20 @@ export default function EntryPage() {
             {/* G3-HumanAndAI */}
             {(!hasUrlAssignment || urlGroup === 'G3-HumanAndAI') && (
               <div className="border rounded-lg overflow-hidden">
-                <div className="bg-blue-50 p-3 rounded">
+                <div className="bg-blue-50 p-4 rounded">
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
-                    <br />
+                    <br /> <br />
                     You will complete the task in <strong>two phases:</strong>
-                    <br />
+                    <br /> <br />
                     <strong>Phase 1 — Draft:</strong> <br />
                     You will have <strong>up to 10 minutes</strong> to write and revise an initial draft <strong>without using AI tools, search engines, or other outside assistance.</strong>
-                    <br />
+                    <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
                     You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise your draft.
-                    <br />
+                    <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br />
+                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios.
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
