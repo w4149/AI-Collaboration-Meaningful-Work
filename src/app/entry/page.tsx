@@ -133,16 +133,18 @@ export default function EntryPage() {
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {/* General instructions 
           <div className="space-y-4">
             <div className="space-y-2 text-gray-700">
               <p className="text-black-700 text-md leading-relaxed">
-              You will then enter the task interface, where you can view <strong>task information in the left panel</strong>. <br />
+              You will enter the task interface, where you can view <strong>task information in the left panel</strong>. <br />
               You need to complete the task within the <strong>specified time</strong> (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
               When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey. <br />
               Your response will be graded by professional evaluators based on real-world work scenarios. We would like you to <strong>take your response seriously</strong> and treat it as if it is part of your real job.
               </p>  
             </div>
           </div>
+          */}
 
           {/* Group-specific instructions */}
           <div className="space-y-4">
@@ -152,7 +154,14 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    Please write and revise your response below, breaking it into paragraphs as appropriate for readability. <strong>Do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
+                    You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
+                    <br />
+                    You will have <strong>10 minutes</strong> to complete the task and enter your response in the submission box. Please complete the task <strong>without using AI tools, search engines, or other outside assistance</strong>.
+                    <br />
+                    When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
+                    <br />
+                    Your response will be graded by professional evaluators based on real-world work scenarios. 
+                    Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
@@ -168,7 +177,14 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    Please use the ChatGPT AI tool available <strong>in this interface</strong>, interacting freely with the AI until you arrive at an answer you are satisfied with. Then paste the final AI-generated content you decide to submit into the box below.
+                    You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
+                    <br />
+                    You will use the <strong>AI assistant available in the interface</strong> to complete the task. You will have <strong>up to 10 minutes</strong> to complete the task and enter your response in the submission box.
+                    <br />
+                    When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
+                    <br />
+                    Your response will be graded by professional evaluators based on real-world work scenarios. 
+                    Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3 rounded">
@@ -179,10 +195,8 @@ export default function EntryPage() {
                 <div className="bg-green-50 p-3 rounded">
                   <p className="text-green-700 text-sm">
                     <strong>Using the AI Assistant</strong> <br />
-                    During the task, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
-                    Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
-                    You may use the AI assistant in any way you find helpful for completing the task.<br />
-                    You are responsible for submitting your final response.
+                    The AI assistant will appear in the <strong>right panel</strong>. Type your message in the chat box and click <strong>Send</strong>.<br />
+                    You may send multiple messages and follow up on previous responses.
                   </p>
                 </div>
               </div>
@@ -193,31 +207,27 @@ export default function EntryPage() {
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-blue-50 p-3 rounded">
                   <p className="text-blue-700 text-sm">
-                    <strong>Phase 1 — Draft:</strong> Please write and revise your response below, breaking it into paragraphs as appropriate for readability. In this initial draft, <strong>do not</strong> use any assistance (e.g., AI tools, search engines, etc.). Use <strong>YOUR OWN</strong> knowledge and skills to complete the task from start to finish.
-                  </p>
-                </div>
-                <div className="bg-amber-50 p-3 rounded">
-                  <p className="text-amber-700 text-sm">
-                    [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
-                  </p>
-                </div>
-                <div className="bg-green-50 p-3 rounded">
-                  <p className="text-green-700 text-sm">
-                    <strong>Phase 2 — Revise with AI:</strong> Please use ChatGPT <strong>in this interface</strong>, interacting freely with the AI to review and revise the draft you just wrote, then enter the version improved by AI into the box below. You may make any further adjustments to the AI&apos;s edits that you see fit — this version will serve as your final submission.
-                  </p>
-                </div>
-                <div className="bg-amber-50 p-3 rounded">
-                  <p className="text-amber-700 text-sm">
-                    [Note: Copy and paste is <strong>enabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+                    You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
+                    <br />
+                    You will complete the task in <strong>two phases:</strong>
+                    <br />
+                    <strong>Phase 1 — Draft:</strong> <br />
+                    You will have <strong>up to 10 minutes</strong> to write and revise an initial draft <strong>without using AI tools, search engines, or other outside assistance.</strong>
+                    <br />
+                    <strong>Phase 2 — Revise with AI:</strong> <br />
+                    You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise your draft.
+                    <br />
+                    When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
+                    <br />
+                    Your response will be graded by professional evaluators based on real-world work scenarios.
+                    Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
                   <p className="text-green-700 text-sm">
                     <strong>Using the AI Assistant</strong> <br />
-                    During the Phase 2, you will be able to communicate with an AI assistant using the chat box provided in the right panel.<br />
-                    Type a message in the chat box and click <strong>Send</strong> to send it to the AI assistant. You may send multiple messages and follow up on previous responses.<br />
-                    You may use the AI assistant in any way you find helpful for completing the task.<br />
-                    You are responsible for submitting your final response.
+                    The AI assistant will appear in the <strong>right panel</strong>. Type your message in the chat box and click <strong>Send</strong>.<br />
+                    You may send multiple messages and follow up on previous responses.
                   </p>
                 </div>
               </div>

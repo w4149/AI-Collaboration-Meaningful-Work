@@ -23,7 +23,7 @@ const CONSENT_1: ConsentConfig = {
 
 This study explores people's experiences when completing everyday work-related tasks.
 
-To be eligible for this study, you must be between 18 and 64 years of age and currently reside in the United States.
+To be eligible for this study, you must be between 18 and 64 years of age, currently reside in the United States, be fluent in reading and writing English, and have prior experience using a generative AI chatbot.
 
 In this study, you will be asked to complete a short work-related task by imagining yourself as a coffee shop employee. You will also be asked to provide basic demographic information, including your age and gender, and answer questions about your experience completing the task.
 
@@ -34,7 +34,7 @@ Your participation is voluntary. You may stop participating at any time by closi
 Your research data will be kept confidential, and no personally identifiable information will be reported in research publications.`,
     },
   ],
-  checkboxText: 'I have carefully read and understood the above study information, meet the eligibility requirements (aged 18-64 and currently residing in the United States), agree to complete the study task as required, promise to fill in demographic information truthfully, and allow the provided data to be used for scientific research.',
+  checkboxText: 'I have read and understood the study information above. I confirm that I meet the eligibility requirements and voluntarily agree to participate in this study. I understand that the data I provide may be used for scientific research.',
   buttonText: 'Continue',
 }
 
@@ -48,7 +48,7 @@ const CONSENT_2: ConsentConfig = {
 
 This study explores people's experiences when completing everyday work-related tasks.
 
-To be eligible for this study, you must be between 18 and 64 years of age and currently reside in the United States.
+To be eligible for this study, you must be between 18 and 64 years of age, currently reside in the United States, be fluent in reading and writing English, and have prior experience using a generative AI chatbot.
 
 In this study, you will be asked to complete a short work-related task by imagining yourself as a coffee shop employee. You will have access to an AI assistant while completing the task. Your interactions with the AI assistant will be recorded as part of the research data. You will also be asked to provide basic demographic information, including your age and gender, and answer questions about your experience completing the task.
 
@@ -59,7 +59,7 @@ Your participation is voluntary. You may stop participating at any time by closi
 Your research data, including your interactions with the AI assistant, will be kept confidential, and no personally identifiable information will be reported in research publications.`,
     },
   ],
-  checkboxText: 'I have carefully read and understood the above study information, meet the eligibility requirements (aged 18-64 and currently residing in the United States), agree to complete the study task as required, promise to fill in demographic information truthfully, and allow the provided data to be used for scientific research.',
+  checkboxText: 'I have read and understood the study information above. I confirm that I meet the eligibility requirements and voluntarily agree to participate in this study. I understand that the data I provide may be used for scientific research.',
   buttonText: 'Continue',
 }
 
@@ -74,7 +74,7 @@ const CONSENT_3: ConsentConfig = {
 
       This study explores people’s experiences when completing everyday work-related tasks.
       
-      To be eligible for this study, you must be between 18 and 64 years of age and currently reside in the United States.
+      To be eligible for this study, you must be between 18 and 64 years of age, currently reside in the United States, be fluent in reading and writing English, and have prior experience using a generative AI chatbot.
 
       In this study, you will be asked to complete a short work-related task by imagining yourself as a coffee shop employee. During part of the task, you will have access to an AI assistant. Your interactions with the AI assistant will be recorded as part of the research data. You will also be asked to provide basic demographic information, including your age and gender, and answer questions about your experience completing the task.
 
@@ -85,7 +85,7 @@ const CONSENT_3: ConsentConfig = {
       Your research data, including your interactions with the AI assistant, will be kept confidential, and no personally identifiable information will be reported in research publications.`,
     },
   ],
-  checkboxText: 'I have carefully read and understood the above study information, meet the eligibility requirements (aged 18-64 and currently residing in the United States), agree to complete the study task as required, promise to fill in demographic information truthfully, and allow the provided data to be used for scientific research.',
+  checkboxText: 'I have read and understood the study information above. I confirm that I meet the eligibility requirements and voluntarily agree to participate in this study. I understand that the data I provide may be used for scientific research.',
   buttonText: 'Continue',
 }
 

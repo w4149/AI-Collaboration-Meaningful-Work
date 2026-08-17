@@ -72,6 +72,14 @@ interface AppState {
   // Pre-survey completion flag
   preSurveyCompleted: boolean
   setPreSurveyCompleted: (completed: boolean) => void
+
+  // Post-task survey completion flag
+  postSurveyCompleted: boolean
+  setPostSurveyCompleted: (completed: boolean) => void
+
+  // Demographics survey completion flag
+  demographicsSurveyCompleted: boolean
+  setDemographicsSurveyCompleted: (completed: boolean) => void
   
   // Reset
   reset: () => void
@@ -152,6 +160,14 @@ export const useAppStore = create<AppState>()(
       preSurveyCompleted: false,
       setPreSurveyCompleted: (preSurveyCompleted) => set({ preSurveyCompleted }),
       
+      // Post-task survey completion flag
+      postSurveyCompleted: false,
+      setPostSurveyCompleted: (postSurveyCompleted) => set({ postSurveyCompleted }),
+
+      // Demographics survey completion flag
+      demographicsSurveyCompleted: false,
+      setDemographicsSurveyCompleted: (demographicsSurveyCompleted) => set({ demographicsSurveyCompleted }),
+      
       // Reset
       reset: () => set({
         taskSubmission: '',
@@ -165,6 +181,8 @@ export const useAppStore = create<AppState>()(
         surveyFormData: {},
         likertResponses: {},
         preSurveyCompleted: false,
+        postSurveyCompleted: false,
+        demographicsSurveyCompleted: false,
       }),
     }),
     {
@@ -179,6 +197,8 @@ export const useAppStore = create<AppState>()(
         surveyFormData: state.surveyFormData,
         likertResponses: state.likertResponses,
         preSurveyCompleted: state.preSurveyCompleted,
+        postSurveyCompleted: state.postSurveyCompleted,
+        demographicsSurveyCompleted: state.demographicsSurveyCompleted,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>

@@ -23,11 +23,11 @@ const QUESTIONS = [
   },
   {
     id: 'residence',
-    text: 'Is your current residence in the United States?',
+    text: 'Do you currently reside in the United States?',
   },
   {
     id: 'english_fluent',
-    text: 'Are you fluent in English?',
+    text: 'Are you fluent in reading and writing English?',
   },
   {
     id: 'ai_experience',
@@ -93,7 +93,7 @@ export default function ScreenPage() {
       <Card className="max-w-2xl w-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Pre‑questionss
+            Before You Begin
           </CardTitle>
         </CardHeader>
 

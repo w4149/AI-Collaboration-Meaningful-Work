@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -27,6 +27,9 @@ const AUTO_REDIRECT_MINUTES = 10
 
 export default function TaskPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const qs = searchParams.toString()
+  const withParams = (path: string) => (qs ? `${path}?${qs}` : path)
   const [showInstructions, setShowInstructions] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
@@ -104,7 +107,7 @@ export default function TaskPage() {
     if (!submission.trim()) {
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace('/thank-you')
+      router.replace(withParams('/post-task-survey'))
       return
     }
 
@@ -135,7 +138,7 @@ export default function TaskPage() {
       })
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace('/thank-you')
+      router.replace(withParams('/post-task-survey'))
     } catch (error) {
       console.error('Auto-submit error:', error)
     }
@@ -154,7 +157,7 @@ export default function TaskPage() {
   useEffect(() => {
     if (taskSubmitted) {
       skipBeforeUnload.current = true
-      router.replace('/thank-you')
+      router.replace(withParams('/post-task-survey'))
     }
   }, [taskSubmitted, router])
 
@@ -322,7 +325,7 @@ export default function TaskPage() {
 
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace('/thank-you')
+      router.replace(withParams('/post-task-survey'))
     } catch (error) {
       console.error('Error submitting task:', error)
       alert('Failed to submit. Please try again.')

@@ -9,11 +9,13 @@ export const FLOW_CONFIG = {
   preSurvey: false,
   entry: true,
   task: true,
+  postSurvey: true,
+  demographicsSurvey: true,
 } as const
 
 export type StepKey = keyof typeof FLOW_CONFIG
 
-const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task']
+const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task', 'postSurvey', 'demographicsSurvey']
 
 export const STEP_ROUTES: Record<StepKey, string> = {
   welcome: '/',
@@ -22,6 +24,8 @@ export const STEP_ROUTES: Record<StepKey, string> = {
   preSurvey: '/pre-survey',
   entry: '/entry',
   task: '/task',
+  postSurvey: '/post-task-survey',
+  demographicsSurvey: '/demographics-survey',
 }
 
 /** Skip flags that must be set when bypassing a step, so downstream guards don't redirect back. */
@@ -35,6 +39,12 @@ const SKIP_SIDE_EFFECTS: Partial<Record<StepKey, () => void>> = {
   },
   preSurvey: () => {
     sessionStorage.setItem('preSurveyCompleted', 'true')
+  },
+  postSurvey: () => {
+    sessionStorage.setItem('postSurveyCompleted', 'true')
+  },
+  demographicsSurvey: () => {
+    sessionStorage.setItem('demographicsSurveyCompleted', 'true')
   },
 }
 
@@ -75,8 +85,8 @@ export function getSkipRoute(current: StepKey): string | null {
 
   const next = getNextEnabledStep(current)
   if (!next) {
-    // All remaining steps disabled — jump to task with mock params
-    return '/task?taskId=task1&group=G1-Human&mock=1'
+    // All remaining steps disabled — jump to thank-you
+    return '/thank-you'
   }
   return STEP_ROUTES[next]
 }
