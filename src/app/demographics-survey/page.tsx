@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 
@@ -90,6 +91,21 @@ export default function DemographicsSurveyPage() {
   })
   const [error, setError] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showBackDialog, setShowBackDialog] = useState(false)
+
+  // Block browser back navigation
+  useEffect(() => {
+    const preventBack = (e: PopStateEvent) => {
+      e.preventDefault()
+      window.history.pushState(null, '', window.location.href)
+      setShowBackDialog(true)
+    }
+    window.history.pushState(null, '', window.location.href)
+    window.addEventListener('popstate', preventBack)
+    return () => {
+      window.removeEventListener('popstate', preventBack)
+    }
+  }, [])
 
   useEffect(() => {
     if (!FLOW_CONFIG.demographicsSurvey) {
@@ -306,6 +322,25 @@ export default function DemographicsSurveyPage() {
           </Button>
         </div>
       </Card>
+
+      {/* Back Navigation Warning Dialog */}
+      <Dialog open={showBackDialog} onOpenChange={setShowBackDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Warning: Page Navigation Blocked</DialogTitle>
+            <DialogDescription>
+              You cannot go back to the previous step. Once you leave this page, your task responses cannot be changed.
+              <br /><br />
+              If you accidentally navigate away, you will need to start the entire study over.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button onClick={() => setShowBackDialog(false)}>
+              Stay on This Page
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

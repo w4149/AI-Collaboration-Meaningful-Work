@@ -126,7 +126,7 @@ Your job: for each review, choose the **ONE label that fits best** from the thre
 
 For each comment, enter the review number and corresponding label on a separate line using the following format: 
 
-> Number, Label
+Number, Label
 
 For example:
 
@@ -135,6 +135,7 @@ For example:
 2,Environment
 
 3,Product
+
 
 
 Work through the reviews in order, starting with Review 1. Complete as many reviews as you can within the time available.

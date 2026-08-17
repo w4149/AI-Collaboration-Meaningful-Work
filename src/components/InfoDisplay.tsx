@@ -95,7 +95,7 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
             <h4 className="font-semibold text-gray-900 mt-3 mb-1">{children}</h4>
           ),
           p: ({ children }) => (
-            <p className="mb-2">{children}</p>
+            <p className="mb-4 leading-relaxed">{children}</p>
           ),
           ul: ({ children }) => (
             <ul className="list-disc list-outside pl-6 mb-2 space-y-1">{children}</ul>
