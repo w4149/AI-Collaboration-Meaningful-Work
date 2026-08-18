@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
 
+function countWords(text: string | null | undefined): number {
+  if (!text) return 0
+  const trimmed = text.trim()
+  if (!trimmed) return 0
+  return trimmed.split(/\s+/).length
+}
+
 export async function POST(request: Request) {
   try {
     const {
@@ -26,6 +33,7 @@ export async function POST(request: Request) {
           task_id: taskId,
           submission: submission || null,
           submission_time: submissionTime ?? null,
+          submission_word_count: countWords(submission),
         })
         .select('id')
         .single()
@@ -55,6 +63,7 @@ export async function POST(request: Request) {
         .update({
           submission_2: submission2 || null,
           submission_time_2: submissionTime2 ?? null,
+          submission_word_count_2: countWords(submission2),
         })
         .eq('id', existing.id)
 
@@ -82,6 +91,7 @@ export async function POST(request: Request) {
         task_id: taskId,
         submission: submission || null,
         submission_time: submissionTime ?? null,
+        submission_word_count: countWords(submission),
       })
       .select('id')
       .single()

@@ -5,30 +5,67 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 import { getParam, encodedQuery } from '@/lib/url-cipher'
 import { getSubmitMinMinutes, getAutoSubmitMinutes } from '@/lib/task-time-config'
+
+// Attention check questions per group
+const ATTENTION_CHECK = {
+  'G1-Human': {
+    question: 'In the following task____',
+    options: [
+      { value: 'g1_wrong', label: 'I may use AI tools, search engines, or other external assistance to complete the task.' },
+      { value: 'g1_correct', label: 'I must complete the task independently and must not use AI tools, search engines, or other external assistance.' },
+    ],
+    correctValue: 'g1_correct',
+  },
+  'G2-AI': {
+    question: 'In the following task____',
+    options: [
+      { value: 'g2_wrong', label: 'I may use tools and resources external to the interface for assistance.' },
+      { value: 'g2_correct', label: 'I may only use the AI assistant available in the interface for assistance.' },
+    ],
+    correctValue: 'g2_correct',
+  },
+  'G3-HumanAndAI': {
+    question: 'In the following task____',
+    options: [
+      { value: 'g3_wrong', label: 'I may use the AI assistant available in the interface for assistance during Phase 1.' },
+      { value: 'g3_correct', label: 'I may use the AI assistant available in the interface for assistance during Phase 2.' },
+    ],
+    correctValue: 'g3_correct',
+  },
+} as const
 
 export default function EntryPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [agreed, setAgreed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [attentionAnswer, setAttentionAnswer] = useState<string>('')
+  const [showAttentionError, setShowAttentionError] = useState(false)
+  const [attentionSubmitted, setAttentionSubmitted] = useState(false)
+
   const setUser = useAppStore((state) => state.setUser)
   const setTask = useAppStore((state) => state.setTask)
   const setStartTime = useAppStore((state) => state.setStartTime)
   const setGroupType = useAppStore((state) => state.setGroupType)
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
   const reset = useAppStore((state) => state.reset)
+  const userId = useAppStore((state) => state.userId)
+  const attentionCheck1FailCount = useAppStore((state) => state.attentionCheck1FailCount)
+  const incrementAttentionCheck1Fail = useAppStore((state) => state.incrementAttentionCheck1Fail)
 
   // Get params from URL (decoded from cipher)
   const urlTask = getParam(searchParams, 'task')
   const urlGroup = getParam(searchParams, 'group')
   const prolificId = searchParams.get('PROLIFIC_PID') || 'test_user_' + Date.now()
 
-  // Time config per group (driven by centralized task-time-config.ts)
+  // Time config per group
   const g1Min = getSubmitMinMinutes('G1-Human')
   const g1Max = getAutoSubmitMinutes('G1-Human')
   const g2Min = getSubmitMinMinutes('G2-AI')
@@ -41,20 +78,20 @@ export default function EntryPage() {
   // If task and group are in URL, skip select-task and start directly
   const hasUrlAssignment = !!(urlTask && urlGroup)
 
-  // Skip entry when disabled: auto-start task with URL params or defaults
+  // Attention check config for current group
+  const attentionConfig = hasUrlAssignment && urlGroup ? ATTENTION_CHECK[urlGroup as keyof typeof ATTENTION_CHECK] : null
+
   useEffect(() => {
     if (!FLOW_CONFIG.entry) {
       const taskId = urlTask || 'task1'
       const group = (urlGroup || 'G1-Human') as 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI'
 
-      // Setup minimal state to enter task page
       reset()
       setTaskSubmitted(false)
       setUser(`skip_${Date.now()}`, `session_${Date.now()}`, prolificId)
       setGroupType(group)
       setStartTime(new Date())
 
-      // Try to load task via API if possible, otherwise use mock
       fetch('/api/auth/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -83,14 +120,51 @@ export default function EntryPage() {
     }
   }, [router, searchParams, urlTask, urlGroup, prolificId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
 
+  const saveAttentionCheck = async (isCorrect: boolean) => {
+    try {
+      await fetch('/api/attention-checks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          checkType: 1,
+          groupType: urlGroup,
+          answer: attentionAnswer,
+          isCorrect,
+        }),
+      })
+    } catch (e) {
+      console.error('Failed to save attention check:', e)
+    }
+  }
+
   const handleStart = async () => {
     if (!agreed) return
+
+    let attentionCheckPassed = true
+    let attentionCheckData: { answer: string; isCorrect: boolean } | null = null
+
+    // If there's an attention check to validate
+    if (attentionConfig && !attentionSubmitted) {
+      if (!attentionAnswer) {
+        setShowAttentionError(true)
+        return
+      }
+      const isCorrect = attentionAnswer === attentionConfig.correctValue
+      attentionCheckData = { answer: attentionAnswer, isCorrect }
+      if (!isCorrect) {
+        incrementAttentionCheck1Fail()
+        setShowAttentionError(true)
+        setAttentionAnswer('')
+        return
+      }
+      attentionCheckPassed = true
+    }
 
     setIsLoading(true)
 
     try {
       if (hasUrlAssignment) {
-        // Direct start: call /api/auth/start with URL params
         reset()
         setTaskSubmitted(false)
 
@@ -121,9 +195,30 @@ export default function EntryPage() {
         setGroupType(urlGroup as 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI')
         setStartTime(new Date())
 
-        router.push('/task')
+        // Save attention check with the real user ID
+        if (attentionCheckData && data.userId) {
+          try {
+            await fetch('/api/attention-checks', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: data.userId,
+                checkType: 1,
+                groupType: urlGroup,
+                answer: attentionCheckData.answer,
+                isCorrect: attentionCheckData.isCorrect,
+              }),
+            })
+          } catch (e) {
+            console.error('Failed to save attention check:', e)
+          }
+        }
+
+        setAttentionSubmitted(true)
+
+        const eq = encodedQuery(searchParams)
+        router.push(eq ? `/task${eq}` : '/task')
       } else {
-        // No URL assignment: go to select-task page
         setUser(`test_user_${Date.now()}`, `session_${Date.now()}`, prolificId)
         setStartTime(new Date())
         router.push('/select-task')
@@ -145,19 +240,6 @@ export default function EntryPage() {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          {/* General instructions 
-          <div className="space-y-4">
-            <div className="space-y-2 text-gray-700">
-              <p className="text-black-700 text-md leading-relaxed">
-              You will enter the task interface, where you can view <strong>task information in the left panel</strong>. <br />
-              You need to complete the task within the <strong>specified time</strong> (It will be displayed at the top of the task interface) and write a response in the submission box below. <br />
-              When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey. <br />
-              Your response will be graded by professional evaluators based on real-world work scenarios. We would like you to <strong>take your response seriously</strong> and treat it as if it is part of your real job.
-              </p>  
-            </div>
-          </div>
-          */}
-
           {/* Group-specific instructions */}
           <div className="space-y-4">
 
@@ -186,7 +268,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will use the <strong>AI assistant available in the interface</strong> to complete the task. You will have <strong>up to {g2Max} minutes</strong> to complete the task and paste the AI-generated response into the submission box.
+                    You will use the <strong>AI assistant available in the interface</strong> to complete the task, and <strong>must not</strong> use any tools or resources other than those provided by the interface. You will have <strong>up to {g2Max} minutes</strong> to complete the task and paste the AI-generated response into the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
@@ -217,7 +299,7 @@ export default function EntryPage() {
                     You will have <strong>up to {g3Max} minutes</strong> to write an initial draft independently, <strong>without using AI tools, search engines, or other outside assistance.</strong>
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
-                    You will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
+                    You will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote, and <strong>must not</strong> use any tools or resources other than those provided by the interface. Then enter the revised draft in the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
@@ -240,7 +322,14 @@ export default function EntryPage() {
             <Checkbox 
               id="agree" 
               checked={agreed} 
-              onCheckedChange={(checked) => setAgreed(checked as boolean)}
+              onCheckedChange={(checked) => {
+                setAgreed(checked as boolean)
+                if (!checked) {
+                  setAttentionAnswer('')
+                  setAttentionSubmitted(false)
+                  setShowAttentionError(false)
+                }
+              }}
             />
             <div className="grid gap-1.5 leading-none">
               <Label htmlFor="agree" className="text-base">
@@ -248,6 +337,28 @@ export default function EntryPage() {
               </Label>
             </div>
           </div>
+
+          {/* Attention check - shown after agreement for URL-assigned groups */}
+          {agreed && attentionConfig && !attentionSubmitted && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+              <Label className="text-sm font-medium text-amber-800">
+                Attention Check: Please answer the following question carefully.
+              </Label>
+              <p className="text-sm text-gray-700">{attentionConfig.question}</p>
+              <RadioGroup value={attentionAnswer} onValueChange={setAttentionAnswer}>
+                <div className="space-y-2">
+                  {attentionConfig.options.map((opt) => (
+                    <div key={opt.value} className="flex items-center space-x-2">
+                      <RadioGroupItem value={opt.value} id={`att-${opt.value}`} />
+                      <Label htmlFor={`att-${opt.value}`} className="text-sm cursor-pointer">
+                        {opt.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </RadioGroup>
+            </div>
+          )}
         </CardContent>
         
         <CardFooter className="flex justify-center">
@@ -257,10 +368,29 @@ export default function EntryPage() {
             size="lg"
             className="w-full sm:w-auto"
           >
-            {isLoading ? 'Starting...' : 'Start Task'}
+            {isLoading ? 'Starting...' : attentionConfig && !attentionSubmitted ? 'Submit Answer & Start' : 'Start Task'}
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Attention Check Error Dialog */}
+      <Dialog open={showAttentionError} onOpenChange={setShowAttentionError}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Attention Check Failed</DialogTitle>
+            <DialogDescription>
+              {attentionAnswer === '' 
+                ? 'Please select an answer before proceeding.'
+                : 'Your answer is incorrect. Please read the task requirements carefully and try again.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button onClick={() => setShowAttentionError(false)}>
+              {attentionAnswer === '' ? 'OK' : 'Try Again'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

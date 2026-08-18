@@ -17,17 +17,17 @@ export type GroupTimeConfig = {
 export const GROUP_TIME_CONFIG: Record<string, GroupTimeConfig> = {
   'G1-Human': {
     submitMinMinutes: 10,
-    autoSubmitMinutes: 10,
+    autoSubmitMinutes: 20,
   },
   'G2-AI': {
     submitMinMinutes: 5,
-    autoSubmitMinutes: 10,
+    autoSubmitMinutes: 20,
   },
   'G3-HumanAndAI': {
     submitMinMinutes: 5,
-    autoSubmitMinutes: 10,
+    autoSubmitMinutes: 20,
     phase2SubmitMinMinutes: 5,
-    phase2AutoSubmitMinutes: 10,
+    phase2AutoSubmitMinutes: 20,
   },
 }
 

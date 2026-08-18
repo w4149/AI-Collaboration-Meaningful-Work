@@ -32,6 +32,7 @@ export default function TaskPage() {
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
+  const [showLeaveWarning, setShowLeaveWarning] = useState(false)
   const autoSubmitTriggered = useRef(false)
   const skipBeforeUnload = useRef(false)
   const [phase2StartTime, setPhase2StartTime] = useState<Date | null>(null)
@@ -376,8 +377,7 @@ export default function TaskPage() {
       }
 
       skipBeforeUnload.current = true
-      setTaskSubmitted(true)
-      router.replace(withParams('/psychological-scale'))
+      setShowLeaveWarning(true)
     } catch (error) {
       console.error('Error submitting task:', error)
       alert('Failed to submit. Please try again.')
@@ -390,6 +390,11 @@ export default function TaskPage() {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleLeaveWarningContinue = () => {
+    setShowLeaveWarning(false)
+    setTaskSubmitted(true)
   }
 
   // Instruction content per group
@@ -613,6 +618,25 @@ export default function TaskPage() {
             </Button>
             <Button onClick={confirmSubmit} disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Yes, Submit'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Leave Warning Dialog */}
+      <Dialog open={showLeaveWarning} onOpenChange={setShowLeaveWarning}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>⚠ Please Do Not Leave</DialogTitle>
+            <DialogDescription>
+              Your task has been submitted. Please do not leave this page. You must complete the entire study to successfully receive your payment.
+              <br /><br />
+              Click &quot;Continue&quot; to proceed to the next step.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button onClick={handleLeaveWarningContinue}>
+              Continue to Next Step
             </Button>
           </div>
         </DialogContent>

@@ -9,3 +9,9 @@ ALTER TABLE public.task_submissions ADD COLUMN IF NOT EXISTS submission_time INT
 
 -- submission_time_2: seconds from entering Phase 2 to final Phase 2 submit (G3 only)
 ALTER TABLE public.task_submissions ADD COLUMN IF NOT EXISTS submission_time_2 INTEGER;
+
+-- submission_word_count: word count of Phase 1 submission (or final submission for G1/G2)
+ALTER TABLE public.task_submissions ADD COLUMN IF NOT EXISTS submission_word_count INTEGER;
+
+-- submission_word_count_2: word count of Phase 2 submission (G3 only)
+ALTER TABLE public.task_submissions ADD COLUMN IF NOT EXISTS submission_word_count_2 INTEGER;

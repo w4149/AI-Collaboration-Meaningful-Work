@@ -84,6 +84,16 @@ interface AppState {
   // Demographics survey completion flag
   demographicsSurveyCompleted: boolean
   setDemographicsSurveyCompleted: (completed: boolean) => void
+
+  // Attention check tracking
+  attentionCheck1Passed: boolean
+  setAttentionCheck1Passed: (passed: boolean) => void
+  attentionCheck2Passed: boolean
+  setAttentionCheck2Passed: (passed: boolean) => void
+  attentionCheck1FailCount: number
+  incrementAttentionCheck1Fail: () => void
+  attentionCheck2FailCount: number
+  incrementAttentionCheck2Fail: () => void
   
   // Reset
   reset: () => void
@@ -175,6 +185,16 @@ export const useAppStore = create<AppState>()(
       // Demographics survey completion flag
       demographicsSurveyCompleted: false,
       setDemographicsSurveyCompleted: (demographicsSurveyCompleted) => set({ demographicsSurveyCompleted }),
+
+      // Attention check tracking
+      attentionCheck1Passed: false,
+      setAttentionCheck1Passed: (passed) => set({ attentionCheck1Passed: passed }),
+      attentionCheck2Passed: false,
+      setAttentionCheck2Passed: (passed) => set({ attentionCheck2Passed: passed }),
+      attentionCheck1FailCount: 0,
+      incrementAttentionCheck1Fail: () => set((state) => ({ attentionCheck1FailCount: state.attentionCheck1FailCount + 1 })),
+      attentionCheck2FailCount: 0,
+      incrementAttentionCheck2Fail: () => set((state) => ({ attentionCheck2FailCount: state.attentionCheck2FailCount + 1 })),
       
       // Reset
       reset: () => set({
@@ -192,6 +212,10 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: false,
         psychologicalScaleCompleted: false,
         demographicsSurveyCompleted: false,
+        attentionCheck1Passed: false,
+        attentionCheck2Passed: false,
+        attentionCheck1FailCount: 0,
+        attentionCheck2FailCount: 0,
       }),
     }),
     {
@@ -209,6 +233,10 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: state.postSurveyCompleted,
         psychologicalScaleCompleted: state.psychologicalScaleCompleted,
         demographicsSurveyCompleted: state.demographicsSurveyCompleted,
+        attentionCheck1Passed: state.attentionCheck1Passed,
+        attentionCheck2Passed: state.attentionCheck2Passed,
+        attentionCheck1FailCount: state.attentionCheck1FailCount,
+        attentionCheck2FailCount: state.attentionCheck2FailCount,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>
