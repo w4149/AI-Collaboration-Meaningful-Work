@@ -154,8 +154,25 @@ export default function EntryPage() {
       attentionCheckData = { answer: attentionAnswer, isCorrect }
       if (!isCorrect) {
         incrementAttentionCheck1Fail()
+        // Save the failed attempt BEFORE clearing the answer
+        if (userId) {
+          try {
+            await fetch('/api/attention-checks', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId,
+                checkType: 1,
+                groupType: urlGroup,
+                answer: attentionAnswer,
+                isCorrect: false,
+              }),
+            })
+          } catch (e) {
+            console.error('Failed to save attention check:', e)
+          }
+        }
         setShowAttentionError(true)
-        setAttentionAnswer('')
         return
       }
       attentionCheckPassed = true
@@ -385,7 +402,10 @@ export default function EntryPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end pt-4">
-            <Button onClick={() => setShowAttentionError(false)}>
+            <Button onClick={() => {
+              setShowAttentionError(false)
+              setAttentionAnswer('')
+            }}>
               {attentionAnswer === '' ? 'OK' : 'Try Again'}
             </Button>
           </div>

@@ -122,11 +122,11 @@ Your job: for each review, choose the **ONE label that fits best** from the thre
 
 - **Product**: What the drink is like (e.g., taste, temperature, sweetness, or strength)
 
-
-
 For each comment, enter the review number and corresponding label on a separate line using the following format: 
 
-Number, Label
+**Number, Label**
+
+---
 
 For example:
 
@@ -136,7 +136,7 @@ For example:
 
 3,Product
 
-
+---
 
 Work through the reviews in order, starting with Review 1. Complete as many reviews as you can within the time available.
 
