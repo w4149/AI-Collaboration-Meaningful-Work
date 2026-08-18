@@ -77,6 +77,10 @@ interface AppState {
   postSurveyCompleted: boolean
   setPostSurveyCompleted: (completed: boolean) => void
 
+  // Psychological scale completion flag
+  psychologicalScaleCompleted: boolean
+  setPsychologicalScaleCompleted: (completed: boolean) => void
+
   // Demographics survey completion flag
   demographicsSurveyCompleted: boolean
   setDemographicsSurveyCompleted: (completed: boolean) => void
@@ -164,6 +168,10 @@ export const useAppStore = create<AppState>()(
       postSurveyCompleted: false,
       setPostSurveyCompleted: (postSurveyCompleted) => set({ postSurveyCompleted }),
 
+      // Psychological scale completion flag
+      psychologicalScaleCompleted: false,
+      setPsychologicalScaleCompleted: (psychologicalScaleCompleted) => set({ psychologicalScaleCompleted }),
+
       // Demographics survey completion flag
       demographicsSurveyCompleted: false,
       setDemographicsSurveyCompleted: (demographicsSurveyCompleted) => set({ demographicsSurveyCompleted }),
@@ -182,6 +190,7 @@ export const useAppStore = create<AppState>()(
         likertResponses: {},
         preSurveyCompleted: false,
         postSurveyCompleted: false,
+        psychologicalScaleCompleted: false,
         demographicsSurveyCompleted: false,
       }),
     }),
@@ -198,6 +207,7 @@ export const useAppStore = create<AppState>()(
         likertResponses: state.likertResponses,
         preSurveyCompleted: state.preSurveyCompleted,
         postSurveyCompleted: state.postSurveyCompleted,
+        psychologicalScaleCompleted: state.psychologicalScaleCompleted,
         demographicsSurveyCompleted: state.demographicsSurveyCompleted,
       }),
       merge: (persistedState: unknown, currentState) => {

@@ -17,14 +17,7 @@ import TaskInput from '@/components/TaskInput'
 import ChatWindow from '@/components/ChatWindow'
 import { useAppStore } from '@/lib/store'
 import { encodedQuery } from '@/lib/url-cipher'
-
-const SUBMIT_MINUTES: Record<string, number> = {
-  'G1-Human': 10,
-  'G2-AI': 5,
-  'G3-HumanAndAI': 5,
-}
-
-const AUTO_REDIRECT_MINUTES = 10
+import { getSubmitMinMinutes, getAutoSubmitMinutes } from '@/lib/task-time-config'
 
 export default function TaskPage() {
   const router = useRouter()
@@ -62,21 +55,30 @@ export default function TaskPage() {
   const taskSubmitted = useAppStore((state) => state.taskSubmitted)
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
 
-  const submitMinutes = groupType ? (SUBMIT_MINUTES[groupType] ?? 5) : 5
+  const submitMinutes = getSubmitMinMinutes(groupType, currentPhase)
+  const autoSubmitMinutes = getAutoSubmitMinutes(groupType, currentPhase)
 
   const handlePhase1AutoSubmit = useCallback(async () => {
     // Save Phase 1 submission and chat, then transition to Phase 2
     const submission = taskSubmissionRef.current
     const messages = chatMessagesRef.current
 
+    const phase1Time = startTime
+      ? Math.floor((Date.now() - startTime.getTime()) / 1000)
+      : 0
+
     try {
-      if (submission.trim()) {
-        await fetch('/api/submissions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, taskId, content: submission }),
-        })
-      }
+      await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          taskId,
+          phase: 1,
+          submission,
+          submissionTime: phase1Time,
+        }),
+      })
       for (const msg of messages) {
         await fetch('/api/chat/save', {
           method: 'POST',
@@ -98,7 +100,7 @@ export default function TaskPage() {
     setCurrentPhase(2)
     unlockFeatures()
     setPhase2StartTime(new Date())
-  }, [userId, taskId, setCurrentPhase, unlockFeatures])
+  }, [userId, taskId, setCurrentPhase, unlockFeatures, startTime])
 
   const handleAutoSubmit = useCallback(async () => {
     if (autoSubmitTriggered.current) return
@@ -106,20 +108,48 @@ export default function TaskPage() {
 
     const submission = taskSubmissionRef.current
     const messages = chatMessagesRef.current
+    const isG3Phase2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
 
     if (!submission.trim()) {
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace(withParams('/post-task-survey'))
+      router.replace(withParams('/psychological-scale'))
       return
     }
 
     setIsSubmitting(true)
     try {
-      if (startTime) {
-        const endTime = new Date()
-        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
-        setTaskDuration(duration)
+      if (isG3Phase2) {
+        // G3 Phase 2: update existing row with submission_2 and submission_time_2
+        const phase2Time = phase2StartTime
+          ? Math.floor((Date.now() - phase2StartTime.getTime()) / 1000)
+          : 0
+        await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            submission2: submission,
+            submissionTime2: phase2Time,
+          }),
+        })
+      } else {
+        // G1/G2: create new row with submission and submission_time
+        const totalTime = startTime
+          ? Math.floor((Date.now() - startTime.getTime()) / 1000)
+          : 0
+        setTaskDuration(totalTime)
+        await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            submission,
+            submissionTime: totalTime,
+          }),
+        })
       }
       for (const msg of messages) {
         await fetch('/api/chat/save', {
@@ -134,18 +164,13 @@ export default function TaskPage() {
           }),
         })
       }
-      await fetch('/api/submissions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, taskId, content: submission }),
-      })
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace(withParams('/post-task-survey'))
+      router.replace(withParams('/psychological-scale'))
     } catch (error) {
       console.error('Auto-submit error:', error)
     }
-  }, [startTime, userId, taskId, setTaskDuration, setTaskSubmitted, router])
+  }, [startTime, phase2StartTime, groupType, currentPhase, userId, taskId, setTaskDuration, setTaskSubmitted, router])
 
   // Use refs to always have latest values for auto-submit
   const taskSubmissionRef = useRef(taskSubmission)
@@ -160,7 +185,7 @@ export default function TaskPage() {
   useEffect(() => {
     if (taskSubmitted) {
       skipBeforeUnload.current = true
-      router.replace(withParams('/post-task-survey'))
+      router.replace(withParams('/psychological-scale'))
     }
   }, [taskSubmitted, router])
 
@@ -187,9 +212,9 @@ export default function TaskPage() {
 
     autoSubmitTriggered.current = false
 
-    const autoTargetTime = new Date(effectiveStartTime.getTime() + AUTO_REDIRECT_MINUTES * 60 * 1000)
+    const autoTargetTime = new Date(effectiveStartTime.getTime() + autoSubmitMinutes * 60 * 1000)
     const submitTargetTime = new Date(effectiveStartTime.getTime() + submitMinutes * 60 * 1000)
-    const warningTime = new Date(effectiveStartTime.getTime() + (AUTO_REDIRECT_MINUTES - 1) * 60 * 1000)
+    const warningTime = new Date(effectiveStartTime.getTime() + (autoSubmitMinutes - 1) * 60 * 1000)
     let warningShown = false
 
     const updateCountdown = () => {
@@ -224,7 +249,7 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [effectiveStartTime, submitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
+  }, [effectiveStartTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
   // Prevent leaving task page (skip during auto-submit)
   useEffect(() => {
@@ -260,13 +285,20 @@ export default function TaskPage() {
     // G3 Phase 1: save and transition to Phase 2
     if (groupType === 'G3-HumanAndAI' && currentPhase === 1) {
       try {
-        if (taskSubmission.trim()) {
-          await fetch('/api/submissions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, taskId, content: taskSubmission }),
-          })
-        }
+        const phase1Time = startTime
+          ? Math.floor((Date.now() - startTime.getTime()) / 1000)
+          : 0
+        await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            phase: 1,
+            submission: taskSubmission,
+            submissionTime: phase1Time,
+          }),
+        })
         for (const msg of chatMessages) {
           await fetch('/api/chat/save', {
             method: 'POST',
@@ -292,12 +324,41 @@ export default function TaskPage() {
       return
     }
 
-    // Normal submit (Phase 2 or non-G3 groups) → survey
+    // Final submit (Phase 2 or non-G3 groups) → survey
     try {
-      if (startTime) {
-        const endTime = new Date()
-        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
-        setTaskDuration(duration)
+      const isG3Phase2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
+
+      if (isG3Phase2) {
+        const phase2Time = phase2StartTime
+          ? Math.floor((Date.now() - phase2StartTime.getTime()) / 1000)
+          : 0
+        const response = await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            submission2: taskSubmission,
+            submissionTime2: phase2Time,
+          }),
+        })
+        if (!response.ok) throw new Error('Failed to submit')
+      } else {
+        const totalTime = startTime
+          ? Math.floor((Date.now() - startTime.getTime()) / 1000)
+          : 0
+        setTaskDuration(totalTime)
+        const response = await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            taskId,
+            submission: taskSubmission,
+            submissionTime: totalTime,
+          }),
+        })
+        if (!response.ok) throw new Error('Failed to submit')
       }
 
       for (const msg of chatMessages) {
@@ -314,21 +375,9 @@ export default function TaskPage() {
         })
       }
 
-      const response = await fetch('/api/submissions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          taskId,
-          content: taskSubmission,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Failed to submit')
-
       skipBeforeUnload.current = true
       setTaskSubmitted(true)
-      router.replace(withParams('/post-task-survey'))
+      router.replace(withParams('/psychological-scale'))
     } catch (error) {
       console.error('Error submitting task:', error)
       alert('Failed to submit. Please try again.')
@@ -355,7 +404,7 @@ export default function TaskPage() {
           </div>
           <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>10</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>{submitMinutes}</strong> minutes, and the page will advance automatically at <strong>{autoSubmitMinutes}</strong> minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
         </div>
@@ -372,7 +421,7 @@ export default function TaskPage() {
           </div>
           <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: You will not be allowed to advance before <strong>{submitMinutes}</strong> minutes, and the page will advance automatically at <strong>{autoSubmitMinutes}</strong> minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
           <div className="bg-green-50 p-3 rounded">
@@ -399,7 +448,7 @@ export default function TaskPage() {
             </div>
             <div className="bg-amber-50 p-3 rounded">
               <p className="text-amber-700 text-sm">
-                [Note: Copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+                [Note: Copy and paste function is <strong>disabled</strong> for this text box. You will not be allowed to advance before <strong>{submitMinutes}</strong> minutes, and the page will advance automatically at <strong>{autoSubmitMinutes}</strong> minutes. Please dedicate your full effort to the writing task during this period.]
               </p>
             </div>
           </div>
@@ -410,7 +459,7 @@ export default function TaskPage() {
           <div className="bg-green-50 p-3 rounded">
             <p className="text-green-700 text-sm">
               <strong>Phase 2 — Revise with AI:</strong> <br />
-              You will have <strong>up to 10 minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
+              You will have <strong>up to {autoSubmitMinutes} minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
               <br /> <br />
               When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
               <br /> <br />
@@ -420,7 +469,7 @@ export default function TaskPage() {
           </div>
           <div className="bg-amber-50 p-3 rounded">
             <p className="text-amber-700 text-sm">
-              [Note: Copy and paste is <strong>enabled</strong> for this text box. You will not be allowed to advance before <strong>5</strong> minutes, and the page will advance automatically at <strong>10</strong> minutes. Please dedicate your full effort to the writing task during this period.]
+              [Note: Copy and paste is <strong>enabled</strong> for this text box. You will not be allowed to advance before <strong>{submitMinutes}</strong> minutes, and the page will advance automatically at <strong>{autoSubmitMinutes}</strong> minutes. Please dedicate your full effort to the writing task during this period.]
             </p>
           </div>
           <div className="bg-green-50 p-3 rounded">

@@ -3,18 +3,85 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const { userId, taskId, content } = await request.json()
+    const {
+      userId,
+      taskId,
+      submission,
+      submissionTime,
+      submission2,
+      submissionTime2,
+      phase,
+    } = await request.json()
 
-    if (!userId || !taskId || !content) {
+    if (!userId || !taskId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    if (phase === 1) {
+      // Phase 1: insert new row with Phase 1 submission
+      const { data, error } = await supabaseServer
+        .from('task_submissions')
+        .insert({
+          user_id: userId,
+          task_id: taskId,
+          submission: submission || null,
+          submission_time: submissionTime ?? null,
+        })
+        .select('id')
+        .single()
+
+      if (error) {
+        console.error('Error saving Phase 1 submission:', error)
+        return NextResponse.json({ error: 'Failed to save submission' }, { status: 500 })
+      }
+
+      return NextResponse.json({ success: true, submissionId: data.id, phase: 1 })
+    }
+
+    // Phase 2 (or single-phase final submit): insert with both fields
+    const { data: existing } = await supabaseServer
+      .from('task_submissions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('task_id', taskId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (existing?.id) {
+      // Update existing row with Phase 2 data
+      const { error } = await supabaseServer
+        .from('task_submissions')
+        .update({
+          submission_2: submission2 || null,
+          submission_time_2: submissionTime2 ?? null,
+        })
+        .eq('id', existing.id)
+
+      if (error) {
+        console.error('Error updating Phase 2 submission:', error)
+        return NextResponse.json({ error: 'Failed to save Phase 2 submission' }, { status: 500 })
+      }
+
+      // Update session to mark task as completed
+      await supabaseServer
+        .from('sessions')
+        .update({ task_completed: true, end_time: new Date().toISOString() })
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      return NextResponse.json({ success: true, submissionId: existing.id, phase: 2 })
+    }
+
+    // Single-phase (G1/G2): insert new row
     const { data, error } = await supabaseServer
       .from('task_submissions')
       .insert({
         user_id: userId,
         task_id: taskId,
-        content: content,
+        submission: submission || null,
+        submission_time: submissionTime ?? null,
       })
       .select('id')
       .single()
