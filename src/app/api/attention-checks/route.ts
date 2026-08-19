@@ -21,54 +21,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid check type. Must be 1 or 2.' }, { status: 400 })
     }
 
-    // Step 1: Verify user exists in DB (FK constraint)
-    const { data: userExists, error: userCheckError } = await supabaseServer
-      .from('users')
-      .select('id')
-      .eq('id', userId)
-      .single()
+    // Step 1: Read existing fail count (if any). Use maybeSingle() because new users
+    // have no row yet — .single() throws PGRST116 when no rows found.
+    const countField = checkType === 1 ? 'check1_fail_count' : 'check2_fail_count'
+    const { data: existingRow, error: readError } = await supabaseServer
+      .from('attention_checks')
+      .select(countField)
+      .eq('user_id', userId)
+      .maybeSingle()
 
-    if (userCheckError || !userExists) {
-      console.error('[attention-checks] User not found in users table:', userId, userCheckError?.message)
+    if (readError) {
+      console.error('[attention-checks] Read failed:', readError.message)
       return NextResponse.json(
-        { error: `User not found (id=${userId}). User must exist in users table before saving attention check.` },
-        { status: 400 }
+        { error: `Cannot read attention_checks table. Column "${countField}" may be missing. Details: ${readError.message}` },
+        { status: 500 }
       )
     }
 
-    // Step 2: Read existing row (if any) to get current fail counts
-    let existingCheck: { fail_count: number } | null = null
+    const row = existingRow as Record<string, unknown> | null
+    const currentFailCount = (row?.[countField] as number | undefined) ?? 0
 
-    if (checkType === 1) {
-      const { data, error } = await supabaseServer
-        .from('attention_checks')
-        .select('check1_fail_count')
-        .eq('user_id', userId)
-        .single()
-      if (error) {
-        console.error('[attention-checks] Read existing failed — migration 016 may not be deployed:', error.message)
-        return NextResponse.json(
-          { error: 'Database schema mismatch. Please deploy migration 016_rebuild_attention_checks first.' },
-          { status: 500 }
-        )
-      }
-      existingCheck = { fail_count: data?.check1_fail_count ?? 0 }
-    } else {
-      const { data, error } = await supabaseServer
-        .from('attention_checks')
-        .select('check2_fail_count')
-        .eq('user_id', userId)
-        .single()
-      if (error) {
-        console.error('[attention-checks] Read existing failed — migration 016 may not be deployed:', error.message)
-        return NextResponse.json(
-          { error: 'Database schema mismatch. Please deploy migration 016_rebuild_attention_checks first.' },
-          { status: 500 }
-        )
-      }
-      existingCheck = { fail_count: data?.check2_fail_count ?? 0 }
-    }
-
+    // Step 2: Build UPSERT payload
     const upsertPayload: Record<string, unknown> = {
       user_id: userId,
       updated_at: new Date().toISOString(),
@@ -78,7 +51,6 @@ export async function POST(request: Request) {
     if (groupType) upsertPayload.group_type = groupType
 
     if (checkType === 1) {
-      const currentFailCount = existingCheck?.fail_count ?? 0
       if (!isCorrect) {
         upsertPayload.check1_ever_failed = true
         upsertPayload.check1_fail_count = currentFailCount + 1
@@ -87,10 +59,9 @@ export async function POST(request: Request) {
         upsertPayload.check1_correct_answer = answer
         upsertPayload.check1_final_answer = answer
         upsertPayload.check1_completed_at = new Date().toISOString()
-        console.log(`[attention-checks] check1 PASSED`)
+        console.log('[attention-checks] check1 PASSED')
       }
     } else {
-      const currentFailCount = existingCheck?.fail_count ?? 0
       if (!isCorrect) {
         upsertPayload.check2_ever_failed = true
         upsertPayload.check2_fail_count = currentFailCount + 1
@@ -99,7 +70,7 @@ export async function POST(request: Request) {
         upsertPayload.check2_correct_answer = answer
         upsertPayload.check2_final_answer = answer
         upsertPayload.check2_completed_at = new Date().toISOString()
-        console.log(`[attention-checks] check2 PASSED`)
+        console.log('[attention-checks] check2 PASSED')
       }
     }
 
@@ -112,12 +83,12 @@ export async function POST(request: Request) {
     if (upsertError) {
       console.error('[attention-checks] UPSERT failed:', upsertError.message, 'payload:', JSON.stringify(upsertPayload))
       return NextResponse.json(
-        { error: `UPSERT failed: ${upsertError.message}. Migration 016 may be required.` },
+        { error: `UPSERT failed: ${upsertError.message}` },
         { status: 500 }
       )
     }
 
-    console.log('[attention-checks] Saved successfully for user:', userId, 'checkType:', checkType, 'isCorrect:', isCorrect)
+    console.log('[attention-checks] Saved for user:', userId, 'checkType:', checkType, 'isCorrect:', isCorrect)
     return NextResponse.json({ success: true, data: upsertData })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error)
