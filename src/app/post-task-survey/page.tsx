@@ -57,13 +57,13 @@ const AGREEMENT_OPTIONS = [
 ]
 
 const FAMILIARITY_OPTIONS = [
-  { value: 1, label: '1 — Not at all familiar' },
-  { value: 2, label: '2' },
-  { value: 3, label: '3' },
-  { value: 4, label: '4 — Moderately familiar' },
-  { value: 5, label: '5' },
-  { value: 6, label: '6' },
-  { value: 7, label: '7 — Extremely familiar' },
+  { value: 1, label: 'Not at all familiar' },
+  { value: 2, label: 'Slightly familiar' },
+  { value: 3, label: 'Somewhat familiar' },
+  { value: 4, label: 'Moderately familiar' },
+  { value: 5, label: 'Quite familiar' },
+  { value: 6, label: 'Very familiar' },
+  { value: 7, label: 'Extremely familiar' },
 ]
 
 const AGREEMENT_ITEMS = [
@@ -290,6 +290,9 @@ export default function PostTaskSurveyPage() {
                           >
                             {opt.value}
                           </Label>
+                          <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
+                            {opt.label.replace(/^\d+\s*[—-]\s*/, '')}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -297,9 +300,6 @@ export default function PostTaskSurveyPage() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-400">
-              Scale: 1 — Strongly disagree, 2 — Disagree, 3 — Somewhat disagree, 4 — Neither agree nor disagree, 5 — Somewhat agree, 6 — Agree, 7 — Strongly agree
-            </p>
           </div>
 
           {/* Q6: Familiarity */}

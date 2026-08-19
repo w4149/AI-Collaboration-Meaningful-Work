@@ -184,11 +184,10 @@ export default function DemographicsSurveyPage() {
     name: string,
     value: string | undefined,
     options: { value: string; label: string }[],
-    onChange: (v: string) => void,
-    columns: string = '2'
+    onChange: (v: string) => void
   ) => (
     <RadioGroup value={value || ''} onValueChange={onChange}>
-      <div className={`grid gap-2 ${columns === '2' ? 'grid-cols-1 sm:grid-cols-2' : columns === '3' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'}`}>
+      <div className="flex flex-col gap-2">
         {options.map((opt) => (
           <div key={opt.value} className="flex items-start gap-2">
             <RadioGroupItem value={opt.value} id={`${name}-${opt.value}`} className="mt-1" />
@@ -219,7 +218,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               1. What is your gender? <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('gender', answers.gender, GENDER_OPTIONS, setGender, '2')}
+            {renderRadioGroup('gender', answers.gender, GENDER_OPTIONS, setGender)}
           </div>
 
           {/* Q2: Race and/or ethnicity */}
@@ -227,7 +226,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               2. What is your race and/or ethnicity? (Select all that apply.) <span className="text-red-500">*</span>
             </Label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="flex flex-col gap-2">
               {RACE_ETHNICITY_OPTIONS.map((opt) => (
                 <div key={opt.value} className="flex items-start gap-2">
                   <Checkbox
@@ -251,7 +250,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               3. What is the highest level of education you have completed? <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('education', answers.education, EDUCATION_OPTIONS, setEducation, '2')}
+            {renderRadioGroup('education', answers.education, EDUCATION_OPTIONS, setEducation)}
           </div>
 
           {/* Q4: Employment */}
@@ -259,7 +258,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               4. Which of the following best describes your current employment status? <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('employment', answers.employment, EMPLOYMENT_OPTIONS, setEmployment, '2')}
+            {renderRadioGroup('employment', answers.employment, EMPLOYMENT_OPTIONS, setEmployment)}
           </div>
 
           {/* Q5: Income */}
@@ -268,7 +267,7 @@ export default function DemographicsSurveyPage() {
               5. This is an income scale from 1 to 10, where 1 indicates the lowest income group and 10 the highest income group in the United States. In which group would you place your household? <span className="text-red-500">*</span>
             </Label>
             <RadioGroup value={answers.income || ''} onValueChange={setIncome}>
-              <div className="flex gap-1 flex-wrap">
+              <div className="flex gap-1 flex-wrap justify-start">
                 {INCOME_OPTIONS.map((opt) => (
                   <div key={opt.value} className="flex items-center gap-1">
                     <RadioGroupItem
@@ -296,7 +295,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               6. Were you born in the United States? <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('usBorn', answers.usBorn, US_BORN_OPTIONS, setUsBorn, '3')}
+            {renderRadioGroup('usBorn', answers.usBorn, US_BORN_OPTIONS, setUsBorn)}
           </div>
 
           {/* Q7: Political */}
@@ -304,7 +303,7 @@ export default function DemographicsSurveyPage() {
             <Label className="text-base font-medium">
               7. Generally speaking, do you usually think of yourself as a Republican, a Democrat, an Independent, or what? <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('political', answers.political, POLITICAL_OPTIONS, setPolitical, '2')}
+            {renderRadioGroup('political', answers.political, POLITICAL_OPTIONS, setPolitical)}
           </div>
 
           {error && (

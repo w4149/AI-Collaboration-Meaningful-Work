@@ -51,6 +51,16 @@ const OWNERSHIP_ITEMS = [
 ]
 
 // Q4: Autonomy items
+const AUTONOMY_OPTIONS = [
+  { value: 1, label: 'Very inaccurate' },
+  { value: 2, label: 'Somewhat inaccurate' },
+  { value: 3, label: 'Slightly inaccurate' },
+  { value: 4, label: 'Neutral' },
+  { value: 5, label: 'Slightly accurate' },
+  { value: 6, label: 'Somewhat accurate' },
+  { value: 7, label: 'Very accurate' },
+]
+
 const AUTONOMY_ITEMS = [
   { id: 'decide_own_how', text: 'I could decide on my own how to go about getting the task done.' },
   { id: 'make_decisions_own', text: 'The task allowed me to make decisions on my own.' },
@@ -59,6 +69,16 @@ const AUTONOMY_ITEMS = [
 ]
 
 // Q5: Skill utilisation items
+const SKILL_OPTIONS = [
+  { value: 1, label: 'Not at all' },
+  { value: 2, label: 'Very little' },
+  { value: 3, label: 'Little' },
+  { value: 4, label: 'Somewhat' },
+  { value: 5, label: 'Much' },
+  { value: 6, label: 'Very much' },
+  { value: 7, label: 'A great deal' },
+]
+
 const SKILL_ITEMS = [
   { id: 'learn_new_things', text: 'learn new things?' },
   { id: 'utilize_abilities', text: 'work in the way that best utilizes your abilities?' },
@@ -290,6 +310,9 @@ export default function PsychologicalScalePage() {
                   >
                     {opt.value}
                   </Label>
+                  <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
+                    {opt.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -367,9 +390,6 @@ export default function PsychologicalScalePage() {
                   1. Please think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
                 </Label>
                 {renderItemList(MEANING_ITEMS, answers.meaning, setMeaning, AGREEMENT_OPTIONS)}
-                <p className="text-xs text-gray-400">
-                  Scale: 1 — Strongly disagree, 2 — Disagree, 3 — Somewhat disagree, 4 — Neither agree nor disagree, 5 — Somewhat agree, 6 — Agree, 7 — Strongly agree
-                </p>
               </div>
 
               {/* Q2: Psychological Ownership */}
@@ -378,9 +398,6 @@ export default function PsychologicalScalePage() {
                   2. Please continue to think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
                 </Label>
                 {renderItemList(OWNERSHIP_ITEMS, answers.ownership, setOwnership, AGREEMENT_OPTIONS)}
-                <p className="text-xs text-gray-400">
-                  Scale: 1 — Strongly disagree, 2 — Disagree, 3 — Somewhat disagree, 4 — Neither agree nor disagree, 5 — Somewhat agree, 6 — Agree, 7 — Strongly agree
-                </p>
               </div>
 
               {/* Q3: Mental Effort */}
@@ -388,28 +405,26 @@ export default function PsychologicalScalePage() {
                 <Label className="text-base font-medium">
                   3. How much mental effort did you invest in the task you just did? <span className="text-red-500">*</span>
                 </Label>
-                {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500">
                   Mental effort is how much thinking and focused attention you actually put into completing the task—not how difficult the task was or how physically tired you felt.
                 </p>
+                {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
               </div>
 
               {/* Q4: Autonomy */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
                   4. Please indicate how accurately or inaccurately the following statements describe the task you just did. <span className="text-red-500">*</span>
-                  <span className="text-sm text-gray-400 font-normal"> (1 = very inaccurate; 7 = very accurate)</span>
                 </Label>
-                {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AGREEMENT_OPTIONS)}
+                {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AUTONOMY_OPTIONS)}
               </div>
 
               {/* Q5: Skill Utilisation */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
                   5. Thinking about the task you just did: To what extent did the task allow you to... <span className="text-red-500">*</span>
-                  <span className="text-sm text-gray-400 font-normal"> (1 = none; 7 = a great deal)</span>
                 </Label>
-                {renderItemList(SKILL_ITEMS, answers.skill, setSkill, AGREEMENT_OPTIONS)}
+                {renderItemList(SKILL_ITEMS, answers.skill, setSkill, SKILL_OPTIONS)}
               </div>
             </>
           )}
