@@ -164,7 +164,7 @@ export default function ManipulationCheckPage() {
       <Card className="max-w-3xl w-full mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Manipulation Check
+            Supplemental Question
           </CardTitle>
           <p className="text-center text-gray-500 text-sm mt-1">
             Please answer the following question about how you completed the task.
@@ -222,7 +222,7 @@ export default function ManipulationCheckPage() {
             size="lg"
             className="w-full"
           >
-            {isSubmitting ? 'Submitting...' : 'Complete Study'}
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </div>
       </Card>
@@ -231,7 +231,7 @@ export default function ManipulationCheckPage() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Proceed?</DialogTitle>
+            <DialogTitle>Submit?</DialogTitle>
             <DialogDescription>
               Are you sure you want to submit your answers? This will complete the study.
             </DialogDescription>
@@ -241,7 +241,7 @@ export default function ManipulationCheckPage() {
               Cancel
             </Button>
             <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Yes, Complete Study'}
+              {isSubmitting ? 'Submitting...' : 'Yes, Submit'}
             </Button>
           </div>
         </DialogContent>

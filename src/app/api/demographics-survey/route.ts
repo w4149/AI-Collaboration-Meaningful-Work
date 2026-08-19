@@ -7,12 +7,15 @@ export async function POST(request: Request) {
       userId,
       prolificId,
       gender,
+      otherGender,
       raceEthnicity,
+      otherRace,
       education,
       employment,
       income,
       usBorn,
       political,
+      otherPolitical,
     } = await request.json()
 
     console.log('[Demographics Survey] received:', { userId, prolificId, gender, education, employment, income, usBorn, political })
@@ -53,12 +56,15 @@ export async function POST(request: Request) {
 
     const surveyData = {
       gender,
+      other_gender: otherGender || null,
       race_ethnicity: Array.isArray(raceEthnicity) ? raceEthnicity.join(', ') : null,
+      other_race: otherRace || null,
       education,
       employment,
       income: Number(income),
       us_born: usBorn,
       political,
+      other_political: otherPolitical || null,
     }
 
     let saved = false
@@ -88,12 +94,15 @@ export async function POST(request: Request) {
           .from('users')
           .update({
             demo_gender: surveyData.gender,
+            demo_other_gender: surveyData.other_gender,
             demo_race_ethnicity: surveyData.race_ethnicity,
+            demo_other_race: surveyData.other_race,
             demo_education: surveyData.education,
             demo_employment: surveyData.employment,
             demo_income: surveyData.income,
             demo_us_born: surveyData.us_born,
             demo_political: surveyData.political,
+            demo_other_political: surveyData.other_political,
           })
           .eq('id', dbUserId)
 

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -17,6 +18,7 @@ const GENDER_OPTIONS = [
   { value: 'woman', label: 'Woman' },
   { value: 'nonbinary', label: 'Nonbinary / Something else' },
   { value: 'transgender', label: 'Transgender' },
+  { value: 'other', label: 'Other' },
 ]
 
 const RACE_ETHNICITY_OPTIONS = [
@@ -72,12 +74,15 @@ const POLITICAL_OPTIONS = [
 
 type DemographicsAnswers = {
   gender?: string
+  otherGender?: string
   raceEthnicity: string[]
+  otherRace?: string
   education?: string
   employment?: string
   income?: string
   usBorn?: string
   political?: string
+  otherPolitical?: string
 }
 
 export default function DemographicsSurveyPage() {
@@ -118,12 +123,15 @@ export default function DemographicsSurveyPage() {
 
   const allRequiredAnswered = (): boolean => {
     if (!answers.gender) return false
+    if (answers.gender === 'other' && !answers.otherGender?.trim()) return false
     if (answers.raceEthnicity.length === 0) return false
+    if (answers.raceEthnicity.includes('other') && !answers.otherRace?.trim()) return false
     if (!answers.education) return false
     if (!answers.employment) return false
     if (!answers.income) return false
     if (!answers.usBorn) return false
     if (!answers.political) return false
+    if (answers.political === 'other' && !answers.otherPolitical?.trim()) return false
     return true
   }
 
@@ -219,6 +227,18 @@ export default function DemographicsSurveyPage() {
               1. What is your gender? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('gender', answers.gender, GENDER_OPTIONS, setGender)}
+            {answers.gender === 'other' && (
+              <div className="space-y-1">
+                <Label htmlFor="other-gender" className="text-sm text-gray-600">Please specify:</Label>
+                <Input
+                  id="other-gender"
+                  value={answers.otherGender || ''}
+                  onChange={(e) => setAnswers((p) => ({ ...p, otherGender: e.target.value }))}
+                  placeholder="Please specify your gender"
+                  className="max-w-md"
+                />
+              </div>
+            )}
           </div>
 
           {/* Q2: Race and/or ethnicity */}
@@ -243,6 +263,18 @@ export default function DemographicsSurveyPage() {
                 </div>
               ))}
             </div>
+            {answers.raceEthnicity.includes('other') && (
+              <div className="space-y-1">
+                <Label htmlFor="other-race" className="text-sm text-gray-600">Please specify:</Label>
+                <Input
+                  id="other-race"
+                  value={answers.otherRace || ''}
+                  onChange={(e) => setAnswers((p) => ({ ...p, otherRace: e.target.value }))}
+                  placeholder="Please specify your race/ethnicity"
+                  className="max-w-md"
+                />
+              </div>
+            )}
           </div>
 
           {/* Q3: Education */}
@@ -304,6 +336,18 @@ export default function DemographicsSurveyPage() {
               7. Generally speaking, do you usually think of yourself as a Republican, a Democrat, an Independent, or what? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('political', answers.political, POLITICAL_OPTIONS, setPolitical)}
+            {answers.political === 'other' && (
+              <div className="space-y-1">
+                <Label htmlFor="other-political" className="text-sm text-gray-600">Please specify:</Label>
+                <Input
+                  id="other-political"
+                  value={answers.otherPolitical || ''}
+                  onChange={(e) => setAnswers((p) => ({ ...p, otherPolitical: e.target.value }))}
+                  placeholder="Please specify your political affiliation"
+                  className="max-w-md"
+                />
+              </div>
+            )}
           </div>
 
           {error && (
@@ -318,7 +362,7 @@ export default function DemographicsSurveyPage() {
             size="lg"
             className="w-full"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit & Finish'}
+            {isSubmitting ? 'Submitting...' : 'Next'}
           </Button>
         </div>
       </Card>

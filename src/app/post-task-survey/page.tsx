@@ -23,27 +23,27 @@ const TASK_TYPE_LABELS: Record<string, string> = {
 
 // Scale options
 const CLARITY_OPTIONS = [
-  { value: 1, label: '1 — Not at all clear' },
-  { value: 2, label: '2 — Slightly clear' },
-  { value: 3, label: '3 — Moderately clear' },
-  { value: 4, label: '4 — Very clear' },
-  { value: 5, label: '5 — Extremely clear' },
+  { value: 1, label: 'Not at all clear' },
+  { value: 2, label: 'Slightly clear' },
+  { value: 3, label: 'Moderately clear' },
+  { value: 4, label: 'Very clear' },
+  { value: 5, label: 'Extremely clear' },
 ]
 
 const DIFFICULTY_OPTIONS = [
-  { value: 1, label: '1 — Not at all difficult' },
-  { value: 2, label: '2 — Slightly difficult' },
-  { value: 3, label: '3 — Moderately difficult' },
-  { value: 4, label: '4 — Very difficult' },
-  { value: 5, label: '5 — Extremely difficult' },
+  { value: 1, label: 'Not at all difficult' },
+  { value: 2, label: 'Slightly difficult' },
+  { value: 3, label: 'Moderately difficult' },
+  { value: 4, label: 'Very difficult' },
+  { value: 5, label: 'Extremely difficult' },
 ]
 
 const TIME_OPTIONS = [
-  { value: 1, label: '1 — Not at all' },
-  { value: 2, label: '2 — Slightly' },
-  { value: 3, label: '3 — Moderately' },
-  { value: 4, label: '4 — To a great extent' },
-  { value: 5, label: '5 — Completely' },
+  { value: 1, label: 'Not at all' },
+  { value: 2, label: 'Slightly' },
+  { value: 3, label: 'Moderately' },
+  { value: 4, label: 'To a great extent' },
+  { value: 5, label: 'Completely' },
 ]
 
 const AGREEMENT_OPTIONS = [
