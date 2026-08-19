@@ -153,8 +153,8 @@ export default function ManipulationCheckPage() {
           <CardTitle className="text-2xl font-bold text-center">
             Supplemental Questions
           </CardTitle>
-          <p className="text-center text-gray-500 text-sm mt-1">
-            Please answer the following questions. Your compensation will not be affected by your answers. Your honest answers are very important to our study.
+          <p className="text-center text-gray-500 text-md mt-1">
+            Please answer the following questions. Your compensation will <span className="text-red-500">not</span> be affected by your answers. Your honest answers are very important to our study.
           </p>
         </CardHeader>
 
