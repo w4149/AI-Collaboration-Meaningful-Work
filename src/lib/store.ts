@@ -85,6 +85,10 @@ interface AppState {
   demographicsSurveyCompleted: boolean
   setDemographicsSurveyCompleted: (completed: boolean) => void
 
+  // Supplemental question completion flag
+  supplementalQuestionCompleted: boolean
+  setSupplementalQuestionCompleted: (completed: boolean) => void
+
   // Manipulation check completion flag
   manipulationCheckCompleted: boolean
   setManipulationCheckCompleted: (completed: boolean) => void
@@ -190,6 +194,10 @@ export const useAppStore = create<AppState>()(
       demographicsSurveyCompleted: false,
       setDemographicsSurveyCompleted: (demographicsSurveyCompleted) => set({ demographicsSurveyCompleted }),
 
+      // Supplemental question completion flag
+      supplementalQuestionCompleted: false,
+      setSupplementalQuestionCompleted: (supplementalQuestionCompleted) => set({ supplementalQuestionCompleted }),
+
       // Manipulation check completion flag
       manipulationCheckCompleted: false,
       setManipulationCheckCompleted: (manipulationCheckCompleted) => set({ manipulationCheckCompleted }),
@@ -220,6 +228,7 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: false,
         psychologicalScaleCompleted: false,
         demographicsSurveyCompleted: false,
+        supplementalQuestionCompleted: false,
         manipulationCheckCompleted: false,
         attentionCheck1Passed: false,
         attentionCheck2Passed: false,
@@ -242,6 +251,7 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: state.postSurveyCompleted,
         psychologicalScaleCompleted: state.psychologicalScaleCompleted,
         demographicsSurveyCompleted: state.demographicsSurveyCompleted,
+        supplementalQuestionCompleted: state.supplementalQuestionCompleted,
         manipulationCheckCompleted: state.manipulationCheckCompleted,
         attentionCheck1Passed: state.attentionCheck1Passed,
         attentionCheck2Passed: state.attentionCheck2Passed,

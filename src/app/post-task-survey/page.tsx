@@ -94,6 +94,7 @@ export default function PostTaskSurveyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const taskId = useAppStore((s) => s.taskId)
+  const taskType = useAppStore((s) => s.taskType)
   const userId = useAppStore((s) => s.userId)
   const prolificId = useAppStore((s) => s.prolificId)
   const setPostSurveyCompleted = useAppStore((s) => s.setPostSurveyCompleted)
@@ -129,7 +130,7 @@ export default function PostTaskSurveyPage() {
     }
   }, [router, searchParams, setPostSurveyCompleted])
 
-  const taskTypeLabel = taskId ? (TASK_TYPE_LABELS[taskId] || 'tasks') : 'tasks'
+  const taskTypeLabel = taskType ? (TASK_TYPE_LABELS[taskType] || 'tasks') : 'tasks'
 
   const allRequiredAnswered = (): boolean => {
     if (!answers.clarity) return false

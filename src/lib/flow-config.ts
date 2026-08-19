@@ -14,12 +14,13 @@ export const FLOW_CONFIG = {
   psychologicalScale: true,
   postSurvey: true,
   demographicsSurvey: true,
+  supplementalQuestion: true,
   manipulationCheck: true,
 } as const
 
 export type StepKey = keyof typeof FLOW_CONFIG
 
-const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task', 'psychologicalScale', 'postSurvey', 'demographicsSurvey', 'manipulationCheck']
+const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task', 'psychologicalScale', 'postSurvey', 'demographicsSurvey', 'supplementalQuestion', 'manipulationCheck']
 
 export const STEP_ROUTES: Record<StepKey, string> = {
   welcome: '/',
@@ -31,6 +32,7 @@ export const STEP_ROUTES: Record<StepKey, string> = {
   psychologicalScale: '/psychological-scale',
   postSurvey: '/post-task-survey',
   demographicsSurvey: '/demographics-survey',
+  supplementalQuestion: '/supplemental-question',
   manipulationCheck: '/manipulation-check',
 }
 
@@ -54,6 +56,9 @@ const SKIP_SIDE_EFFECTS: Partial<Record<StepKey, () => void>> = {
   },
   demographicsSurvey: () => {
     sessionStorage.setItem('demographicsSurveyCompleted', 'true')
+  },
+  supplementalQuestion: () => {
+    sessionStorage.setItem('supplementalQuestionCompleted', 'true')
   },
   manipulationCheck: () => {
     sessionStorage.setItem('manipulationCheckCompleted', 'true')

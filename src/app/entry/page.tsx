@@ -309,7 +309,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>{g1Max} minutes</strong> to complete the task and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
+                    You will have <strong>up to {g1Max} minutes</strong> to complete the task and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
