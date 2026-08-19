@@ -20,7 +20,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid check type. Must be 1 or 2.' }, { status: 400 })
     }
 
-    // Build the UPSERT payload — one row per user_id
     const upsertPayload: Record<string, unknown> = {
       user_id: userId,
       updated_at: new Date().toISOString(),
@@ -30,33 +29,36 @@ export async function POST(request: Request) {
     if (groupType) upsertPayload.group_type = groupType
 
     if (checkType === 1) {
-      // If this is a wrong answer, mark ever_failed and increment count
-      // If correct, store the final correct answer and timestamp
       if (!isCorrect) {
-        // We need to read existing row to increment count
-        const { data: existing } = await supabaseServer
+        const { data: existing, error: readError } = await supabaseServer
           .from('attention_checks')
           .select('check1_ever_failed, check1_fail_count')
           .eq('user_id', userId)
-          .maybeSingle()
+          .single()
+
+        if (readError) {
+          console.warn('attention_checks read (check1) — table may need migration 016:', readError.message)
+        }
 
         const currentFailCount = existing?.check1_fail_count ?? 0
         upsertPayload.check1_ever_failed = true
         upsertPayload.check1_fail_count = currentFailCount + 1
       } else {
-        // Correct answer
         upsertPayload.check1_correct_answer = answer
         upsertPayload.check1_final_answer = answer
         upsertPayload.check1_completed_at = new Date().toISOString()
       }
     } else {
-      // checkType === 2
       if (!isCorrect) {
-        const { data: existing } = await supabaseServer
+        const { data: existing, error: readError } = await supabaseServer
           .from('attention_checks')
           .select('check2_ever_failed, check2_fail_count')
           .eq('user_id', userId)
-          .maybeSingle()
+          .single()
+
+        if (readError) {
+          console.warn('attention_checks read (check2) — table may need migration 016:', readError.message)
+        }
 
         const currentFailCount = existing?.check2_fail_count ?? 0
         upsertPayload.check2_ever_failed = true
@@ -68,18 +70,19 @@ export async function POST(request: Request) {
       }
     }
 
-    const { error } = await supabaseServer
+    const { error: upsertError } = await supabaseServer
       .from('attention_checks')
       .upsert(upsertPayload, { onConflict: 'user_id' })
 
-    if (error) {
-      console.error('Error upserting attention check:', error)
+    if (upsertError) {
+      console.error('attention_checks UPSERT failed:', upsertError.message, 'payload:', upsertPayload)
       return NextResponse.json({ error: 'Failed to save attention check' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error in attention checks API:', error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('attention_checks API error:', message)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -11,7 +11,6 @@ import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 import { encodedQuery } from '@/lib/url-cipher'
 
-// 7-point agreement scale
 const AGREEMENT_OPTIONS = [
   { value: 1, label: 'Strongly disagree' },
   { value: 2, label: 'Disagree' },
@@ -22,7 +21,6 @@ const AGREEMENT_OPTIONS = [
   { value: 7, label: 'Strongly agree' },
 ]
 
-// 7-point mental effort scale
 const MENTAL_EFFORT_OPTIONS = [
   { value: 1, label: 'Extremely low' },
   { value: 2, label: 'Very low' },
@@ -33,7 +31,6 @@ const MENTAL_EFFORT_OPTIONS = [
   { value: 7, label: 'Extremely high' },
 ]
 
-// Q1: Meaning items
 const MEANING_ITEMS = [
   { id: 'meaningful', text: 'This task was meaningful to me.' },
   { id: 'contributed_growth', text: 'This task contributed to my growth at work.' },
@@ -41,7 +38,6 @@ const MEANING_ITEMS = [
   { id: 'worthwhile', text: 'This task was worthwhile to me.' },
 ]
 
-// Q2: Psychological ownership items
 const OWNERSHIP_ITEMS = [
   { id: 'my_task_output', text: 'The task output is MY task output.' },
   { id: 'sense_of_belonging', text: 'I sense that the output of the task belongs to me.' },
@@ -50,7 +46,6 @@ const OWNERSHIP_ITEMS = [
   { id: 'hard_to_think_mine', text: 'It is hard for me to think about this task as MINE.' },
 ]
 
-// Q4: Autonomy items
 const AUTONOMY_OPTIONS = [
   { value: 1, label: 'Very inaccurate' },
   { value: 2, label: 'Somewhat inaccurate' },
@@ -68,7 +63,6 @@ const AUTONOMY_ITEMS = [
   { id: 'personal_initiative', text: 'I could use my personal initiative or judgment in carrying out the task.' },
 ]
 
-// Q5: Skill utilisation items
 const SKILL_OPTIONS = [
   { value: 1, label: 'Not at all' },
   { value: 2, label: 'Very little' },
@@ -91,6 +85,7 @@ type PsychologicalAnswers = {
   ownership: Record<string, number | undefined>
   mentalEffort?: number
   autonomy: Record<string, number | undefined>
+  attentionCheck?: number
   skill: Record<string, number | undefined>
 }
 
@@ -101,14 +96,6 @@ export default function PsychologicalScalePage() {
   const userId = useAppStore((s) => s.userId)
   const prolificId = useAppStore((s) => s.prolificId)
   const setPsychologicalScaleCompleted = useAppStore((s) => s.setPsychologicalScaleCompleted)
-  const attentionCheck1FailCount = useAppStore((s) => s.attentionCheck1FailCount)
-  const incrementAttentionCheck2Fail = useAppStore((s) => s.incrementAttentionCheck2Fail)
-
-  // Attention check state
-  const [attentionAnswer, setAttentionAnswer] = useState<number | undefined>(undefined)
-  const [attentionPassed, setAttentionPassed] = useState(false)
-  const [showAttentionFailDialog, setShowAttentionFailDialog] = useState(false)
-  const [showAttentionTwoFailsDialog, setShowAttentionTwoFailsDialog] = useState(false)
 
   const [answers, setAnswers] = useState<PsychologicalAnswers>({
     meaning: {},
@@ -121,7 +108,6 @@ export default function PsychologicalScalePage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
 
-  // Block browser back navigation
   useEffect(() => {
     const preventBack = (e: PopStateEvent) => {
       e.preventDefault()
@@ -135,7 +121,6 @@ export default function PsychologicalScalePage() {
     }
   }, [])
 
-  // Skip when disabled
   useEffect(() => {
     if (!FLOW_CONFIG.psychologicalScale) {
       const skip = getSkipRouteWithParams('psychologicalScale', searchParams)
@@ -155,36 +140,13 @@ export default function PsychologicalScalePage() {
         body: JSON.stringify({
           userId,
           checkType: 2,
-          answer: String(attentionAnswer),
+          answer: String(answers.attentionCheck ?? ''),
           isCorrect,
         }),
       })
     } catch (e) {
       console.error('Failed to save attention check:', e)
     }
-  }
-
-  const handleAttentionCheck = () => {
-    if (attentionAnswer === undefined) {
-      alert('Please select an answer first.')
-      return
-    }
-    const isCorrect = attentionAnswer === 7 // Strongly agree
-    if (!isCorrect) {
-      incrementAttentionCheck2Fail()
-      saveAttentionCheck(false)
-      if (attentionCheck1FailCount > 0) {
-        // Both attention checks failed
-        setShowAttentionTwoFailsDialog(true)
-      } else {
-        // Only this one failed, first one passed
-        setShowAttentionFailDialog(true)
-      }
-      return
-    }
-    // Correct answer
-    saveAttentionCheck(true)
-    setAttentionPassed(true)
   }
 
   const allRequiredAnswered = (): boolean => {
@@ -198,6 +160,7 @@ export default function PsychologicalScalePage() {
     for (const item of AUTONOMY_ITEMS) {
       if (answers.autonomy[item.id] === undefined) return false
     }
+    if (answers.attentionCheck === undefined) return false
     for (const item of SKILL_ITEMS) {
       if (answers.skill[item.id] === undefined) return false
     }
@@ -205,10 +168,6 @@ export default function PsychologicalScalePage() {
   }
 
   const handleNext = () => {
-    if (!attentionPassed) {
-      alert('Please complete the attention check first.')
-      return
-    }
     if (!allRequiredAnswered()) {
       setError('Please answer all required questions before proceeding.')
       return
@@ -225,6 +184,12 @@ export default function PsychologicalScalePage() {
     const qs = eq ? eq : ''
 
     try {
+      const attentionAnswer = answers.attentionCheck
+      if (attentionAnswer !== undefined) {
+        const isCorrect = attentionAnswer === 7
+        saveAttentionCheck(isCorrect)
+      }
+
       const response = await fetch('/api/psychological-scale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -257,6 +222,8 @@ export default function PsychologicalScalePage() {
     setAnswers((p) => ({ ...p, mentalEffort: Number(v) }))
   const setAutonomy = (id: string, v: string) =>
     setAnswers((p) => ({ ...p, autonomy: { ...p.autonomy, [id]: Number(v) } }))
+  const setAttention = (v: string) =>
+    setAnswers((p) => ({ ...p, attentionCheck: Number(v) }))
   const setSkill = (id: string, v: string) =>
     setAnswers((p) => ({ ...p, skill: { ...p.skill, [id]: Number(v) } }))
 
@@ -335,99 +302,56 @@ export default function PsychologicalScalePage() {
         </CardHeader>
 
         <CardContent className="space-y-8 pb-2">
-          {/* Attention Check (must be completed first) */}
-          <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-5 space-y-4">
-            <Label className="text-sm font-bold text-amber-800">
-              ⚠ Attention Check
+          {/* Q1: Meaning */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              1. Please think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
             </Label>
-            <p className="text-sm text-gray-700">
-              Please select <strong>&quot;Strongly agree&quot;</strong> below.
-            </p>
-            <RadioGroup
-              value={attentionAnswer !== undefined ? String(attentionAnswer) : ''}
-              onValueChange={(v) => setAttentionAnswer(Number(v))}
-              disabled={attentionPassed}
-            >
-              <div className="flex justify-between gap-1">
-                {AGREEMENT_OPTIONS.map((opt) => (
-                  <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
-                    <RadioGroupItem value={String(opt.value)} id={`att-check-${opt.value}`} className="sr-only peer" />
-                    <Label
-                      htmlFor={`att-check-${opt.value}`}
-                      className={`cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border text-[11px] font-medium transition-colors ${
-                        attentionPassed
-                          ? opt.value === 7
-                            ? 'border-green-500 bg-green-500 text-white'
-                            : 'border-gray-200 text-gray-400'
-                          : 'border-gray-300 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground'
-                      }`}
-                    >
-                      {opt.value}
-                    </Label>
-                    <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
-                      {opt.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </RadioGroup>
-            {!attentionPassed && (
-              <Button onClick={handleAttentionCheck} size="sm" variant="outline">
-                Submit Answer
-              </Button>
-            )}
-            {attentionPassed && (
-              <p className="text-green-600 text-sm font-medium">✓ Attention check passed. Please continue with the survey below.</p>
-            )}
+            {renderItemList(MEANING_ITEMS, answers.meaning, setMeaning, AGREEMENT_OPTIONS)}
           </div>
 
-          {/* Main survey questions (only visible after attention check passes) */}
-          {attentionPassed && (
-            <>
-              {/* Q1: Meaning */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  1. Please think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
-                </Label>
-                {renderItemList(MEANING_ITEMS, answers.meaning, setMeaning, AGREEMENT_OPTIONS)}
-              </div>
+          {/* Q2: Psychological Ownership */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              2. Please continue to think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
+            </Label>
+            {renderItemList(OWNERSHIP_ITEMS, answers.ownership, setOwnership, AGREEMENT_OPTIONS)}
+          </div>
 
-              {/* Q2: Psychological Ownership */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  2. Please continue to think about the task you just did, and indicate to what extent you agree or disagree with the following statements. <span className="text-red-500">*</span>
-                </Label>
-                {renderItemList(OWNERSHIP_ITEMS, answers.ownership, setOwnership, AGREEMENT_OPTIONS)}
-              </div>
+          {/* Q3: Mental Effort */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              3. How much mental effort did you invest in the task you just did? <span className="text-red-500">*</span>
+            </Label>
+            <p className="text-xs text-gray-500">
+              Mental effort is how much thinking and focused attention you actually put into completing the task—not how difficult the task was or how physically tired you felt.
+            </p>
+            {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
+          </div>
 
-              {/* Q3: Mental Effort */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  3. How much mental effort did you invest in the task you just did? <span className="text-red-500">*</span>
-                </Label>
-                <p className="text-xs text-gray-500">
-                  Mental effort is how much thinking and focused attention you actually put into completing the task—not how difficult the task was or how physically tired you felt.
-                </p>
-                {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
-              </div>
+          {/* Q4: Autonomy */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              4. Please indicate how accurately or inaccurately the following statements describe the task you just did. <span className="text-red-500">*</span>
+            </Label>
+            {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AUTONOMY_OPTIONS)}
+          </div>
 
-              {/* Q4: Autonomy */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  4. Please indicate how accurately or inaccurately the following statements describe the task you just did. <span className="text-red-500">*</span>
-                </Label>
-                {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AUTONOMY_OPTIONS)}
-              </div>
+          {/* Q5: Attention check (silent, no special highlighting) */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              5. This is an attention check question. Please select <strong>&quot;Strongly agree&quot;</strong> below. <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('attentionCheck', answers.attentionCheck, AGREEMENT_OPTIONS, setAttention)}
+          </div>
 
-              {/* Q5: Skill Utilisation */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  5. Thinking about the task you just did: To what extent did the task allow you to... <span className="text-red-500">*</span>
-                </Label>
-                {renderItemList(SKILL_ITEMS, answers.skill, setSkill, SKILL_OPTIONS)}
-              </div>
-            </>
-          )}
+          {/* Q6: Skill Utilisation */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              6. Thinking about the task you just did: To what extent did the task allow you to... <span className="text-red-500">*</span>
+            </Label>
+            {renderItemList(SKILL_ITEMS, answers.skill, setSkill, SKILL_OPTIONS)}
+          </div>
 
           {error && (
             <p className="text-sm text-red-500 text-center">{error}</p>
@@ -437,7 +361,7 @@ export default function PsychologicalScalePage() {
         <div className="px-6 pb-6">
           <Button
             onClick={handleNext}
-            disabled={isSubmitting || !attentionPassed}
+            disabled={isSubmitting}
             size="lg"
             className="w-full"
           >
@@ -461,48 +385,6 @@ export default function PsychologicalScalePage() {
             </Button>
             <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Yes, Proceed'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Attention Check Failed Dialog (first check passed, this one failed) */}
-      <Dialog open={showAttentionFailDialog} onOpenChange={setShowAttentionFailDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Attention Check Failed</DialogTitle>
-            <DialogDescription>
-              Your answer is incorrect. Please read the task requirements carefully and try again.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end pt-4">
-            <Button onClick={() => {
-              setShowAttentionFailDialog(false)
-              setAttentionAnswer(undefined)
-            }}>
-              Try Again
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Both Attention Checks Failed Dialog */}
-      <Dialog open={showAttentionTwoFailsDialog} onOpenChange={setShowAttentionTwoFailsDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>⚠ Attention Check Warning</DialogTitle>
-            <DialogDescription>
-              You have now failed two attention checks. Your task quality will be evaluated, and this may affect the compensation you can receive.
-              <br /><br />
-              Please continue with the study.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end pt-4">
-            <Button onClick={() => {
-              setShowAttentionTwoFailsDialog(false)
-              setAttentionPassed(true) // Allow them to continue despite failing
-            }}>
-              Continue
             </Button>
           </div>
         </DialogContent>
