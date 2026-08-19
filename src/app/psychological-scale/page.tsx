@@ -16,7 +16,7 @@ const AGREEMENT_OPTIONS = [
   { value: 1, label: 'Strongly disagree' },
   { value: 2, label: 'Disagree' },
   { value: 3, label: 'Somewhat disagree' },
-  { value: 4, label: 'Neither agree nor disagree' },
+  { value: 4, label: 'Neither' },
   { value: 5, label: 'Somewhat agree' },
   { value: 6, label: 'Agree' },
   { value: 7, label: 'Strongly agree' },
@@ -24,13 +24,13 @@ const AGREEMENT_OPTIONS = [
 
 // 7-point mental effort scale
 const MENTAL_EFFORT_OPTIONS = [
-  { value: 1, label: '1 — Extremely low' },
-  { value: 2, label: '2 — Very low' },
-  { value: 3, label: '3 — Low' },
-  { value: 4, label: '4 — Moderate' },
-  { value: 5, label: '5 — High' },
-  { value: 6, label: '6 — Very high' },
-  { value: 7, label: '7 — Extremely high' },
+  { value: 1, label: 'Extremely low' },
+  { value: 2, label: 'Very low' },
+  { value: 3, label: 'Low' },
+  { value: 4, label: 'Moderate' },
+  { value: 5, label: 'High' },
+  { value: 6, label: 'Very high' },
+  { value: 7, label: 'Extremely high' },
 ]
 
 // Q1: Meaning items
@@ -267,18 +267,18 @@ export default function PsychologicalScalePage() {
     onChange: (v: string) => void
   ) => (
     <RadioGroup value={value !== undefined ? String(value) : ''} onValueChange={onChange}>
-      <div className="flex justify-between gap-1">
+      <div className="flex justify-between gap-0.5">
         {options.map((opt) => (
           <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
             <RadioGroupItem value={String(opt.value)} id={`${name}-${opt.value}`} className="sr-only peer" />
             <Label
               htmlFor={`${name}-${opt.value}`}
-              className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+              className="cursor-pointer flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
             >
               {opt.value}
             </Label>
-            <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
-              {opt.label.replace(/^\d+\s*[—-]\s*/, '')}
+            <span className="text-[9px] text-gray-500 text-center leading-tight whitespace-nowrap">
+              {opt.label}
             </span>
           </div>
         ))}
@@ -300,17 +300,17 @@ export default function PsychologicalScalePage() {
             value={answers[item.id] !== undefined ? String(answers[item.id]) : ''}
             onValueChange={(v) => setter(item.id, v)}
           >
-            <div className="flex justify-between gap-1">
+            <div className="flex justify-between gap-0.5">
               {scaleOptions.map((opt) => (
                 <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
                   <RadioGroupItem value={String(opt.value)} id={`${item.id}-${opt.value}`} className="sr-only peer" />
                   <Label
                     htmlFor={`${item.id}-${opt.value}`}
-                    className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+                    className="cursor-pointer flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
                   >
                     {opt.value}
                   </Label>
-                  <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
+                  <span className="text-[9px] text-gray-500 text-center leading-tight whitespace-nowrap">
                     {opt.label}
                   </span>
                 </div>

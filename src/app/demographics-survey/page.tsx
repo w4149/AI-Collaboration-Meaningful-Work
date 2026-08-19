@@ -153,7 +153,7 @@ export default function DemographicsSurveyPage() {
 
       if (response.ok) {
         setDemographicsSurveyCompleted(true)
-        router.replace(`/thank-you${qs}`)
+        router.replace(`/manipulation-check${qs}`)
       } else {
         setError('Failed to save your responses. Please try again.')
       }

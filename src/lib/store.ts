@@ -85,6 +85,10 @@ interface AppState {
   demographicsSurveyCompleted: boolean
   setDemographicsSurveyCompleted: (completed: boolean) => void
 
+  // Manipulation check completion flag
+  manipulationCheckCompleted: boolean
+  setManipulationCheckCompleted: (completed: boolean) => void
+
   // Attention check tracking
   attentionCheck1Passed: boolean
   setAttentionCheck1Passed: (passed: boolean) => void
@@ -186,6 +190,10 @@ export const useAppStore = create<AppState>()(
       demographicsSurveyCompleted: false,
       setDemographicsSurveyCompleted: (demographicsSurveyCompleted) => set({ demographicsSurveyCompleted }),
 
+      // Manipulation check completion flag
+      manipulationCheckCompleted: false,
+      setManipulationCheckCompleted: (manipulationCheckCompleted) => set({ manipulationCheckCompleted }),
+
       // Attention check tracking
       attentionCheck1Passed: false,
       setAttentionCheck1Passed: (passed) => set({ attentionCheck1Passed: passed }),
@@ -212,6 +220,7 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: false,
         psychologicalScaleCompleted: false,
         demographicsSurveyCompleted: false,
+        manipulationCheckCompleted: false,
         attentionCheck1Passed: false,
         attentionCheck2Passed: false,
         attentionCheck1FailCount: 0,
@@ -233,6 +242,7 @@ export const useAppStore = create<AppState>()(
         postSurveyCompleted: state.postSurveyCompleted,
         psychologicalScaleCompleted: state.psychologicalScaleCompleted,
         demographicsSurveyCompleted: state.demographicsSurveyCompleted,
+        manipulationCheckCompleted: state.manipulationCheckCompleted,
         attentionCheck1Passed: state.attentionCheck1Passed,
         attentionCheck2Passed: state.attentionCheck2Passed,
         attentionCheck1FailCount: state.attentionCheck1FailCount,

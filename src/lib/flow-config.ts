@@ -14,11 +14,12 @@ export const FLOW_CONFIG = {
   psychologicalScale: true,
   postSurvey: true,
   demographicsSurvey: true,
+  manipulationCheck: true,
 } as const
 
 export type StepKey = keyof typeof FLOW_CONFIG
 
-const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task', 'psychologicalScale', 'postSurvey', 'demographicsSurvey']
+const STEP_ORDER: StepKey[] = ['welcome', 'screen', 'consent', 'preSurvey', 'entry', 'task', 'psychologicalScale', 'postSurvey', 'demographicsSurvey', 'manipulationCheck']
 
 export const STEP_ROUTES: Record<StepKey, string> = {
   welcome: '/',
@@ -30,6 +31,7 @@ export const STEP_ROUTES: Record<StepKey, string> = {
   psychologicalScale: '/psychological-scale',
   postSurvey: '/post-task-survey',
   demographicsSurvey: '/demographics-survey',
+  manipulationCheck: '/manipulation-check',
 }
 
 /** Skip flags that must be set when bypassing a step, so downstream guards don't redirect back. */
@@ -52,6 +54,9 @@ const SKIP_SIDE_EFFECTS: Partial<Record<StepKey, () => void>> = {
   },
   demographicsSurvey: () => {
     sessionStorage.setItem('demographicsSurveyCompleted', 'true')
+  },
+  manipulationCheck: () => {
+    sessionStorage.setItem('manipulationCheckCompleted', 'true')
   },
 }
 

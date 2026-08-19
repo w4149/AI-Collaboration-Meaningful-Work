@@ -47,13 +47,13 @@ const TIME_OPTIONS = [
 ]
 
 const AGREEMENT_OPTIONS = [
-  { value: 1, label: '1 — Strongly disagree' },
-  { value: 2, label: '2 — Disagree' },
-  { value: 3, label: '3 — Somewhat disagree' },
-  { value: 4, label: '4 — Neither agree nor disagree' },
-  { value: 5, label: '5 — Somewhat agree' },
-  { value: 6, label: '6 — Agree' },
-  { value: 7, label: '7 — Strongly agree' },
+  { value: 1, label: 'Strongly disagree' },
+  { value: 2, label: 'Disagree' },
+  { value: 3, label: 'Somewhat disagree' },
+  { value: 4, label: 'Neither' },
+  { value: 5, label: 'Somewhat agree' },
+  { value: 6, label: 'Agree' },
+  { value: 7, label: 'Strongly agree' },
 ]
 
 const FAMILIARITY_OPTIONS = [
@@ -197,18 +197,18 @@ export default function PostTaskSurveyPage() {
     onChange: (v: string) => void
   ) => (
     <RadioGroup value={value !== undefined ? String(value) : ''} onValueChange={onChange}>
-      <div className="flex justify-between gap-1">
+      <div className="flex justify-between gap-0.5">
         {options.map((opt) => (
           <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
             <RadioGroupItem value={String(opt.value)} id={`${name}-${opt.value}`} className="sr-only peer" />
             <Label
               htmlFor={`${name}-${opt.value}`}
-              className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-xs font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+              className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
             >
               {opt.value}
             </Label>
-            <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
-              {opt.label.replace(/^\d+\s*[—-]\s*/, '')}
+            <span className="text-[9px] text-gray-500 text-center leading-tight whitespace-nowrap">
+              {opt.label}
             </span>
           </div>
         ))}
@@ -280,18 +280,18 @@ export default function PostTaskSurveyPage() {
                     value={answers.agreement[item.id] !== undefined ? String(answers.agreement[item.id]) : ''}
                     onValueChange={(v) => setAgreement(item.id, v)}
                   >
-                    <div className="flex justify-between gap-1">
+                    <div className="flex justify-between gap-0.5">
                       {AGREEMENT_OPTIONS.map((opt) => (
                         <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
                           <RadioGroupItem value={String(opt.value)} id={`${item.id}-${opt.value}`} className="sr-only peer" />
                           <Label
                             htmlFor={`${item.id}-${opt.value}`}
-                            className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
+                            className="cursor-pointer flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
                           >
                             {opt.value}
                           </Label>
-                          <span className="text-[10px] text-gray-500 text-center leading-tight px-0.5">
-                            {opt.label.replace(/^\d+\s*[—-]\s*/, '')}
+                          <span className="text-[9px] text-gray-500 text-center leading-tight whitespace-nowrap">
+                            {opt.label}
                           </span>
                         </div>
                       ))}
