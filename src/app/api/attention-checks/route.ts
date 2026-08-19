@@ -13,6 +13,8 @@ export async function POST(request: Request) {
       isCorrect,
     } = body
 
+    console.log('[attention-checks] Received request:', JSON.stringify({ userId, checkType, groupType, answer, isCorrect, taskId }))
+
     if (!userId) {
       return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
     }
@@ -75,6 +77,7 @@ export async function POST(request: Request) {
     }
 
     // Step 3: UPSERT
+    console.log('[attention-checks] Upsert payload:', JSON.stringify(upsertPayload))
     const { error: upsertError, data: upsertData } = await supabaseServer
       .from('attention_checks')
       .upsert(upsertPayload, { onConflict: 'user_id' })
@@ -88,6 +91,7 @@ export async function POST(request: Request) {
       )
     }
 
+    console.log('[attention-checks] Upsert result:', JSON.stringify(upsertData))
     console.log('[attention-checks] Saved for user:', userId, 'checkType:', checkType, 'isCorrect:', isCorrect)
     return NextResponse.json({ success: true, data: upsertData })
   } catch (error: unknown) {
