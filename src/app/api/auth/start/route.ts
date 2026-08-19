@@ -319,7 +319,7 @@ I raised it with a staff member, and all I got back was, "We're pretty swamped 
 
 I've always trusted Lucky Coffee and been a regular here. This really let me down, and I don't think I'll be back. Either way, I deserve an explanation.
 
-<div align="right">——Tony</div>
+<div align="right">Tony</div>
 
 ---`,
 
