@@ -123,7 +123,7 @@ export default function EntryPage() {
 
   const saveAttentionCheck = async (isCorrect: boolean) => {
     try {
-      await fetch('/api/attention-checks', {
+      const res = await fetch('/api/attention-checks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -134,6 +134,10 @@ export default function EntryPage() {
           isCorrect,
         }),
       })
+      if (!res.ok) {
+        const errText = await res.text()
+        console.error('Attention check save failed:', res.status, errText)
+      }
     } catch (e) {
       console.error('Failed to save attention check:', e)
     }
@@ -158,7 +162,7 @@ export default function EntryPage() {
         // Save the failed attempt BEFORE clearing the answer
         if (userId) {
           try {
-            await fetch('/api/attention-checks', {
+            const res = await fetch('/api/attention-checks', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -169,6 +173,9 @@ export default function EntryPage() {
                 isCorrect: false,
               }),
             })
+            if (!res.ok) {
+              console.error('Attention check save failed:', res.status, await res.text())
+            }
           } catch (e) {
             console.error('Failed to save attention check:', e)
           }
@@ -223,7 +230,7 @@ export default function EntryPage() {
           const failures = preUserIdFailuresRef.current
           for (let i = 0; i < failures.count; i++) {
             try {
-              await fetch('/api/attention-checks', {
+              const res = await fetch('/api/attention-checks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -234,6 +241,9 @@ export default function EntryPage() {
                   isCorrect: false,
                 }),
               })
+              if (!res.ok) {
+                console.error('Pre-userId attention check save failed:', res.status, await res.text())
+              }
             } catch (e) {
               console.error('Failed to save pre-userId attention check failure:', e)
             }
@@ -244,7 +254,7 @@ export default function EntryPage() {
         // Save attention check with the real user ID
         if (attentionCheckData && data.userId) {
           try {
-            await fetch('/api/attention-checks', {
+            const res = await fetch('/api/attention-checks', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -255,6 +265,9 @@ export default function EntryPage() {
                 isCorrect: attentionCheckData.isCorrect,
               }),
             })
+            if (!res.ok) {
+              console.error('Attention check save failed:', res.status, await res.text())
+            }
           } catch (e) {
             console.error('Failed to save attention check:', e)
           }

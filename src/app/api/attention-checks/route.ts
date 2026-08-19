@@ -3,6 +3,7 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json()
     const {
       userId,
       taskId,
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
       groupType,
       answer,
       isCorrect,
-    } = await request.json()
+    } = body
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
@@ -18,6 +19,54 @@ export async function POST(request: Request) {
 
     if (!checkType || (checkType !== 1 && checkType !== 2)) {
       return NextResponse.json({ error: 'Invalid check type. Must be 1 or 2.' }, { status: 400 })
+    }
+
+    // Step 1: Verify user exists in DB (FK constraint)
+    const { data: userExists, error: userCheckError } = await supabaseServer
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .single()
+
+    if (userCheckError || !userExists) {
+      console.error('[attention-checks] User not found in users table:', userId, userCheckError?.message)
+      return NextResponse.json(
+        { error: `User not found (id=${userId}). User must exist in users table before saving attention check.` },
+        { status: 400 }
+      )
+    }
+
+    // Step 2: Read existing row (if any) to get current fail counts
+    let existingCheck: { fail_count: number } | null = null
+
+    if (checkType === 1) {
+      const { data, error } = await supabaseServer
+        .from('attention_checks')
+        .select('check1_fail_count')
+        .eq('user_id', userId)
+        .single()
+      if (error) {
+        console.error('[attention-checks] Read existing failed — migration 016 may not be deployed:', error.message)
+        return NextResponse.json(
+          { error: 'Database schema mismatch. Please deploy migration 016_rebuild_attention_checks first.' },
+          { status: 500 }
+        )
+      }
+      existingCheck = { fail_count: data?.check1_fail_count ?? 0 }
+    } else {
+      const { data, error } = await supabaseServer
+        .from('attention_checks')
+        .select('check2_fail_count')
+        .eq('user_id', userId)
+        .single()
+      if (error) {
+        console.error('[attention-checks] Read existing failed — migration 016 may not be deployed:', error.message)
+        return NextResponse.json(
+          { error: 'Database schema mismatch. Please deploy migration 016_rebuild_attention_checks first.' },
+          { status: 500 }
+        )
+      }
+      existingCheck = { fail_count: data?.check2_fail_count ?? 0 }
     }
 
     const upsertPayload: Record<string, unknown> = {
@@ -29,60 +78,50 @@ export async function POST(request: Request) {
     if (groupType) upsertPayload.group_type = groupType
 
     if (checkType === 1) {
+      const currentFailCount = existingCheck?.fail_count ?? 0
       if (!isCorrect) {
-        const { data: existing, error: readError } = await supabaseServer
-          .from('attention_checks')
-          .select('check1_ever_failed, check1_fail_count')
-          .eq('user_id', userId)
-          .single()
-
-        if (readError) {
-          console.warn('attention_checks read (check1) — table may need migration 016:', readError.message)
-        }
-
-        const currentFailCount = existing?.check1_fail_count ?? 0
         upsertPayload.check1_ever_failed = true
         upsertPayload.check1_fail_count = currentFailCount + 1
+        console.log(`[attention-checks] check1 FAILED — fail_count: ${currentFailCount + 1}`)
       } else {
         upsertPayload.check1_correct_answer = answer
         upsertPayload.check1_final_answer = answer
         upsertPayload.check1_completed_at = new Date().toISOString()
+        console.log(`[attention-checks] check1 PASSED`)
       }
     } else {
+      const currentFailCount = existingCheck?.fail_count ?? 0
       if (!isCorrect) {
-        const { data: existing, error: readError } = await supabaseServer
-          .from('attention_checks')
-          .select('check2_ever_failed, check2_fail_count')
-          .eq('user_id', userId)
-          .single()
-
-        if (readError) {
-          console.warn('attention_checks read (check2) — table may need migration 016:', readError.message)
-        }
-
-        const currentFailCount = existing?.check2_fail_count ?? 0
         upsertPayload.check2_ever_failed = true
         upsertPayload.check2_fail_count = currentFailCount + 1
+        console.log(`[attention-checks] check2 FAILED — fail_count: ${currentFailCount + 1}`)
       } else {
         upsertPayload.check2_correct_answer = answer
         upsertPayload.check2_final_answer = answer
         upsertPayload.check2_completed_at = new Date().toISOString()
+        console.log(`[attention-checks] check2 PASSED`)
       }
     }
 
-    const { error: upsertError } = await supabaseServer
+    // Step 3: UPSERT
+    const { error: upsertError, data: upsertData } = await supabaseServer
       .from('attention_checks')
       .upsert(upsertPayload, { onConflict: 'user_id' })
+      .select()
 
     if (upsertError) {
-      console.error('attention_checks UPSERT failed:', upsertError.message, 'payload:', upsertPayload)
-      return NextResponse.json({ error: 'Failed to save attention check' }, { status: 500 })
+      console.error('[attention-checks] UPSERT failed:', upsertError.message, 'payload:', JSON.stringify(upsertPayload))
+      return NextResponse.json(
+        { error: `UPSERT failed: ${upsertError.message}. Migration 016 may be required.` },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ success: true })
+    console.log('[attention-checks] Saved successfully for user:', userId, 'checkType:', checkType, 'isCorrect:', isCorrect)
+    return NextResponse.json({ success: true, data: upsertData })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error)
-    console.error('attention_checks API error:', message)
+    console.error('[attention-checks] API error:', message)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

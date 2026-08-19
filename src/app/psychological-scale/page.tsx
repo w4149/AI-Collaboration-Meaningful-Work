@@ -132,9 +132,9 @@ export default function PsychologicalScalePage() {
     }
   }, [router, searchParams, setPsychologicalScaleCompleted])
 
-  const saveAttentionCheck = async (isCorrect: boolean) => {
+  const saveAttentionCheck = async (isCorrect: boolean): Promise<boolean> => {
     try {
-      await fetch('/api/attention-checks', {
+      const res = await fetch('/api/attention-checks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -144,8 +144,15 @@ export default function PsychologicalScalePage() {
           isCorrect,
         }),
       })
+      if (!res.ok) {
+        const errText = await res.text()
+        console.error('Attention check save failed:', res.status, errText)
+        return false
+      }
+      return true
     } catch (e) {
       console.error('Failed to save attention check:', e)
+      return false
     }
   }
 
@@ -187,7 +194,10 @@ export default function PsychologicalScalePage() {
       const attentionAnswer = answers.attentionCheck
       if (attentionAnswer !== undefined) {
         const isCorrect = attentionAnswer === 7
-        saveAttentionCheck(isCorrect)
+        const acRes = await saveAttentionCheck(isCorrect)
+        if (!acRes) {
+          console.warn('Attention check save failed, continuing anyway')
+        }
       }
 
       const response = await fetch('/api/psychological-scale', {
