@@ -1,13 +1,16 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useCallback } from 'react'
 
 const PROLIFIC_COMPLETION_CODE = 'C6S9QW4R'
 const PROLIFIC_COMPLETION_URL = `https://app.prolific.com/submissions/complete?cc=${PROLIFIC_COMPLETION_CODE}`
 
 export default function ThankYouPage() {
-  const handleRedirect = () => {
+  const handleRedirect = useCallback(() => {
     window.location.href = PROLIFIC_COMPLETION_URL
-  }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
