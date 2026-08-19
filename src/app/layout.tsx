@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Collaboration Meaningful Work",
+  title: "Everyday Work Task Study",
   description: "Collaborative AI Work Platform",
 };
 

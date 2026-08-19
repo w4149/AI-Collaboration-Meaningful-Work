@@ -3,6 +3,7 @@
 import { useEffect, useRef, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface InfoDisplayProps {
@@ -73,6 +74,7 @@ export default function InfoDisplay({ content, allowCopy, title = "Task Informat
     return (
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           table: ({ children }) => (
             <div className="overflow-x-auto my-3">

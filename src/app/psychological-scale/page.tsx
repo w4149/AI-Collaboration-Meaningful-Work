@@ -304,7 +304,7 @@ export default function PsychologicalScalePage() {
       <Card className="max-w-3xl w-full mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            Psychological Experience Survey
+            Your Experience with the Task
           </CardTitle>
           <p className="text-center text-gray-500 text-sm mt-1">
             Please answer the following questions about the task you just completed.

@@ -114,7 +114,7 @@ Both groups had the option of visiting Bingo Coffee. However, customers who orde
   'task3': `You work at Lucky Coffee. The store manager has collected customer comments from an online review site and needs you to label each review using one of three categories.
 
 
-Your job: for each review, choose the **ONE label that fits best** from the three below.
+Your task: for each review, choose the **ONE label that fits best** from the three below.
 
 - **Service**: What the staff do (e.g., assistance, order handling, or other staff behavior)
 
@@ -124,7 +124,7 @@ Your job: for each review, choose the **ONE label that fits best** from the thre
 
 For each comment, enter the review number and corresponding label on a separate line using the following format: 
 
-**Number, Label**
+**Number,Label**
 
 ---
 
@@ -319,7 +319,7 @@ I raised it with a staff member, and all I got back was, "We're pretty swamped 
 
 I've always trusted Lucky Coffee and been a regular here. This really let me down, and I don't think I'll be back. Either way, I deserve an explanation.
 
-——Tony
+<div align="right">——Tony</div>
 
 ---`,
 

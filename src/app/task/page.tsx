@@ -556,31 +556,52 @@ export default function TaskPage() {
 
       <main className="flex-1 flex flex-col p-4 lg:p-6">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-          <div className={`lg:col-span-7 ${!isChatOpen || !allowChat ? 'lg:col-span-12' : ''} flex flex-col gap-4`}>
+          {/* Left column: task info + (when chat available) input */}
+          <div className={`${allowChat && isChatOpen ? 'lg:col-span-7' : 'lg:col-span-7'} flex flex-col gap-4`}>
             <div className="flex-1 min-h-[300px]">
               <InfoDisplay
                 content={taskContent}
                 allowCopy={allowCopy}
               />
             </div>
-            <div className="min-h-[250px]">
-              <TaskInput allowPaste={allowPaste} />
-            </div>
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
-                size="lg"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Task'}
-              </Button>
-            </div>
+            {allowChat && isChatOpen && (
+              <>
+                <div className="min-h-[250px]">
+                  <TaskInput allowPaste={allowPaste} />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                    size="lg"
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Task'}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
 
-          {allowChat && isChatOpen && (
+          {/* Right column: chat (when available) OR input (no chat) */}
+          {allowChat && isChatOpen ? (
             <div className="lg:col-span-5">
               <div className="h-[calc(100vh-140px)] min-h-[500px]">
                 <ChatWindow />
+              </div>
+            </div>
+          ) : (
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              <div className="flex-1 min-h-[400px]">
+                <TaskInput allowPaste={allowPaste} />
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                  size="lg"
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Task'}
+                </Button>
               </div>
             </div>
           )}
