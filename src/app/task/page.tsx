@@ -33,6 +33,7 @@ export default function TaskPage() {
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
+  const [showBackDialog, setShowBackDialog] = useState(false)
   const autoSubmitTriggered = useRef(false)
   const skipBeforeUnload = useRef(false)
   const [phase2StartTime, setPhase2StartTime] = useState<Date | null>(null)
@@ -263,6 +264,20 @@ export default function TaskPage() {
 
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
+  // Block browser back navigation
+  useEffect(() => {
+    const preventBack = (e: PopStateEvent) => {
+      e.preventDefault()
+      window.history.pushState(null, '', window.location.href)
+      setShowBackDialog(true)
+    }
+    window.history.pushState(null, '', window.location.href)
+    window.addEventListener('popstate', preventBack)
+    return () => {
+      window.removeEventListener('popstate', preventBack)
+    }
   }, [])
 
   const handleSubmit = async () => {
@@ -667,6 +682,25 @@ export default function TaskPage() {
           <div className="flex justify-end gap-3 pt-4">
             <Button onClick={handleLeaveWarningContinue}>
               Continue to Next Step
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Back Navigation Dialog */}
+      <Dialog open={showBackDialog} onOpenChange={setShowBackDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>⚠ Leaving This Page Will Void Your Session</DialogTitle>
+            <DialogDescription>
+              You cannot go back to the previous step. If you leave this page, it will be treated as a mid-exit and will <strong>not</strong> be counted as a completed study. You will <strong>not</strong> receive your payment.
+              <br /><br />
+              Please stay on this page and complete the task.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button onClick={() => setShowBackDialog(false)}>
+              Stay on This Page
             </Button>
           </div>
         </DialogContent>

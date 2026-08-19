@@ -18,7 +18,6 @@ const GENDER_OPTIONS = [
   { value: 'woman', label: 'Woman' },
   { value: 'nonbinary', label: 'Nonbinary / Something else' },
   { value: 'transgender', label: 'Transgender' },
-  { value: 'other', label: 'Other' },
 ]
 
 const RACE_ETHNICITY_OPTIONS = [
@@ -74,7 +73,6 @@ const POLITICAL_OPTIONS = [
 
 type DemographicsAnswers = {
   gender?: string
-  otherGender?: string
   raceEthnicity: string[]
   otherRace?: string
   education?: string
@@ -123,7 +121,6 @@ export default function DemographicsSurveyPage() {
 
   const allRequiredAnswered = (): boolean => {
     if (!answers.gender) return false
-    if (answers.gender === 'other' && !answers.otherGender?.trim()) return false
     if (answers.raceEthnicity.length === 0) return false
     if (answers.raceEthnicity.includes('other') && !answers.otherRace?.trim()) return false
     if (!answers.education) return false
@@ -227,18 +224,6 @@ export default function DemographicsSurveyPage() {
               1. What is your gender? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('gender', answers.gender, GENDER_OPTIONS, setGender)}
-            {answers.gender === 'other' && (
-              <div className="space-y-1">
-                <Label htmlFor="other-gender" className="text-sm text-gray-600">Please specify:</Label>
-                <Input
-                  id="other-gender"
-                  value={answers.otherGender || ''}
-                  onChange={(e) => setAnswers((p) => ({ ...p, otherGender: e.target.value }))}
-                  placeholder="Please specify your gender"
-                  className="max-w-md"
-                />
-              </div>
-            )}
           </div>
 
           {/* Q2: Race and/or ethnicity */}

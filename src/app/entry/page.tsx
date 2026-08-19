@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -49,6 +49,7 @@ export default function EntryPage() {
   const [attentionAnswer, setAttentionAnswer] = useState<string>('')
   const [showAttentionError, setShowAttentionError] = useState(false)
   const [attentionSubmitted, setAttentionSubmitted] = useState(false)
+  const preUserIdFailuresRef = useRef<{ answer: string; count: number } | null>(null)
 
   const setUser = useAppStore((state) => state.setUser)
   const setTask = useAppStore((state) => state.setTask)
@@ -171,6 +172,11 @@ export default function EntryPage() {
           } catch (e) {
             console.error('Failed to save attention check:', e)
           }
+        } else {
+          preUserIdFailuresRef.current = {
+            answer: attentionAnswer,
+            count: (preUserIdFailuresRef.current?.count ?? 0) + 1,
+          }
         }
         setShowAttentionError(true)
         return
@@ -211,6 +217,29 @@ export default function EntryPage() {
         )
         setGroupType(urlGroup as 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI')
         setStartTime(new Date())
+
+        // Flush pre-userId failures first (so ever_failed is recorded)
+        if (preUserIdFailuresRef.current && data.userId) {
+          const failures = preUserIdFailuresRef.current
+          for (let i = 0; i < failures.count; i++) {
+            try {
+              await fetch('/api/attention-checks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  userId: data.userId,
+                  checkType: 1,
+                  groupType: urlGroup,
+                  answer: failures.answer,
+                  isCorrect: false,
+                }),
+              })
+            } catch (e) {
+              console.error('Failed to save pre-userId attention check failure:', e)
+            }
+          }
+          preUserIdFailuresRef.current = null
+        }
 
         // Save attention check with the real user ID
         if (attentionCheckData && data.userId) {
