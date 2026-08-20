@@ -65,6 +65,8 @@ export default function EntryPage() {
   const urlTask = getParam(searchParams, 'task')
   const urlGroup = getParam(searchParams, 'group')
   const prolificId = searchParams.get('PROLIFIC_PID') || 'test_user_' + Date.now()
+  const studyId = searchParams.get('STUDY_ID') || ''
+  const prolificSessionId = searchParams.get('SESSION_ID') || ''
 
   // Time config per group
   const g1Min = getSubmitMinMinutes('G1-Human')
@@ -89,19 +91,19 @@ export default function EntryPage() {
 
       reset()
       setTaskSubmitted(false)
-      setUser(`skip_${Date.now()}`, `session_${Date.now()}`, prolificId)
+      setUser(`skip_${Date.now()}`, `session_${Date.now()}`, prolificId, studyId, prolificSessionId)
       setGroupType(group)
       setStartTime(new Date())
 
       fetch('/api/auth/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prolificId, taskId, groupType: group }),
+        body: JSON.stringify({ prolificId, taskId, groupType: group, studyId, prolificSessionId }),
       })
         .then((r) => r.json())
         .then((data) => {
           if (data && data.taskId) {
-            setUser(data.userId, data.sessionId || `session_${Date.now()}`, prolificId)
+            setUser(data.userId, data.sessionId || `session_${Date.now()}`, prolificId, studyId, prolificSessionId)
             setTask(
               data.taskId,
               data.taskTypeId || '',
@@ -119,7 +121,7 @@ export default function EntryPage() {
           router.replace(eq ? `/task${eq}` : '/task')
         })
     }
-  }, [router, searchParams, urlTask, urlGroup, prolificId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
+  }, [router, searchParams, urlTask, urlGroup, prolificId, studyId, prolificSessionId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
 
   const saveAttentionCheck = async (isCorrect: boolean) => {
     try {
@@ -205,6 +207,8 @@ export default function EntryPage() {
             prolificId,
             taskId: urlTask,
             groupType: urlGroup,
+            studyId,
+            prolificSessionId,
           }),
         })
 
@@ -212,7 +216,7 @@ export default function EntryPage() {
 
         const data = await response.json()
 
-        setUser(data.userId, data.sessionId, prolificId)
+        setUser(data.userId, data.sessionId, prolificId, studyId, prolificSessionId)
         setTask(
           data.taskId,
           data.taskTypeId,
@@ -278,7 +282,7 @@ export default function EntryPage() {
         const eq = encodedQuery(searchParams)
         router.push(eq ? `/task${eq}` : '/task')
       } else {
-        setUser(`test_user_${Date.now()}`, `session_${Date.now()}`, prolificId)
+        setUser(`test_user_${Date.now()}`, `session_${Date.now()}`, prolificId, studyId, prolificSessionId)
         setStartTime(new Date())
         router.push('/select-task')
       }

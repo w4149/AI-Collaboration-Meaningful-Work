@@ -368,7 +368,7 @@ const GROUP_CONFIG: Record<string, { allowCopy: boolean; allowPaste: boolean; al
 
 export async function POST(request: Request) {
   try {
-    const { prolificId, taskId, groupType } = await request.json()
+    const { prolificId, taskId, groupType, studyId, prolificSessionId } = await request.json()
 
     if (!prolificId) {
       return NextResponse.json({ error: 'Prolific ID is required' }, { status: 400 })
@@ -415,18 +415,32 @@ export async function POST(request: Request) {
       .from('users')
       .select('id')
       .eq('prolific_id', prolificId)
-      .single()
+      .maybeSingle()
 
     let userId: string
 
     if (existingUser) {
       userId = existingUser.id
+      // Update study_id and prolific_session_id if provided
+      if (studyId || prolificSessionId) {
+        await supabaseServer
+          .from('users')
+          .update({
+            study_id: studyId || null,
+            prolific_session_id: prolificSessionId || null,
+          })
+          .eq('id', userId)
+      }
     } else {
       const { data: newUser, error: userError } = await supabaseServer
         .from('users')
-        .insert({ prolific_id: prolificId })
+        .insert({
+          prolific_id: prolificId,
+          study_id: studyId || null,
+          prolific_session_id: prolificSessionId || null,
+        })
         .select('id')
-        .single()
+        .maybeSingle()
 
       if (userError || !newUser) {
         console.error('Error creating user:', userError)

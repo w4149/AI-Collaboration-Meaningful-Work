@@ -15,7 +15,9 @@ interface AppState {
   userId: string | null
   sessionId: string | null
   prolificId: string | null
-  setUser: (userId: string, sessionId: string, prolificId: string) => void
+  studyId: string | null
+  prolificSessionId: string | null
+  setUser: (userId: string, sessionId: string, prolificId: string, studyId?: string, prolificSessionId?: string) => void
   
   // Task
   taskId: string | null
@@ -114,7 +116,9 @@ export const useAppStore = create<AppState>()(
       userId: null,
       sessionId: null,
       prolificId: null,
-      setUser: (userId, sessionId, prolificId) => set({ userId, sessionId, prolificId }),
+      studyId: null,
+      prolificSessionId: null,
+      setUser: (userId, sessionId, prolificId, studyId, prolificSessionId) => set({ userId, sessionId, prolificId, studyId, prolificSessionId }),
       
       // Task
       taskId: null,
@@ -257,6 +261,11 @@ export const useAppStore = create<AppState>()(
         attentionCheck2Passed: state.attentionCheck2Passed,
         attentionCheck1FailCount: state.attentionCheck1FailCount,
         attentionCheck2FailCount: state.attentionCheck2FailCount,
+        userId: state.userId,
+        sessionId: state.sessionId,
+        prolificId: state.prolificId,
+        studyId: state.studyId,
+        prolificSessionId: state.prolificSessionId,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>
