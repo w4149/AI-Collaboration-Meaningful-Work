@@ -57,7 +57,7 @@ const AGREEMENT_OPTIONS = [
 ]
 
 const FAMILIARITY_OPTIONS = [
-  { value: 1, label: 'Not at all familiar' },
+  { value: 1, label: 'Not familiar at all' },
   { value: 2, label: 'Slightly familiar' },
   { value: 3, label: 'Somewhat familiar' },
   { value: 4, label: 'Moderately familiar' },

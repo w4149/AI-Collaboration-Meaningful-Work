@@ -56,6 +56,7 @@ export async function POST(request: Request) {
       if (!isCorrect) {
         upsertPayload.check1_ever_failed = true
         upsertPayload.check1_fail_count = currentFailCount + 1
+        upsertPayload.check1_final_answer = answer
         console.log(`[attention-checks] check1 FAILED — fail_count: ${currentFailCount + 1}`)
       } else {
         upsertPayload.check1_correct_answer = answer
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
       if (!isCorrect) {
         upsertPayload.check2_ever_failed = true
         upsertPayload.check2_fail_count = currentFailCount + 1
+        upsertPayload.check2_final_answer = answer
         console.log(`[attention-checks] check2 FAILED — fail_count: ${currentFailCount + 1}`)
       } else {
         upsertPayload.check2_correct_answer = answer

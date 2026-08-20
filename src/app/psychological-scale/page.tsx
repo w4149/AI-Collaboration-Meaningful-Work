@@ -349,20 +349,20 @@ export default function PsychologicalScalePage() {
             {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
           </div>
 
-          {/* Q4: Autonomy */}
+          {/* Q4: Attention check (silent, no special highlighting) */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              4. Please indicate how accurately or inaccurately the following statements describe the task you just did. <span className="text-red-500">*</span>
-            </Label>
-            {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AUTONOMY_OPTIONS)}
-          </div>
-
-          {/* Q5: Attention check (silent, no special highlighting) */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              5. This is an attention check question. Please select <strong>&quot;Strongly agree&quot;</strong> below. <span className="text-red-500">*</span>
+              4. This is an attention check question. Please select <strong>&quot;Strongly agree&quot;</strong> below. <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('attentionCheck', answers.attentionCheck, AGREEMENT_OPTIONS, setAttention)}
+          </div>
+
+          {/* Q5: Autonomy */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              5. Please indicate how accurately or inaccurately the following statements describe the task you just did. <span className="text-red-500">*</span>
+            </Label>
+            {renderItemList(AUTONOMY_ITEMS, answers.autonomy, setAutonomy, AUTONOMY_OPTIONS)}
           </div>
 
           {/* Q6: Skill Utilisation */}

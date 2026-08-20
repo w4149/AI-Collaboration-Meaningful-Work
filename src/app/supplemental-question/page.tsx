@@ -13,11 +13,11 @@ import { encodedQuery } from '@/lib/url-cipher'
 
 const AI_FAMILIARITY_OPTIONS = [
   { value: 1, label: 'Not familiar at all' },
-  { value: 2, label: '' },
-  { value: 3, label: '' },
+  { value: 2, label: 'Slightly familiar' },
+  { value: 3, label: 'Somewhat familiar' },
   { value: 4, label: 'Moderately familiar' },
-  { value: 5, label: '' },
-  { value: 6, label: '' },
+  { value: 5, label: 'Quite familiar' },
+  { value: 6, label: 'Very familiar' },
   { value: 7, label: 'Extremely familiar' },
 ]
 
