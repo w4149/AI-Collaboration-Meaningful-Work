@@ -13,12 +13,12 @@ import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 import { encodedQuery } from '@/lib/url-cipher'
 
 const TASK_TYPE_LABELS: Record<string, string> = {
-  'task1': 'event design tasks',
-  'task1-2': 'event design tasks',
-  'task2': 'evaluation and analysis tasks',
-  'task3': 'categorization tasks',
-  'task4': 'creative design tasks',
-  'task4-2': 'creative design tasks',
+  'task1': 'event planning',
+  'task1-2': 'event planning',
+  'task2': 'reviewing information and drawing conclusions from it',
+  'task3': 'text labeling',
+  'task4': 'handling customer complaints',
+  'task4-2': 'handling customer complaints',
 }
 
 // Scale options
