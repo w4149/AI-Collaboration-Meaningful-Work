@@ -43,9 +43,9 @@ Design an anniversary event that meets the following requirements:
   
   2. Explain why, using evidence from all three materials. 
   
-  3.Explain why the other explanation is less well supported. 
+  3. Explain why the other explanation is less well supported. 
   
-  4.Base your answer only on the information provided.
+  4. Base your answer only on the information provided.
 
 ---
 
@@ -73,7 +73,7 @@ During the same period:
 
 - Afternoon visits among customers who usually **ordered at the counter** decreased by 22%.
 
-- Afternoon visits among customers who usually **ordered ahead through the Lucky Coffee app** decreased by 5%.
+- Afternoon visits among customers who usually **ordered ahead through the Lucky Coffee app** decreased by 5%.
 
 Both groups could visit Bingo Coffee. However, customers who ordered ahead through the Lucky Coffee app could usually pick up their drinks without waiting in the in-store ordering line.
 
