@@ -7,24 +7,27 @@ import { useAppStore } from '@/lib/store'
 
 interface NavigationProps {
   onShowInstructions?: () => void
+  effectiveStart?: Date | null
 }
 
-export default function Navigation({ onShowInstructions }: NavigationProps) {
+export default function Navigation({ onShowInstructions, effectiveStart }: NavigationProps) {
   const [elapsedTime, setElapsedTime] = useState(0)
   const startTime = useAppStore((state) => state.startTime)
   const taskType = useAppStore((state) => state.taskType)
 
+  const timerBase = effectiveStart ?? startTime
+
   useEffect(() => {
-    if (!startTime) return
+    if (!timerBase) return
 
     const timer = setInterval(() => {
       const now = new Date()
-      const diff = Math.floor((now.getTime() - startTime.getTime()) / 1000)
+      const diff = Math.floor((now.getTime() - timerBase.getTime()) / 1000)
       setElapsedTime(diff)
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [startTime])
+  }, [timerBase])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)

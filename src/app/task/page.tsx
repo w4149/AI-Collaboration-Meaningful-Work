@@ -32,6 +32,8 @@ export default function TaskPage() {
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
   const [readingCountdown, setReadingCountdown] = useState<number | null>(null)
+  const [mountTime, setMountTime] = useState<Date | null>(null)
+  const [taskTimerStart, setTaskTimerStart] = useState<Date | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
@@ -205,9 +207,16 @@ export default function TaskPage() {
     ? phase2StartTime
     : startTime
 
+  // Set mountTime when task page first renders or phase changes
+  useEffect(() => {
+    if (!effectiveStartTime) return
+    setMountTime(new Date())
+    setTaskTimerStart(null)
+  }, [effectiveStartTime])
+
   // Unified timer: 30s reading period → auto-redirect countdown + minimum submit countdown
   useEffect(() => {
-    if (!effectiveStartTime) {
+    if (!mountTime) {
       setRedirectCountdown(null)
       setSubmitCountdown(null)
       setReadingCountdown(null)
@@ -217,11 +226,12 @@ export default function TaskPage() {
     autoSubmitTriggered.current = false
 
     const READING_DURATION = (groupType === 'G3-HumanAndAI' && currentPhase === 2) ? 0 : 30 * 1000
-    const readingEndTime = new Date(effectiveStartTime.getTime() + READING_DURATION)
+    const readingEndTime = new Date(mountTime.getTime() + READING_DURATION)
     const autoTargetTime = new Date(readingEndTime.getTime() + autoSubmitMinutes * 60 * 1000)
     const submitTargetTime = new Date(readingEndTime.getTime() + submitMinutes * 60 * 1000)
     const warningTime = new Date(autoTargetTime.getTime() - 60 * 1000)
     let warningShown = false
+    let timerStartSet = false
 
     const updateCountdown = () => {
       const now = new Date()
@@ -237,6 +247,10 @@ export default function TaskPage() {
 
       // Reading period is over
       setReadingCountdown(null)
+      if (!timerStartSet) {
+        timerStartSet = true
+        setTaskTimerStart(readingEndTime)
+      }
 
       const autoRemaining = autoTargetTime.getTime() - now.getTime()
       const submitRemaining = submitTargetTime.getTime() - now.getTime()
@@ -268,7 +282,7 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [effectiveStartTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
+  }, [mountTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
   // Prevent leaving task page (skip during auto-submit)
   useEffect(() => {
@@ -549,7 +563,7 @@ export default function TaskPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navigation onShowInstructions={() => setShowInstructions(true)} />
+      <Navigation onShowInstructions={() => setShowInstructions(true)} effectiveStart={taskTimerStart} />
 
       {/* Reading period banner (first 30s) */}
       {readingCountdown !== null && readingCountdown > 0 && (
