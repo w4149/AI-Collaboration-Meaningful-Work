@@ -43,9 +43,7 @@ Design an anniversary event that meets the following requirements:
   
   2. Use evidence from **ALL three materials**. 
   
-  3. Explain why the other explanation is less well supported. 
-  
-  4. Base your answer only on the information provided.
+  3. Base your answer only on the information provided.
 
 ---
 
@@ -63,7 +61,7 @@ Lucky Coffee’s average weekday drink sales in the afternoon were:
 
 - **First month after Lucky Coffee reduced its afternoon staffing:** 95 drinks 
 
-Bingo Coffee’s average weekday afternoon drink sales increased from **about 75 drinks in its first month** to **84 drinks in its third month**.
+Bingo Coffee’s average weekday afternoon drink sales increased from about 75 drinks in its first month to 84 drinks in its third month.
 
 ---
 
