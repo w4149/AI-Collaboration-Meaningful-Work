@@ -31,9 +31,12 @@ export default function TaskPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
-  const [readingCountdown, setReadingCountdown] = useState<number | null>(null)
-  const [mountTime, setMountTime] = useState<Date | null>(null)
+  const [readingCountdown, setReadingCountdown] = useState<number | null>(() => {
+    const isG3P2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
+    return isG3P2 ? null : 30
+  })
   const [taskTimerStart, setTaskTimerStart] = useState<Date | null>(null)
+  const mountTimeRef = useRef<Date | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
@@ -207,19 +210,18 @@ export default function TaskPage() {
     ? phase2StartTime
     : startTime
 
-  // Set mountTime when task page first renders or phase changes
+  // Set mountTimeRef when task page first renders or phase changes
   useEffect(() => {
     if (!effectiveStartTime) return
-    setMountTime(new Date())
+    mountTimeRef.current = new Date()
     setTaskTimerStart(null)
   }, [effectiveStartTime])
 
   // Unified timer: 30s reading period → auto-redirect countdown + minimum submit countdown
   useEffect(() => {
+    const mountTime = mountTimeRef.current
     if (!mountTime) {
-      setRedirectCountdown(null)
-      setSubmitCountdown(null)
-      setReadingCountdown(null)
+      // Keep initial readingCountdown (set via useState initializer)
       return
     }
 
@@ -282,7 +284,7 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [mountTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
+  }, [effectiveStartTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
   // Prevent leaving task page (skip during auto-submit)
   useEffect(() => {
@@ -659,12 +661,12 @@ export default function TaskPage() {
           ) : (
             <div className="lg:col-span-5 flex flex-col gap-4">
               <div className="flex-1 min-h-[400px]">
-                <TaskInput allowPaste={allowPaste} />
+                <TaskInput allowPaste={allowPaste} disabled={isReading} />
               </div>
               <div className="flex justify-end">
                 <Button
                   onClick={handleSubmit}
-                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0) || (readingCountdown !== null && readingCountdown > 0)}
+                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0) || (readingCountdown !== null && readingCountdown > 0) || isReading}
                   size="lg"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Task'}

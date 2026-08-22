@@ -15,10 +15,13 @@ export default function Navigation({ onShowInstructions, effectiveStart }: Navig
   const startTime = useAppStore((state) => state.startTime)
   const taskType = useAppStore((state) => state.taskType)
 
-  const timerBase = effectiveStart ?? startTime
+  const timerBase = effectiveStart !== undefined ? effectiveStart : startTime
 
   useEffect(() => {
-    if (!timerBase) return
+    if (!timerBase) {
+      setElapsedTime(0)
+      return
+    }
 
     const timer = setInterval(() => {
       const now = new Date()
