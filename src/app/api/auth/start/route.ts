@@ -287,19 +287,24 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 | 159 | I changed my mind at the register, and the cashier updated the order without any attitude. |
 | 160 | The tables near the back have plenty of space between them, so it never feels crowded. |`,
 
-  'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer’s complaint below has been confirmed as accurate by store records. Read the complaint and write a reply as a Lucky Coffee representative.
+  'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer has submitted the complaint below. Read the complaint and write a reply as a Lucky Coffee representative.
 
-  Lucky Coffee has already approved **a full refund and one complimentary drink on a future visit**. You do not need to determine or explain why the incident occurred.
+  Lucky Coffee has already approved a full refund and one complimentary drink on a future visit. You do not need to determine or explain why the incident occurred or decide what compensation should be offered.
 
-  In your response, address the customer’s concerns and feelings, communicate the approved refund and complimentary drink, and respond in a sincere and considerate way that helps the customer feel heard and taken seriously. Your reply should also help rebuild trust and preserve the customer relationship.
+  **In your response**: 
+  
+  - Acknowledge what happened and recognize the customer’s frustration and disappointment, including the fact that their time was wasted and that they are a regular customer. 
+
+  - Communicate the approved full refund and complimentary drink, and let the customer know that their experience is being taken seriously. 
+  
+  - Respond in a sincere, empathetic, and considerate way that helps the customer feel heard and respected, rebuilds trust, and preserves the customer relationship.
+
 
 ---
 
 #### Customer Complaint
 
-Yesterday I ordered a hot latte. I understand that the store was busy, but I waited over 30 minutes without any explanation. When I finally received my drink, it was cold and turned out to be an Americano rather than a latte.
-
-I raised the issue with a staff member, and I was told, “We’re pretty swamped right now, so you can either wait for a remake or get a refund.” After already waiting more than 30 minutes, I did not want to wait again. I was frustrated and left without drinking the coffee.
+Yesterday I waited more than 30 minutes for my drink, and when it arrived, it was the wrong order. When I asked a staff member for help, the response felt dismissive, and I left feeling frustrated and disappointed.
 
 I’ve been a regular customer at Lucky Coffee and have always trusted the store, so this experience was especially disappointing. I’m not sure I want to come back.
 
