@@ -31,6 +31,7 @@ export default function TaskPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
+  const [readingCountdown, setReadingCountdown] = useState<number | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
@@ -204,23 +205,39 @@ export default function TaskPage() {
     ? phase2StartTime
     : startTime
 
-  // Unified timer: auto-redirect countdown + minimum submit countdown
+  // Unified timer: 30s reading period → auto-redirect countdown + minimum submit countdown
   useEffect(() => {
     if (!effectiveStartTime) {
       setRedirectCountdown(null)
       setSubmitCountdown(null)
+      setReadingCountdown(null)
       return
     }
 
     autoSubmitTriggered.current = false
 
-    const autoTargetTime = new Date(effectiveStartTime.getTime() + autoSubmitMinutes * 60 * 1000)
-    const submitTargetTime = new Date(effectiveStartTime.getTime() + submitMinutes * 60 * 1000)
-    const warningTime = new Date(effectiveStartTime.getTime() + (autoSubmitMinutes - 1) * 60 * 1000)
+    const READING_DURATION = (groupType === 'G3-HumanAndAI' && currentPhase === 2) ? 0 : 30 * 1000
+    const readingEndTime = new Date(effectiveStartTime.getTime() + READING_DURATION)
+    const autoTargetTime = new Date(readingEndTime.getTime() + autoSubmitMinutes * 60 * 1000)
+    const submitTargetTime = new Date(readingEndTime.getTime() + submitMinutes * 60 * 1000)
+    const warningTime = new Date(autoTargetTime.getTime() - 60 * 1000)
     let warningShown = false
 
     const updateCountdown = () => {
       const now = new Date()
+      const readingRemaining = readingEndTime.getTime() - now.getTime()
+
+      // Phase 1: Reading period (first 30s)
+      if (readingRemaining > 0) {
+        setReadingCountdown(Math.ceil(readingRemaining / 1000))
+        setRedirectCountdown(null)
+        setSubmitCountdown(null)
+        return
+      }
+
+      // Reading period is over
+      setReadingCountdown(null)
+
       const autoRemaining = autoTargetTime.getTime() - now.getTime()
       const submitRemaining = submitTargetTime.getTime() - now.getTime()
 
@@ -283,6 +300,11 @@ export default function TaskPage() {
   const handleSubmit = async () => {
     if (!taskSubmission.trim()) {
       alert('Please write a response before submitting.')
+      return
+    }
+
+    if (readingCountdown !== null && readingCountdown > 0) {
+      alert(`Please read the task content carefully before answering. Time remaining: ${formatCountdown(readingCountdown)}`)
       return
     }
 
@@ -523,9 +545,25 @@ export default function TaskPage() {
     )
   }
 
+  const isReading = readingCountdown !== null && readingCountdown > 0
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navigation onShowInstructions={() => setShowInstructions(true)} />
+
+      {/* Reading period banner (first 30s) */}
+      {readingCountdown !== null && readingCountdown > 0 && (
+        <div className="bg-blue-100 border-b border-blue-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-blue-500 text-white border-blue-500">
+              Reading
+            </Badge>
+            <span className="text-blue-700 font-semibold">
+              Please read the task content carefully. You can start answering in {formatCountdown(readingCountdown)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Countdown banner */}
       {redirectCountdown !== null && redirectCountdown > 0 && (
@@ -582,12 +620,12 @@ export default function TaskPage() {
             {allowChat && isChatOpen && (
               <>
                 <div className="min-h-[250px]">
-                  <TaskInput allowPaste={allowPaste} />
+                  <TaskInput allowPaste={allowPaste} disabled={isReading} />
                 </div>
                 <div className="flex justify-end">
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                    disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0) || (readingCountdown !== null && readingCountdown > 0)}
                     size="lg"
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Task'}
@@ -601,7 +639,7 @@ export default function TaskPage() {
           {allowChat && isChatOpen ? (
             <div className="lg:col-span-5">
               <div className="h-[calc(100vh-140px)] min-h-[500px]">
-                <ChatWindow />
+                <ChatWindow disabled={isReading} />
               </div>
             </div>
           ) : (
@@ -612,7 +650,7 @@ export default function TaskPage() {
               <div className="flex justify-end">
                 <Button
                   onClick={handleSubmit}
-                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0)}
+                  disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0) || (readingCountdown !== null && readingCountdown > 0)}
                   size="lg"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Task'}

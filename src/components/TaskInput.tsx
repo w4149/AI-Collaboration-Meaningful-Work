@@ -8,9 +8,10 @@ import { useAppStore } from '@/lib/store'
 
 interface TaskInputProps {
   allowPaste: boolean
+  disabled?: boolean
 }
 
-export default function TaskInput({ allowPaste }: TaskInputProps) {
+export default function TaskInput({ allowPaste, disabled = false }: TaskInputProps) {
   const taskSubmission = useAppStore((state) => state.taskSubmission)
   const setTaskSubmission = useAppStore((state) => state.setTaskSubmission)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -94,6 +95,7 @@ export default function TaskInput({ allowPaste }: TaskInputProps) {
           onChange={handleChange}
           placeholder="Write your response here..."
           className="flex-1 resize-none min-h-[200px]"
+          disabled={disabled}
           onPaste={(e) => !allowPaste && e.preventDefault()}
           onDrop={(e) => !allowPaste && e.preventDefault()}
           onDragOver={(e) => !allowPaste && e.preventDefault()}

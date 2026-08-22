@@ -11,7 +11,7 @@ import { useAppStore } from '@/lib/store'
 // Max input: ~6000 words (≈ 30000 chars, avg 5 chars/word for English)
 const MAX_INPUT_CHARS = 30000
 
-export default function ChatWindow() {
+export default function ChatWindow({ disabled = false }: { disabled?: boolean }) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -159,13 +159,13 @@ export default function ChatWindow() {
               onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_CHARS))}
               onKeyDown={handleKeyDown}
               placeholder="Type your message... (Press Enter to go to a new line)"
-              disabled={isLoading}
+              disabled={isLoading || disabled}
               rows={4}
               className="flex-1 resize-none min-h-[108px] max-h-[200px] overflow-y-auto"
             />
             <Button
               onClick={handleSend}
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || disabled}
               size="sm"
               className="shrink-0"
             >

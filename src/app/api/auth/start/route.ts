@@ -2,19 +2,22 @@ import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
 
 const TASK_CONTENTS = {
-  'task1': `You work at Lucky Coffee. Its main customers are nearby office workers and students. The manager is planning an in-store event to celebrate the store's third anniversary and has asked you to come up with an event idea.
+  'task1': `You work at Lucky Coffee, an affordable coffee chain whose main customers are nearby office workers and students. The manager is planning an event to celebrate the store’s third anniversary and has asked you to come up with ideas for it.
 
+  Your task is to design a third-anniversary event for Lucky Coffee.
 
-Your task is to design an anniversary event for Lucky Coffee. The event should:
+  First, give the event a **creative name** and develop an **overall theme or concept**.
 
-- Bring customers into the store and encourage them to stay. 
+  Then, design ideas in each of the following areas that fit with your overall theme:
 
-- Give customers reasons to take and share photos. 
+1. **Membership or loyalty program**: Suggest at least one way the store could use its membership or loyalty program to engage customers during the anniversary. 
 
-- Help increase sales and build awareness of Lucky Coffee.
+2. **In-store activities**: Suggest at least one activity customers could take part in at the store during the anniversary. 
 
+3. **Online engagement**: Suggest at least one way customers could take part in the anniversary beyond the in-store experience.
 
-Describe your event idea, explain how it would work, and describe how customers would participate.`,
+For each idea, describe what customers would do, how the idea would work, and any special details you would include. Your ideas may be simple or elaborate, but aim to make them original and distinctive while providing enough detail for someone to picture the anniversary experience.
+`,
 
   'task1-2': `
 
@@ -26,27 +29,23 @@ Design an anniversary event that meets the following requirements:
 
 2. What to include: **Describe what the event is?Describe the activities included in the event**, how it works, and/or how customers would take part.`,
 
-  'task2': `You work at Lucky Coffee. Over the past few months, two changes have occurred: a nearby competitor, Bingo Coffee, opened, and Lucky Coffee later reduced the number of employees working during the afternoon by one. During this period, Lucky Coffee’s afternoon drink sales declined.
+  'task2': `You work at Lucky Coffee. Over the past few months, afternoon drink sales have declined, and two possible explanations have been suggested:
 
-  Two possible explanations have been suggested:
+  **Explanation A:** The opening of a nearby competitor, Bingo Coffee, contributed to the decline by attracting some of Lucky Coffee’s customers.
 
-  **Explanation A:** The opening of Bingo Coffee contributed to the decline by attracting some of Lucky Coffee’s customers.
+  **Explanation B:** Lucky Coffee’s reduction in afternoon staffing contributed to the decline by increasing waiting times and making customers less willing to visit.
 
-  **Explanation B:** The reduction in afternoon staffing contributed to the decline by making customers less willing to visit Lucky Coffee.
+  The manager has asked you to assess which explanation is better supported by the available evidence. Use the three materials below to make your assessment.
 
-  The manager has asked you to review the available information and assess which explanation is better supported by the evidence, while also considering the evidence for the other explanation.
-
-  Use the four materials below to make your assessment.
-
-  Please:
+  **In your response**:
   
-  1. Give your overall assessment of the two explanations. 
-
-  2. Explain the reasons for your assessment. 
-
-  3. Use evidence from all four materials. 
-
-  4. Base your answer only on the information provided. 
+  1. State which explanation is better supported. 
+  
+  2. Explain why, using evidence from all three materials. 
+  
+  3.Explain why the other explanation is less well supported. 
+  
+  4.Base your answer only on the information provided.
 
 ---
 
@@ -54,7 +53,7 @@ Design an anniversary event that meets the following requirements:
 
 Bingo Coffee opened near Lucky Coffee. Lucky Coffee kept its afternoon staffing unchanged for the next two months. At the beginning of the third month after Bingo Coffee opened, Lucky Coffee reduced its afternoon staffing by one employee.
 
-Lucky Coffee’s average weekday drink sales between 2:00 and 5:00 p.m. were:
+Lucky Coffee’s average weekday drink sales in the afternoon were:
 
 - **Before Bingo Coffee opened:** 120 drinks 
 
@@ -64,51 +63,34 @@ Lucky Coffee’s average weekday drink sales between 2:00 and 5:00 p.m. were:
 
 - **First month after Lucky Coffee reduced its afternoon staffing:** 95 drinks 
 
-Bingo Coffee’s average weekday afternoon drink sales were about **75 drinks in its first month** and **84 drinks in its third month**.
-
 ---
 
-#### Material 2: Waiting Time After the Staffing Change
+#### Material 2: Waiting Time and Customer Groups
 
-After Lucky Coffee reduced its afternoon staffing:
+After Lucky Coffee reduced its afternoon staffing, average customer waiting time increased from about 4 minutes to 9 minutes.
 
-- Average customer waiting time increased from about **4 minutes** to **9 minutes**. 
+During the same period:
 
-- Drink prices remained unchanged. 
+- Afternoon visits among customers who usually **ordered at the counter** decreased by 22%.
 
-- The menu remained unchanged. 
+- Afternoon visits among customers who usually **ordered ahead through the Lucky Coffee app** decreased by 5%.
 
-- Store seating remained unchanged. 
+Both groups could visit Bingo Coffee. However, customers who ordered ahead through the Lucky Coffee app could usually pick up their drinks without waiting in the in-store ordering line.
 
 ---
 
 #### Material 3: Customer Survey
 
-Lucky Coffee surveyed 60 customers who said they had recently started visiting the store less often between 2:00 and 5:00 p.m.
+Lucky Coffee surveyed 60 customers who said they had recently started visiting the store less often in the afternoon.
 
-When asked for the **main reason** they were visiting less often:
+When asked for the main reason they were visiting less often:
 
 - **24** said the waiting time had become too long. 
 
 - **14** said they had started going to Bingo Coffee more often. 
 
-- **12** said their work or class schedule had changed. 
+- **22** gave other reasons, such as schedule changes or drinking less coffee.
 
-- **6** said they were drinking less coffee in general. 
-
-- **4** gave other reasons. 
-
----
-
-#### Material 4: Customer Groups
-
-Lucky Coffee also compared changes in afternoon visits among two groups of regular customers after the staffing change:
-
-- Among customers who usually **ordered at the counter**, afternoon visits decreased by **22%**. 
-
-- Among customers who usually **ordered ahead through the app**, afternoon visits decreased by **5%**. 
-
-Both groups had the option of visiting Bingo Coffee. However, customers who ordered ahead through the Lucky Coffee app could usually pick up their drinks without waiting in the in-store ordering line.
 `,
 
   'task3': `You work at Lucky Coffee. The store manager has collected customer comments from an online review site and needs you to label each review using one of three categories.
@@ -305,19 +287,21 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 | 159 | I changed my mind at the register, and the cashier updated the order without any attitude. |
 | 160 | The tables near the back have plenty of space between them, so it never feels crowded. |`,
 
-  'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer's complaint below has been confirmed by store records. Read it and write a reply as a Lucky Coffee representative.
+  'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer’s complaint below has been confirmed as accurate by store records. Read the complaint and write a reply as a Lucky Coffee representative.
 
-**Goal**: Respond appropriately to the customer's concerns and frustration, offer help, and preserve the customer relationship.
+  Lucky Coffee has already approved **a full refund and one complimentary drink on a future visit**. You do not need to determine or explain why the incident occurred.
+
+  In your response, address the customer’s concerns and feelings, communicate the approved refund and complimentary drink, and respond in a sincere and considerate way that helps the customer feel heard and taken seriously. Your reply should also help rebuild trust and preserve the customer relationship.
 
 ---
 
 #### Customer Complaint
 
-Yesterday I ordered a hot latte. I get that it was busy, but I waited over 30 minutes with zero explanation. Worse, the drink was cold and turned out to be an Americano, not a latte.
+Yesterday I ordered a hot latte. I understand that the store was busy, but I waited over 30 minutes without any explanation. When I finally received my drink, it was cold and turned out to be an Americano rather than a latte.
 
-I raised it with a staff member, and all I got back was, "We're pretty swamped right now, so either wait for a remake or you can just get a refund." After already losing 30 minutes, I'm supposed to wait another 30? And a refund doesn't give me my time back. I was so frustrated that I just left the coffee there and walked out.
+I raised the issue with a staff member, and I was told, “We’re pretty swamped right now, so you can either wait for a remake or get a refund.” After already waiting more than 30 minutes, I did not want to wait again. I was frustrated and left without drinking the coffee.
 
-I've always trusted Lucky Coffee and been a regular here. This really let me down, and I don't think I'll be back. Either way, I deserve an explanation.
+I’ve been a regular customer at Lucky Coffee and have always trusted the store, so this experience was especially disappointing. I’m not sure I want to come back.
 
 <div align="right">Tony</div>
 
