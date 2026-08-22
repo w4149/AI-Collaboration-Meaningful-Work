@@ -15,10 +15,11 @@ export default function Navigation({ onShowInstructions, effectiveStart }: Navig
   const startTime = useAppStore((state) => state.startTime)
   const taskType = useAppStore((state) => state.taskType)
 
-  const timerBase = effectiveStart !== undefined ? effectiveStart : startTime
+  const isReading = effectiveStart === null
+  const timerBase = effectiveStart ?? startTime
 
   useEffect(() => {
-    if (!timerBase) {
+    if (isReading || !timerBase) {
       setElapsedTime(0)
       return
     }
@@ -30,7 +31,7 @@ export default function Navigation({ onShowInstructions, effectiveStart }: Navig
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [timerBase])
+  }, [timerBase, isReading])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)

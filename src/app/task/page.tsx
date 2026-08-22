@@ -29,14 +29,6 @@ export default function TaskPage() {
   const [showInstructions, setShowInstructions] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
-  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
-  const [readingCountdown, setReadingCountdown] = useState<number | null>(() => {
-    const isG3P2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
-    return isG3P2 ? null : 30
-  })
-  const [taskTimerStart, setTaskTimerStart] = useState<Date | null>(null)
-  const mountTimeRef = useRef<Date | null>(null)
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
@@ -62,6 +54,13 @@ export default function TaskPage() {
   const setCurrentPhase = useAppStore((state) => state.setCurrentPhase)
   const taskSubmitted = useAppStore((state) => state.taskSubmitted)
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
+
+  const isG3P2Init = groupType === 'G3-HumanAndAI' && currentPhase === 2
+  const [isReading, setIsReading] = useState(!isG3P2Init)
+  const [readingCountdown, setReadingCountdown] = useState<number | null>(isG3P2Init ? null : 30)
+  const [taskTimerStart, setTaskTimerStart] = useState<Date | null>(isG3P2Init ? new Date() : null)
+  const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
+  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
 
   const submitMinutes = getSubmitMinMinutes(groupType, currentPhase)
   const autoSubmitMinutes = getAutoSubmitMinutes(groupType, currentPhase)
@@ -210,60 +209,95 @@ export default function TaskPage() {
     ? phase2StartTime
     : startTime
 
-  // Set mountTimeRef when task page first renders or phase changes
-  useEffect(() => {
-    if (!effectiveStartTime) return
-    mountTimeRef.current = new Date()
-    setTaskTimerStart(null)
-  }, [effectiveStartTime])
+  const readingStartedRef = useRef(false)
 
-  // Unified timer: 30s reading period → auto-redirect countdown + minimum submit countdown
+  // Reading countdown: 30s for all groups EXCEPT G3 Phase 2
   useEffect(() => {
-    const mountTime = mountTimeRef.current
-    if (!mountTime) {
-      // Keep initial readingCountdown (set via useState initializer)
+    const isG3P2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
+    console.log('[Reading] useEffect start', { isG3P2, isReading, readingCountdown, taskTimerStart, readingStarted: readingStartedRef.current })
+
+    if (isG3P2) {
+      readingStartedRef.current = true
+      setIsReading(false)
+      setReadingCountdown(null)
+      if (!taskTimerStart) {
+        setTaskTimerStart(new Date())
+      }
+      console.log('[Reading] G3P2: skip reading, start timer')
       return
     }
 
+    // Ensure reading state is correct
+    if (!isReading) {
+      console.log('[Reading] Setting isReading=true')
+      setIsReading(true)
+    }
+    if (taskTimerStart) {
+      console.log('[Reading] Clearing taskTimerStart')
+      setTaskTimerStart(null)
+    }
+
+    if (readingStartedRef.current) {
+      console.log('[Reading] Already started, skip')
+      return
+    }
+    readingStartedRef.current = true
+    console.log('[Reading] Marked as started')
+
+    if (readingCountdown === null) {
+      console.log('[Reading] Setting readingCountdown=30')
+      setReadingCountdown(30)
+    }
+
+    let remaining = readingCountdown ?? 30
+    console.log('[Reading] Starting countdown from', remaining)
+    const interval = setInterval(() => {
+      remaining -= 1
+      console.log('[Reading] Countdown:', remaining)
+      if (remaining <= 0) {
+        clearInterval(interval)
+        console.log('[Reading] Reading period ended')
+        setIsReading(false)
+        setReadingCountdown(null)
+        setTaskTimerStart(new Date())
+      } else {
+        setReadingCountdown(remaining)
+      }
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+      console.log('[Reading] Cleanup: interval cleared')
+    }
+  }, [groupType, currentPhase])
+
+  // Main timer: only starts AFTER reading period ends
+  useEffect(() => {
+    if (isReading) {
+      setRedirectCountdown(null)
+      setSubmitCountdown(null)
+      return
+    }
+
+    if (!taskTimerStart) return
+
     autoSubmitTriggered.current = false
 
-    const READING_DURATION = (groupType === 'G3-HumanAndAI' && currentPhase === 2) ? 0 : 30 * 1000
-    const readingEndTime = new Date(mountTime.getTime() + READING_DURATION)
-    const autoTargetTime = new Date(readingEndTime.getTime() + autoSubmitMinutes * 60 * 1000)
-    const submitTargetTime = new Date(readingEndTime.getTime() + submitMinutes * 60 * 1000)
+    const autoTargetTime = new Date(taskTimerStart.getTime() + autoSubmitMinutes * 60 * 1000)
+    const submitTargetTime = new Date(taskTimerStart.getTime() + submitMinutes * 60 * 1000)
     const warningTime = new Date(autoTargetTime.getTime() - 60 * 1000)
     let warningShown = false
-    let timerStartSet = false
 
     const updateCountdown = () => {
       const now = new Date()
-      const readingRemaining = readingEndTime.getTime() - now.getTime()
-
-      // Phase 1: Reading period (first 30s)
-      if (readingRemaining > 0) {
-        setReadingCountdown(Math.ceil(readingRemaining / 1000))
-        setRedirectCountdown(null)
-        setSubmitCountdown(null)
-        return
-      }
-
-      // Reading period is over
-      setReadingCountdown(null)
-      if (!timerStartSet) {
-        timerStartSet = true
-        setTaskTimerStart(readingEndTime)
-      }
-
       const autoRemaining = autoTargetTime.getTime() - now.getTime()
       const submitRemaining = submitTargetTime.getTime() - now.getTime()
 
-      // Show 1-minute warning before auto-submit
       if (!warningShown && now >= warningTime) {
         warningShown = true
         setShowAutoSubmitWarning(true)
       }
 
-      // Auto-submit / phase switch when time is up
       if (autoRemaining <= 0) {
         setRedirectCountdown(0)
         setSubmitCountdown(0)
@@ -284,7 +318,7 @@ export default function TaskPage() {
     const interval = setInterval(updateCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [effectiveStartTime, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
+  }, [isReading, taskTimerStart, submitMinutes, autoSubmitMinutes, groupType, currentPhase, handleAutoSubmit, handlePhase1AutoSubmit])
 
   // Prevent leaving task page (skip during auto-submit)
   useEffect(() => {
@@ -560,8 +594,6 @@ export default function TaskPage() {
       </div>
     )
   }
-
-  const isReading = readingCountdown !== null && readingCountdown > 0
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
