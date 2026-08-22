@@ -64,6 +64,7 @@ Lucky Coffee’s average weekday drink sales in the afternoon were:
 - **First month after Lucky Coffee reduced its afternoon staffing:** 95 drinks 
 
 Bingo Coffee’s average weekday afternoon drink sales increased from **about 75 drinks in its first month** to **84 drinks in its third month**.
+
 ---
 
 #### Material 2: Waiting Time and Customer Groups
