@@ -344,7 +344,7 @@ export default function PsychologicalScalePage() {
               3. How much mental effort did you invest in the task you just did? <span className="text-red-500">*</span>
             </Label>
             <p className="text-xs text-gray-500">
-              Mental effort is how much thinking and focused attention you actually put into completing the task—not how difficult the task was or how physically tired you felt.
+              Mental effort is how much thinking and focused attention you actually invested to complete this task—not how difficult the task seemed.
             </p>
             {renderRadioGroup('mentalEffort', answers.mentalEffort, MENTAL_EFFORT_OPTIONS, setMentalEffort)}
           </div>
