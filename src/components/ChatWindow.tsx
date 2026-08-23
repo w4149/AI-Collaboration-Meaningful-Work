@@ -26,20 +26,26 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
 
-  // Auto-scroll to bottom only when user is already near the bottom
-  const messageCountRef = useRef(0)
+  const userScrolledUpRef = useRef(false)
+
+  const handleChatScroll = () => {
+    const container = chatContainerRef.current
+    if (!container) return
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight
+    userScrolledUpRef.current = distanceFromBottom > 100
+  }
+
+  const scrollChatToBottom = () => {
+    const container = chatContainerRef.current
+    if (!container) return
+    container.scrollTop = container.scrollHeight
+  }
+
   useEffect(() => {
-    if (chatMessages.length > messageCountRef.current) {
-      messageCountRef.current = chatMessages.length
-      const container = chatContainerRef.current
-      if (container) {
-        const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight
-        if (distanceFromBottom < 100) {
-          messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
-        }
-      } else {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
-      }
+    const container = chatContainerRef.current
+    if (!container) return
+    if (!userScrolledUpRef.current) {
+      scrollChatToBottom()
     }
   }, [chatMessages])
 
@@ -141,7 +147,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div ref={chatContainerRef} onScroll={handleChatScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
           {chatMessages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
               <p>Ask me anything about the task!</p>

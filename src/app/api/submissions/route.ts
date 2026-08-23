@@ -88,7 +88,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, submissionId: existing.id, phase: 2 })
     }
 
-    // Single-phase (G1/G2): insert new row
+    // No existing row found — create new row
+    // Handle both Phase 2 (submission2) and single-phase (submission) scenarios
+    if (submission2 !== undefined) {
+      // Phase 2 fallback: create row with submission_2
+      const { data, error } = await supabaseServer
+        .from('task_submissions')
+        .insert({
+          user_id: userId,
+          task_id: taskId,
+          submission_2: submission2 || null,
+          submission_time_2: submissionTime2 ?? null,
+          submission_word_count_2: countWords(submission2),
+          ai_total_tokens: tokenCount,
+        })
+        .select('id')
+        .single()
+
+      if (error) {
+        console.error('Error saving Phase 2 submission (no existing row):', error)
+        return NextResponse.json({ error: 'Failed to save Phase 2 submission' }, { status: 500 })
+      }
+
+      await supabaseServer
+        .from('sessions')
+        .update({ task_completed: true, end_time: new Date().toISOString() })
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      return NextResponse.json({ success: true, submissionId: data.id, phase: 2 })
+    }
+
+    // Single-phase (G1/G2): insert new row with submission
     const { data, error } = await supabaseServer
       .from('task_submissions')
       .insert({

@@ -76,7 +76,7 @@ export default function TaskPage() {
       : 0
 
     try {
-      await fetch('/api/submissions', {
+      const res = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,6 +88,10 @@ export default function TaskPage() {
           aiTotalTokens: aiTotalTokensRef.current,
         }),
       })
+      if (!res.ok) {
+        console.error('Phase 1 auto-save failed:', await res.text())
+        return
+      }
       for (const msg of messages) {
         await fetch('/api/chat/save', {
           method: 'POST',
@@ -103,6 +107,7 @@ export default function TaskPage() {
       }
     } catch (error) {
       console.error('Phase 1 auto-save error:', error)
+      return
     }
 
     // Transition to Phase 2
@@ -135,7 +140,7 @@ export default function TaskPage() {
         const phase2Time = phase2StartTime
           ? Math.floor((Date.now() - phase2StartTime.getTime()) / 1000)
           : 0
-        await fetch('/api/submissions', {
+        const res = await fetch('/api/submissions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -146,13 +151,14 @@ export default function TaskPage() {
             aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
+        if (!res.ok) throw new Error('Failed to save Phase 2 submission')
       } else {
         // G1/G2: create new row with submission and submission_time
         const totalTime = startTime
           ? Math.floor((Date.now() - startTime.getTime()) / 1000)
           : 0
         setTaskDuration(totalTime)
-        await fetch('/api/submissions', {
+        const res = await fetch('/api/submissions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -163,6 +169,7 @@ export default function TaskPage() {
             aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
+        if (!res.ok) throw new Error('Failed to save submission')
       }
       for (const msg of messages) {
         await fetch('/api/chat/save', {
@@ -380,7 +387,7 @@ export default function TaskPage() {
         const phase1Time = startTime
           ? Math.floor((Date.now() - startTime.getTime()) / 1000)
           : 0
-        await fetch('/api/submissions', {
+        const res = await fetch('/api/submissions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -392,6 +399,12 @@ export default function TaskPage() {
             aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
+        if (!res.ok) {
+          console.error('Phase 1 save failed:', await res.text())
+          alert('Failed to save Phase 1. Please try again.')
+          setIsSubmitting(false)
+          return
+        }
         for (const msg of chatMessages) {
           await fetch('/api/chat/save', {
             method: 'POST',
@@ -677,15 +690,9 @@ export default function TaskPage() {
           <div className={`${allowChat && isChatOpen ? 'lg:col-span-7' : 'lg:col-span-7'} flex flex-col gap-4`}>
             {groupType === 'G3-HumanAndAI' && currentPhase === 2 && allowChat && isChatOpen ? (
               <>
-                {/* G3 Phase 2: TaskInput on top, InfoDisplay on bottom */}
+                {/* G3 Phase 2: TaskInput + Submit on top, InfoDisplay on bottom */}
                 <div className="min-h-[250px]">
                   <TaskInput allowPaste={allowPaste} disabled={isReading} />
-                </div>
-                <div className="flex-1 min-h-[200px]">
-                  <InfoDisplay
-                    content={taskContent}
-                    allowCopy={allowCopy}
-                  />
                 </div>
                 <div className="flex justify-end">
                   <Button
@@ -695,6 +702,12 @@ export default function TaskPage() {
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Task'}
                   </Button>
+                </div>
+                <div className="flex-1 min-h-[200px]">
+                  <InfoDisplay
+                    content={taskContent}
+                    allowCopy={allowCopy}
+                  />
                 </div>
               </>
             ) : (
