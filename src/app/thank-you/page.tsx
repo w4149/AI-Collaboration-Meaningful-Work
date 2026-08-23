@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { useCallback } from 'react'
 
-const PROLIFIC_COMPLETION_CODE = 'C6S9QW4R'
+const PROLIFIC_COMPLETION_CODE = 'CC7LTI5A'
 const PROLIFIC_COMPLETION_URL = `https://app.prolific.com/submissions/complete?cc=${PROLIFIC_COMPLETION_CODE}`
 
 export default function ThankYouPage() {
