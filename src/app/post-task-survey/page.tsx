@@ -46,6 +46,14 @@ const TIME_OPTIONS = [
   { value: 5, label: 'Completely' },
 ]
 
+const WAIT_TIME_OPTIONS = [
+  { value: 1, label: 'Not at all' },
+  { value: 2, label: 'Slightly' },
+  { value: 3, label: 'Moderately' },
+  { value: 4, label: 'To a great extent' },
+  { value: 5, label: 'Completely' },
+]
+
 const AGREEMENT_OPTIONS = [
   { value: 1, label: 'Strongly disagree' },
   { value: 2, label: 'Disagree' },
@@ -86,6 +94,7 @@ type SurveyAnswers = {
   unclearDescription?: string
   difficulty?: number
   timeSufficient?: number
+  waitTime?: number
   agreement: Record<string, number | undefined>
   familiarity?: number
 }
@@ -136,6 +145,7 @@ export default function PostTaskSurveyPage() {
     if (!answers.clarity) return false
     if (!answers.difficulty) return false
     if (!answers.timeSufficient) return false
+    if (!answers.waitTime) return false
     if (!answers.familiarity) return false
     for (const item of AGREEMENT_ITEMS) {
       if (answers.agreement[item.id] === undefined) return false
@@ -187,6 +197,7 @@ export default function PostTaskSurveyPage() {
   const setClarity = (v: string) => setAnswers((p) => ({ ...p, clarity: Number(v) }))
   const setDifficulty = (v: string) => setAnswers((p) => ({ ...p, difficulty: Number(v) }))
   const setTime = (v: string) => setAnswers((p) => ({ ...p, timeSufficient: Number(v) }))
+  const setWaitTime = (v: string) => setAnswers((p) => ({ ...p, waitTime: Number(v) }))
   const setFamiliarity = (v: string) => setAnswers((p) => ({ ...p, familiarity: Number(v) }))
   const setAgreement = (id: string, v: string) => 
     setAnswers((p) => ({ ...p, agreement: { ...p.agreement, [id]: Number(v) } }))
@@ -268,10 +279,18 @@ export default function PostTaskSurveyPage() {
             {renderRadioGroup('time', answers.timeSufficient, TIME_OPTIONS, setTime)}
           </div>
 
-          {/* Q5: Cognitive load items */}
+          {/* Q5: Wait time */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              5. To what extent did you feel that you had to wait for the minimum time to pass before you could submit your response? <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('waitTime', answers.waitTime, WAIT_TIME_OPTIONS, setWaitTime)}
+          </div>
+
+          {/* Q6: Cognitive load items */}
           <div className="space-y-4">
             <Label className="text-base font-medium">
-              5. Thinking about the task you just completed, please indicate how much you agree or disagree with each of the following statements. <span className="text-red-500">*</span>
+              6. Thinking about the task you just completed, please indicate how much you agree or disagree with each of the following statements. <span className="text-red-500">*</span>
             </Label>
             <div className="space-y-5 bg-gray-50 p-4 rounded-lg border">
               {AGREEMENT_ITEMS.map((item) => (
@@ -303,10 +322,10 @@ export default function PostTaskSurveyPage() {
             </div>
           </div>
 
-          {/* Q6: Familiarity */}
+          {/* Q7: Familiarity */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              6. How familiar are you with tasks involving {taskTypeLabel}? <span className="text-red-500">*</span>
+              7. How familiar are you with tasks involving {taskTypeLabel}? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('familiarity', answers.familiarity, FAMILIARITY_OPTIONS, setFamiliarity)}
           </div>

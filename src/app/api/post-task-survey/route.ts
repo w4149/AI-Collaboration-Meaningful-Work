@@ -9,15 +9,16 @@ export async function POST(request: Request) {
       unclearDescription,
       difficulty,
       timeSufficient,
+      waitTime,
       agreement,
       familiarity,
       prolificId,
       userId,
     } = await request.json()
 
-    console.log('[Post-Task Survey] received:', { taskId, clarity, difficulty, timeSufficient, familiarity })
+    console.log('[Post-Task Survey] received:', { taskId, clarity, difficulty, timeSufficient, waitTime, familiarity })
 
-    if (!clarity || !difficulty || !timeSufficient || !familiarity || !agreement) {
+    if (!clarity || !difficulty || !timeSufficient || !waitTime || !familiarity || !agreement) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
       unclear_description: unclearDescription || null,
       difficulty: Number(difficulty),
       time_sufficient: Number(timeSufficient),
+      wait_time: Number(waitTime),
       familiarity: Number(familiarity),
       analyze_info: agreement.analyze_info ?? null,
       generate_ideas: agreement.generate_ideas ?? null,
@@ -103,6 +105,7 @@ export async function POST(request: Request) {
             post_unclear_description: surveyData.unclear_description,
             post_difficulty: surveyData.difficulty,
             post_time_sufficient: surveyData.time_sufficient,
+            post_wait_time: surveyData.wait_time,
             post_familiarity: surveyData.familiarity,
             post_analyze_info: surveyData.analyze_info,
             post_generate_ideas: surveyData.generate_ideas,
