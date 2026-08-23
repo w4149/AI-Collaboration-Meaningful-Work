@@ -111,7 +111,7 @@ Your task: for each review, choose the **ONE label that fits best** from the thr
 
 - **Environment**: What the store is like (e.g., space, facilities, or cleanliness)
 
-- **Product**: What the drink is like (e.g., taste, temperature, sweetness, or strength)
+- **Product**: What the drink or food is like (e.g., taste, temperature, sweetness, or strength)
 
 For each comment, enter the review number and corresponding label on a separate line using the following format: 
 
@@ -150,7 +150,7 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 | 13 | Latte art was gorgeous, and it tasted just as smooth. |
 | 14 | Cashier caught a mistake on my receipt and fixed it before I even said anything. |
 | 15 | Flat white had a great balance of milk and coffee. |
-| 16 | My iced latte sat for a bit, but it was still well mixed. |
+| 16 | My iced latte was really well mixed, with no separation at all. |
 | 17 | Seats along the wall have outlets, good pick if you're trying to get work done. |
 | 18 | The drip coffee tasted fresh and had a nice nutty flavor. |
 | 19 | Barista patiently walked me through the differences between the new drinks. |
@@ -209,92 +209,159 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 | 72 | The blonde roast was milder than I usually go for, but it was smooth and easy to drink. |
 | 73 | Cashier reminded me it was rewards member day. |
 | 74 | The front area can be a little drafty when the door keeps opening. |
-| 75 | The barista noticed my drink had been sitting and offered to make a fresh one. |
-| 76 | The iced matcha was earthy and smooth, not that overly sugary kind. |
-| 77 | The staff packed my pastry separately so it wouldn’t get squished in my bag. |
-| 78 | Lighting's nice and soft, my eyes don't get tired even at night. |
-| 79 | Not enough outlets here, wish there were more. |
-| 80 | Caramel latte is pretty sweet, starts to feel heavy after a while. |
-| 81 | Warm lighting at night is easy on the eyes, not too bright. |
-| 82 | Had two separate orders, and the barista combined the rewards points without me even asking. |
-| 83 | Caramel macchiato had a really nice balance. |
-| 84 | Americano tasted a bit sour today, maybe they switched up the beans. |
-| 85 | Staff let me know the kitchen was running behind before I had to ask. |
-| 86 | Some rewards points were missing, and the barista went ahead and added them manually. |
-| 87 | Took me forever to decide, and the barista was patient the whole time. |
-| 88 | Windows upstairs actually open, so airflow's way better than downstairs. |
-| 89 | Cashier reminded me I had an unused coupon sitting in the app. |
-| 90 | Outdoor tables have enough shade to sit comfortably even when it’s sunny. |
-| 91 | Barista double‑checked the seal on my to‑go cup before handing it over. |
-| 92 | Plenty of table space for a laptop and notebook. |
-| 93 | Foam on my hot latte was so smooth and creamy. |
-| 94 | Barista remembered my order from last time and asked if I wanted the usual. |
-| 95 | Had a ton of stuff with me, so the barista cleared off a bigger table. |
-| 96 | The music changes throughout the day, but it always fits the vibe. |
-| 97 | Chairs have cushioned seats, so they're comfortable even if you camp out for hours. |
-| 98 | The restroom mirror and counter were clean, which is always a good sign. |
-| 99 | Cold brew leaves a nice aftertaste. |
-| 100 | Ordered a dessert to go, and the barista packed it in its own box. |
-| 101 | The restroom is small, but it’s clearly looked after. |
-| 102 | Staff offered to combine my two orders onto one check. |
-| 103 | There's an outlet right by this seat, makes working on a laptop so much easier. |
-| 104 | Lighting's nice and warm at night, whole place feels calm. |
-| 105 | Cashier told me about the BOGO deal even though I never asked. |
-| 106 | Coconut latte tasted more like coconut than coffee today. |
-| 107 | Barista got every detail on my receipt right the first time. |
-| 108 | The hazelnut latte was creamy and not overly syrupy. |
-| 109 | Oat milk latte was sweet enough on its own, didn't need to add anything. |
-| 110 | The iced mocha tasted more like actual cocoa than sugary chocolate sauce. |
-| 111 | Hot Americano stayed warm till the very last sip. |
-| 112 | Barista mentioned my drink had light ice and suggested I drink it soon. |
-| 113 | Mocha had a nice balance of chocolate and coffee. |
-| 114 | Cold brew was so refreshing, no bitterness at all. |
-| 115 | Love the high ceilings, makes the whole place feel open. |
-| 116 | Background noise is low enough that I can focus without headphones. |
-| 117 | Had two drinks, and the barista put them both on one tray for me. |
-| 118 | My iced Americano was smoother than usual, less acidic too. |
-| 119 | Booths in the back are pretty private, great if you want to actually talk. |
-| 120 | The pour‑over took a few minutes, but it came out bright, clean, and worth the wait. |
-| 121 | The window seats get amazing afternoon light, perfect spot for reading. |
-| 122 | Flat white tasted more like coffee today, less milk than usual. |
-| 123 | Iced Americano was pretty acidic today, had a fruity finish though. |
-| 124 | Restroom's clean and doesn't smell at all. |
-| 125 | They kept my iced drink behind the counter while I waited for my food, so it didn’t melt. |
-| 126 | There's a little rack by the register for your bag, super convenient. |
-| 127 | I like adding a little coconut milk to my cold brew, makes it so much smoother. |
-| 128 | The plant vibe is nice. |
-| 129 | AC runs a little cold in here. |
-| 130 | Iced latte had way too much ice. |
-| 131 | Tables are spaced out well, easy to walk around. |
-| 132 | The Wi‑Fi held up really well while I was on a video call. |
-| 133 | Sitting by the window watching people go by is oddly relaxing. |
-| 134 | Foam on the cappuccino was a bit dry, but the cocoa dusting on top was spot on. |
-| 135 | Spilled some coffee and staff came over to clean it up without me even asking. |
-| 136 | The cashier reminded me about a coupon before I even brought it up. |
-| 137 | Plants and wooden tables look great together, gives the place a really natural feel. |
-| 138 | Oat milk latte was the perfect temperature, could drink it right away. |
-| 139 | Couldn't find a seat, so the barista pointed me to an open table in the back. |
-| 140 | Seats by the door get a lot of foot traffic — much quieter if you sit further in. |
-| 141 | Tables are always wiped down well, never sticky. |
-| 142 | Temperature inside is always comfortable, never feels too cold. |
-| 143 | The place has a relaxed neighborhood feel, even when it’s fairly full. |
-| 144 | Barista patiently walked me through the differences between the new drinks. |
-| 145 | The patio’s surprisingly peaceful in the morning. |
-| 146 | Had my pet with me, and the staff showed us where we could sit. |
-| 147 | I accidentally ordered the wrong size, but the barista fixed it right away, no questions asked. |
-| 148 | Tried oat milk in my latte and it worked out really well. |
-| 149 | The barista labeled both my drinks so I could tell them apart easily. |
-| 150 | Music's at a good volume — you can actually hold a conversation without raising your voice. |
-| 151 | Staff was super patient answering all my questions about the new drinks. |
-| 152 | The espresso shot had a rich flavor and no burnt aftertaste. |
-| 153 | Forgot to scan for rewards points, but the staff went back and added them for me. |
-| 154 | These couches are so comfy, I could sit here alone for hours. |
-| 155 | Barista reprinted my receipt right away, no hassle. |
-| 156 | Love the seats by the big windows — the view makes it such a relaxing spot. |
-| 157 | Mocha was loaded with chocolate, which made it sweeter than usual. |
-| 158 | The hooks under the counter are handy for hanging a backpack or tote. |
-| 159 | I changed my mind at the register, and the cashier updated the order without any attitude. |
-| 160 | The tables near the back have plenty of space between them, so it never feels crowded. |`,
+| 75 | The iced matcha was earthy and smooth, not that overly sugary kind. |
+| 76 | The staff packed my pastry separately so it wouldn’t get squished in my bag. |
+| 77 | Lighting's nice and soft, my eyes don't get tired even at night. |
+| 78 | Not enough outlets here, wish there were more. |
+| 79 | Caramel latte is pretty sweet, starts to feel heavy after a while. |
+| 80 | Warm lighting at night is easy on the eyes, not too bright. |
+| 81 | Had two separate orders, and the barista combined the rewards points without me even asking. |
+| 82 | Caramel macchiato had a really nice balance. |
+| 83 | Americano tasted a bit sour today, maybe they switched up the beans. |
+| 84 | Staff let me know the kitchen was running behind before I had to ask. |
+| 85 | Some rewards points were missing, and the barista went ahead and added them manually. |
+| 86 | Took me forever to decide, and the barista was patient the whole time. |
+| 87 | Cashier reminded me I had an unused coupon sitting in the app. |
+| 88 | Barista double‑checked the seal on my to‑go cup before handing it over. |
+| 89 | Plenty of table space for a laptop and notebook. |
+| 90 | Foam on my hot latte was so smooth and creamy. |
+| 91 | Barista remembered my order from last time and asked if I wanted the usual. |
+| 92 | Had a ton of stuff with me, so the barista cleared off a bigger table. |
+| 93 | The music changes throughout the day, but it always fits the vibe. |
+| 94 | Chairs have cushioned seats, so they're comfortable even if you camp out for hours. |
+| 95 | The restroom mirror and counter were clean, which is always a good sign. |
+| 96 | Cold brew leaves a nice aftertaste. |
+| 97 | Ordered a dessert to go, and the barista packed it in its own box. |
+| 98 | The restroom is small, but it’s clearly looked after. |
+| 99 | Staff offered to combine my two orders onto one check. |
+| 100 | There's an outlet right by this seat, makes working on a laptop so much easier. |
+| 101 | Lighting's nice and warm at night, whole place feels calm. |
+| 102 | Cashier told me about the BOGO deal even though I never asked. |
+| 103 | Coconut latte tasted more like coconut than coffee today. |
+| 104 | Barista got every detail on my receipt right the first time. |
+| 105 | The hazelnut latte was creamy and not overly syrupy. |
+| 106 | Oat milk latte was sweet enough on its own, didn't need to add anything. |
+| 107 | The iced mocha tasted more like actual cocoa than sugary chocolate sauce. |
+| 108 | Hot Americano stayed warm till the very last sip. |
+| 109 | Barista mentioned my drink had light ice and suggested I drink it soon. |
+| 110 | Mocha had a nice balance of chocolate and coffee. |
+| 111 | Cold brew was so refreshing, no bitterness at all. |
+| 112 | Love the high ceilings, makes the whole place feel open. |
+| 113 | Background noise is low enough that I can focus without headphones. |
+| 114 | Had two drinks, and the barista put them both on one tray for me. |
+| 115 | My iced Americano was smoother than usual, less acidic too. |
+| 116 | Booths in the back are pretty private, great if you want to actually talk. |
+| 117 | The pour‑over tasted bright and clean, with a really crisp finish. |
+| 118 | The window seats get amazing afternoon light, perfect spot for reading. |
+| 119 | Flat white tasted more like coffee today, less milk than usual. |
+| 120 | Iced Americano was pretty acidic today, had a fruity finish though. |
+| 121 | Restroom's clean and doesn't smell at all. |
+| 122 | They kept my iced drink behind the counter while I waited for my food, so it didn’t melt. |
+| 123 | There's a little rack by the register for your bag, super convenient. |
+| 124 | I like adding a little coconut milk to my cold brew, makes it so much smoother. |
+| 125 | The plants around the store give the space a relaxed, natural feel. |
+| 126 | AC runs a little cold in here. |
+| 127 | Iced latte had way too much ice. |
+| 128 | Tables are spaced out well, easy to walk around. |
+| 129 | The Wi‑Fi held up really well while I was on a video call. |
+| 130 | Sitting by the window watching people go by is oddly relaxing. |
+| 131 | Foam on the cappuccino was a bit dry, but the cocoa dusting on top was spot on. |
+| 132 | Spilled some coffee and staff came over to clean it up without me even asking. |
+| 133 | The cashier reminded me about a coupon before I even brought it up. |
+| 134 | Plants and wooden tables look great together, gives the place a really natural feel. |
+| 135 | Oat milk latte was the perfect temperature, could drink it right away. |
+| 136 | Couldn't find a seat, so the barista pointed me to an open table in the back. |
+| 137 | Seats by the door get a lot of foot traffic — much quieter if you sit further in. |
+| 138 | Tables are always wiped down well, never sticky. |
+| 139 | Temperature inside is always comfortable, never feels too cold. |
+| 140 | The place has a relaxed neighborhood feel, even when it’s fairly full. |
+| 141 | The patio’s surprisingly peaceful in the morning. |
+| 142 | Had my pet with me, and the staff showed us where we could sit. |
+| 143 | I accidentally ordered the wrong size, but the barista fixed it right away, no questions asked. |
+| 144 | Tried oat milk in my latte and it worked out really well. |
+| 145 | The barista labeled both my drinks so I could tell them apart easily. |
+| 146 | Music's at a good volume — you can actually hold a conversation without raising your voice. |
+| 147 | Staff was super patient answering all my questions about the new drinks. |
+| 148 | The espresso shot had a rich flavor and no burnt aftertaste. |
+| 149 | Forgot to scan for rewards points, but the staff went back and added them for me. |
+| 150 | These couches are so comfy, I could sit here alone for hours. |
+| 151 | Barista reprinted my receipt right away, no hassle. |
+| 152 | Love the seats by the big windows — the view makes it such a relaxing spot. |
+| 153 | Mocha was loaded with chocolate, which made it sweeter than usual. |
+| 154 | The hooks under the counter are handy for hanging a backpack or tote. |
+| 155 | I changed my mind at the register, and the cashier updated the order without any attitude. |
+| 156 | The tables near the back have plenty of space between them, so it never feels crowded. |
+| 157 | Chai latte had a warm cinnamon kick without tasting overly spicy. |
+| 158 | The barista checked the syrup ingredients carefully when I mentioned my nut allergy. |
+| 159 | There’s a bike rack right outside, which makes stopping by really convenient. |
+| 160 | The menu board is clear enough to read before you reach the register. |
+| 161 | The lemonade was tart and fresh, not overloaded with sugar. |
+| 162 | Staff warmed my pastry and timed it so it came out with my drink. |
+| 163 | The decaf coffee still tasted full‑bodied, not thin or flat. |
+| 164 | The ramp at the entrance makes it easy to come in with a stroller. |
+| 165 | Barista rinsed my reusable cup before filling it, which I appreciated. |
+| 166 | Peppermint mocha had a clean mint flavor without tasting like toothpaste. |
+| 167 | There’s a coat rack near the entrance, really useful on rainy days. |
+| 168 | The barista offered me a small sample before I committed to the seasonal drink. |
+| 169 | The restroom has a changing table, which is helpful for parents. |
+| 170 | Staff brought me a cup of water while I waited for the rest of my order. |
+| 171 | My black tea had steeped a little too long and tasted slightly astringent. |
+| 172 | Barista marked the lid clearly so I knew which drink was dairy‑free. |
+| 173 | The honey latte had a soft floral sweetness that didn’t overpower the espresso. |
+| 174 | The staircase has a sturdy handrail and doesn’t feel too steep. |
+| 175 | Staff brought out a bowl of water when they saw my dog on the patio. |
+| 176 | The recycling and trash bins are clearly labeled, so sorting everything is easy. |
+| 177 | The rooibos tea was mellow and naturally sweet without any syrup. |
+| 178 | The restroom hand dryer is surprisingly quiet. |
+| 179 | The turmeric latte tasted earthy with just enough ginger to brighten it up. |
+| 180 | Barista gave us an extra empty cup so we could split one drink. |
+| 181 | The cascara drink had a light fruity flavor, almost like dried cherries. |
+| 182 | Cashier helped me load the exact amount I wanted onto a gift card. |
+| 183 | The aisles are wide enough to move through comfortably with a stroller. |
+| 184 | The ristretto shot had a concentrated flavor with a caramel‑like finish. |
+| 185 | The iced hibiscus tea was bright and tangy without being too sharp. |
+| 186 | There’s a covered stand by the entrance where you can leave a wet umbrella. |
+| 187 | Staff gave me clear directions to the nearest bus stop when I asked. |
+| 188 | The stairs have nonslip strips, which helps when it’s raining outside. |
+| 189 | The espresso con panna had just enough cream to soften the strong coffee taste. |
+| 190 | Barista offered me a ceramic mug when they realized I was staying in. |
+| 191 | Trash bins are placed near the exits, so you don’t have to search for one. |
+| 192 | The barista offered to refill my water bottle before I left. |
+| 193 | The honey latte tasted floral, not just sweet. |
+| 194 | Cashier walked me through loading a gift card in the app. |
+| 195 | Almond milk latte had a light nutty taste that didn't fight the espresso. |
+| 196 | Shared long table works well if you're solo and don't need a four‑top. |
+| 197 | Extra‑hot latte tasted a bit cooked — milk got scalded. |
+| 198 | Skylight upstairs keeps it bright even on gray days. |
+| 199 | Cashier found the card I dropped and held it at the register. |
+| 200 | Barista warmed my croissant before putting it in the bag. |
+| 201 | Floor‑to‑ceiling shelves give the place a nice library feel. |
+| 202 | Honey lavender latte was fragrant without being too floral. |
+| 203 | The brown sugar boba latte had a nice chew to the pearls. |
+| 204 | There's a small garden out back that's nice for sitting in the morning. |
+| 205 | Barista wrote a little note on my cup for my friend's birthday. |
+| 206 | Iced mocha had just the right amount of chocolate drizzle. |
+| 207 | Cashier let me know my card had already been charged once, so I didn't double pay. |
+| 208 | Barista held the door open for me since my hands were full. |
+| 209 | Pistachio latte had a rich, nutty flavor that wasn't too sweet. |
+| 210 | Staff brought extra napkins over before I even asked. |
+| 211 | The plain croissant was buttery and flaky, paired well with coffee. |
+| 212 | The restroom is cramped and doesn’t have much space. |
+| 213 | The wallpaper gives the space a warm, homey feel. |
+| 214 | Brown butter latte had a subtle toasty flavor I really enjoyed. |
+| 215 | Standing charging stations near the counter are handy for a quick top‑up. |
+| 216 | The skylight brings in nice light without making the room too warm. |
+| 217 | Cashier explained the app's referral bonus when I asked about it. |
+| 218 | Cortado had a good coffee‑to‑milk ratio, strong but smooth. |
+| 219 | Booth cushions could use a bit more padding. |
+| 220 | Barista offered to box up my leftover pastry for later. |
+| 221 | The seasonal pumpkin drink had a nice spice blend, not too sweet. |
+| 222 | The bookshelf by the window has a nice little reading nook. |
+| 223 | Staff apologized and remade my order after mixing up my ticket. |
+| 224 | Iced chai was well spiced but a bit too sweet for me. |
+| 225 | Umbrellas on the patio make sitting outside comfortable even when it drizzles. |
+| 226 | The banana bread was moist and paired nicely with a latte. |
+`,
 
   'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer has submitted the complaint below. Read the complaint and write a reply as a Lucky Coffee representative.
 
