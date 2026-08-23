@@ -62,8 +62,8 @@ export default function TaskPage() {
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
 
-  const submitMinutes = getSubmitMinMinutes(groupType, currentPhase)
-  const autoSubmitMinutes = getAutoSubmitMinutes(groupType, currentPhase)
+  const submitMinutes = getSubmitMinMinutes(groupType, currentPhase, taskType)
+  const autoSubmitMinutes = getAutoSubmitMinutes(groupType, currentPhase, taskType)
 
   const handlePhase1AutoSubmit = useCallback(async () => {
     // Save Phase 1 submission and chat, then transition to Phase 2

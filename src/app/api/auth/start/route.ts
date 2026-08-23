@@ -20,7 +20,7 @@ For each idea, describe what customers would do, how the idea would work, and an
 
 ---
 
-Note: A response of about 80–200 words is recommended, but you may write more or less as needed to fully address the task.
+Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
 
 `,
 
@@ -52,7 +52,7 @@ Design an anniversary event that meets the following requirements:
   
 ---
 
-Note: A response of about 80–200 words is recommended, but you may write more or less as needed to fully address the task.
+Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
 
 ---
 
@@ -377,7 +377,7 @@ Work through the reviews in order, starting with Review 1. Complete as many revi
 
 ---
 
-Note: A response of about 80–200 words is recommended, but you may write more or less as needed to fully address the task.
+Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
 
 ---
 

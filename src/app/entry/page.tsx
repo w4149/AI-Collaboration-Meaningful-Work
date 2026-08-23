@@ -68,15 +68,15 @@ export default function EntryPage() {
   const studyId = searchParams.get('STUDY_ID') || ''
   const prolificSessionId = searchParams.get('SESSION_ID') || ''
 
-  // Time config per group
-  const g1Min = getSubmitMinMinutes('G1-Human')
-  const g1Max = getAutoSubmitMinutes('G1-Human')
-  const g2Min = getSubmitMinMinutes('G2-AI')
-  const g2Max = getAutoSubmitMinutes('G2-AI')
-  const g3Min = getSubmitMinMinutes('G3-HumanAndAI')
-  const g3Max = getAutoSubmitMinutes('G3-HumanAndAI')
-  const g3Phase2Min = getSubmitMinMinutes('G3-HumanAndAI', 2)
-  const g3Phase2Max = getAutoSubmitMinutes('G3-HumanAndAI', 2)
+  // Time config per group (pass urlTask for task-specific overrides)
+  const g1Min = getSubmitMinMinutes('G1-Human', undefined, urlTask)
+  const g1Max = getAutoSubmitMinutes('G1-Human', undefined, urlTask)
+  const g2Min = getSubmitMinMinutes('G2-AI', undefined, urlTask)
+  const g2Max = getAutoSubmitMinutes('G2-AI', undefined, urlTask)
+  const g3Min = getSubmitMinMinutes('G3-HumanAndAI', undefined, urlTask)
+  const g3Max = getAutoSubmitMinutes('G3-HumanAndAI', undefined, urlTask)
+  const g3Phase2Min = getSubmitMinMinutes('G3-HumanAndAI', 2, urlTask)
+  const g3Phase2Max = getAutoSubmitMinutes('G3-HumanAndAI', 2, urlTask)
 
   // If task and group are in URL, skip select-task and start directly
   const hasUrlAssignment = !!(urlTask && urlGroup)
