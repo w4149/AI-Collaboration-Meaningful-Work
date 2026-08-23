@@ -675,16 +675,17 @@ export default function TaskPage() {
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Left column: task info + (when chat available) input */}
           <div className={`${allowChat && isChatOpen ? 'lg:col-span-7' : 'lg:col-span-7'} flex flex-col gap-4`}>
-            <div className="flex-1 min-h-[300px]">
-              <InfoDisplay
-                content={taskContent}
-                allowCopy={allowCopy}
-              />
-            </div>
-            {allowChat && isChatOpen && (
+            {groupType === 'G3-HumanAndAI' && currentPhase === 2 && allowChat && isChatOpen ? (
               <>
+                {/* G3 Phase 2: TaskInput on top, InfoDisplay on bottom */}
                 <div className="min-h-[250px]">
                   <TaskInput allowPaste={allowPaste} disabled={isReading} />
+                </div>
+                <div className="flex-1 min-h-[200px]">
+                  <InfoDisplay
+                    content={taskContent}
+                    allowCopy={allowCopy}
+                  />
                 </div>
                 <div className="flex justify-end">
                   <Button
@@ -695,6 +696,32 @@ export default function TaskPage() {
                     {isSubmitting ? 'Submitting...' : 'Submit Task'}
                   </Button>
                 </div>
+              </>
+            ) : (
+              <>
+                {/* Default: InfoDisplay on top, TaskInput on bottom */}
+                <div className="flex-1 min-h-[300px]">
+                  <InfoDisplay
+                    content={taskContent}
+                    allowCopy={allowCopy}
+                  />
+                </div>
+                {allowChat && isChatOpen && (
+                  <>
+                    <div className="min-h-[250px]">
+                      <TaskInput allowPaste={allowPaste} disabled={isReading} />
+                    </div>
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={isSubmitting || (submitCountdown !== null && submitCountdown > 0) || (readingCountdown !== null && readingCountdown > 0)}
+                        size="lg"
+                      >
+                        {isSubmitting ? 'Submitting...' : 'Submit Task'}
+                      </Button>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
