@@ -108,7 +108,9 @@ export default function TaskPage() {
     // Transition to Phase 2
     setCurrentPhase(2)
     unlockFeatures()
-    setPhase2StartTime(new Date())
+    // Don't start Phase 2 timer yet — wait for user to click Start in the dialog
+    setPhase2StartTime(null)
+    setTaskTimerStart(null)
   }, [userId, taskId, setCurrentPhase, unlockFeatures, startTime])
 
   const handleAutoSubmit = useCallback(async () => {
@@ -220,16 +222,12 @@ export default function TaskPage() {
   // Reading countdown: 30s for all groups EXCEPT G3 Phase 2
   useEffect(() => {
     const isG3P2 = groupType === 'G3-HumanAndAI' && currentPhase === 2
-    console.log('[Reading] useEffect start', { isG3P2, isReading, readingCountdown, taskTimerStart, readingStarted: readingStartedRef.current })
 
     if (isG3P2) {
       readingStartedRef.current = true
       setIsReading(false)
       setReadingCountdown(null)
-      if (!taskTimerStart) {
-        setTaskTimerStart(new Date())
-      }
-      console.log('[Reading] G3P2: skip reading, start timer')
+      // Timer starts only after user clicks Start in the dialog
       return
     }
 
@@ -409,7 +407,9 @@ export default function TaskPage() {
         }
         setCurrentPhase(2)
         unlockFeatures()
-        setPhase2StartTime(new Date())
+        // Don't start Phase 2 timer yet — wait for user to click Start in the dialog
+        setPhase2StartTime(null)
+        setTaskTimerStart(null)
       } catch (error) {
         console.error('Error transitioning to Phase 2:', error)
         alert('Failed to proceed. Please try again.')
@@ -491,6 +491,13 @@ export default function TaskPage() {
   const handleLeaveWarningContinue = () => {
     setShowLeaveWarning(false)
     setTaskSubmitted(true)
+  }
+
+  const handleStartPhase2 = () => {
+    setShowInstructions(false)
+    const now = new Date()
+    setPhase2StartTime(now)
+    setTaskTimerStart(now)
   }
 
   // Instruction content per group
@@ -631,7 +638,7 @@ export default function TaskPage() {
             </Badge>
             <span className={`${groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'text-amber-700' : 'text-purple-700'} font-semibold`}>
               {groupType === 'G3-HumanAndAI' && currentPhase === 1
-                ? `Phase 2 in ${formatCountdown(redirectCountdown)}`
+                ? `Auto-submit your initial draft in ${formatCountdown(redirectCountdown)}`
                 : `Auto-submit in ${formatCountdown(redirectCountdown)}`}
             </span>
           </div>
@@ -719,7 +726,13 @@ export default function TaskPage() {
       </main>
 
       {/* Instructions Dialog */}
-      <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
+      <Dialog open={showInstructions} onOpenChange={(open) => {
+        // For G3 Phase 2, don't allow closing via overlay/ESC — require Start button
+        if (groupType === 'G3-HumanAndAI' && currentPhase === 2 && !phase2StartTime) {
+          return
+        }
+        setShowInstructions(open)
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Task Instructions</DialogTitle>
@@ -728,6 +741,13 @@ export default function TaskPage() {
             </DialogDescription>
           </DialogHeader>
           {getInstructions()}
+          {groupType === 'G3-HumanAndAI' && currentPhase === 2 && !phase2StartTime && (
+            <div className="flex justify-center pt-4">
+              <Button onClick={handleStartPhase2} size="lg">
+                Start Phase 2
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

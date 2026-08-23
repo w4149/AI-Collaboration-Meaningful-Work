@@ -15,6 +15,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   
   const chatMessages = useAppStore((state) => state.chatMessages)
   const addChatMessage = useAppStore((state) => state.addChatMessage)
@@ -25,12 +26,20 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
 
-  // Auto-scroll to bottom only when a new message is added (not on every chatMessages change)
+  // Auto-scroll to bottom only when user is already near the bottom
   const messageCountRef = useRef(0)
   useEffect(() => {
     if (chatMessages.length > messageCountRef.current) {
       messageCountRef.current = chatMessages.length
-      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+      const container = chatContainerRef.current
+      if (container) {
+        const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight
+        if (distanceFromBottom < 100) {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+        }
+      } else {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+      }
     }
   }, [chatMessages])
 
@@ -132,7 +141,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-2">
           {chatMessages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
               <p>Ask me anything about the task!</p>
