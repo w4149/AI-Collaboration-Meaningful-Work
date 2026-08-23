@@ -21,8 +21,11 @@ export async function POST(request: Request) {
     const apiKey = process.env.OPENROUTER_API_KEY
 
     if (!apiKey) {
-      const mockResponse = `[模拟AI] 您说的是: "${message}"\n\n这是一个模拟的AI回复，用于测试。当您配置了真实的OPENROUTER_API_KEY后，这里会显示真实的AI回复。`
-      return NextResponse.json({ message: mockResponse })
+      const mockResponse = `[Mock AI] You said: "${message}"\n\nThis is a mock AI response for testing. When you configure a real OPENROUTER_API_KEY, the real AI response will appear here.`
+      return NextResponse.json({
+        message: mockResponse,
+        usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+      })
     }
 
     const baseURL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
@@ -93,7 +96,15 @@ Rules:
       clearTimeout(timeout)
 
       const assistantMessage = completion.choices[0]?.message?.content || 'I apologize, I could not generate a response.'
-      return NextResponse.json({ message: assistantMessage })
+      const usage = completion.usage
+      return NextResponse.json({
+        message: assistantMessage,
+        usage: usage ? {
+          prompt_tokens: usage.prompt_tokens || 0,
+          completion_tokens: usage.completion_tokens || 0,
+          total_tokens: usage.total_tokens || 0,
+        } : null,
+      })
     } catch (apiError: any) {
       clearTimeout(timeout)
       const errMsg = apiError?.message || String(apiError)

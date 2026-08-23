@@ -54,6 +54,7 @@ export default function TaskPage() {
   const setCurrentPhase = useAppStore((state) => state.setCurrentPhase)
   const taskSubmitted = useAppStore((state) => state.taskSubmitted)
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
+  const aiTotalTokens = useAppStore((state) => state.aiTotalTokens)
 
   const isG3P2Init = groupType === 'G3-HumanAndAI' && currentPhase === 2
   const [isReading, setIsReading] = useState(!isG3P2Init)
@@ -84,6 +85,7 @@ export default function TaskPage() {
           phase: 1,
           submission,
           submissionTime: phase1Time,
+          aiTotalTokens: aiTotalTokensRef.current,
         }),
       })
       for (const msg of messages) {
@@ -139,6 +141,7 @@ export default function TaskPage() {
             taskId,
             submission2: submission,
             submissionTime2: phase2Time,
+            aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
       } else {
@@ -155,6 +158,7 @@ export default function TaskPage() {
             taskId,
             submission,
             submissionTime: totalTime,
+            aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
       }
@@ -183,10 +187,12 @@ export default function TaskPage() {
   const taskSubmissionRef = useRef(taskSubmission)
   const chatMessagesRef = useRef(chatMessages)
   const isSubmittingRef = useRef(isSubmitting)
+  const aiTotalTokensRef = useRef(aiTotalTokens)
 
   useEffect(() => { taskSubmissionRef.current = taskSubmission }, [taskSubmission])
   useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
   useEffect(() => { isSubmittingRef.current = isSubmitting }, [isSubmitting])
+  useEffect(() => { aiTotalTokensRef.current = aiTotalTokens }, [aiTotalTokens])
 
   // Prevent re-entry after submission
   useEffect(() => {
@@ -385,6 +391,7 @@ export default function TaskPage() {
             phase: 1,
             submission: taskSubmission,
             submissionTime: phase1Time,
+            aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
         for (const msg of chatMessages) {
@@ -428,6 +435,7 @@ export default function TaskPage() {
             taskId,
             submission2: taskSubmission,
             submissionTime2: phase2Time,
+            aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
         if (!response.ok) throw new Error('Failed to submit')
@@ -444,6 +452,7 @@ export default function TaskPage() {
             taskId,
             submission: taskSubmission,
             submissionTime: totalTime,
+            aiTotalTokens: aiTotalTokensRef.current,
           }),
         })
         if (!response.ok) throw new Error('Failed to submit')

@@ -18,6 +18,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
   
   const chatMessages = useAppStore((state) => state.chatMessages)
   const addChatMessage = useAppStore((state) => state.addChatMessage)
+  const incrementAiTokens = useAppStore((state) => state.incrementAiTokens)
   const isChatOpen = useAppStore((state) => state.isChatOpen)
   const toggleChat = useAppStore((state) => state.toggleChat)
   const allowChat = useAppStore((state) => state.allowChat)
@@ -65,6 +66,10 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
       if (!response.ok) throw new Error('Failed to get response')
 
       const data = await response.json()
+
+      if (data.usage?.total_tokens) {
+        incrementAiTokens(data.usage.total_tokens)
+      }
 
       const assistantMessage = {
         id: (Date.now() + 1).toString(),

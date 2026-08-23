@@ -18,11 +18,14 @@ export async function POST(request: Request) {
       submission2,
       submissionTime2,
       phase,
+      aiTotalTokens,
     } = await request.json()
 
     if (!userId || !taskId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
+
+    const tokenCount = aiTotalTokens ?? 0
 
     if (phase === 1) {
       // Phase 1: insert new row with Phase 1 submission
@@ -34,6 +37,7 @@ export async function POST(request: Request) {
           submission: submission || null,
           submission_time: submissionTime ?? null,
           submission_word_count: countWords(submission),
+          ai_total_tokens: tokenCount,
         })
         .select('id')
         .single()
@@ -64,6 +68,7 @@ export async function POST(request: Request) {
           submission_2: submission2 || null,
           submission_time_2: submissionTime2 ?? null,
           submission_word_count_2: countWords(submission2),
+          ai_total_tokens: tokenCount,
         })
         .eq('id', existing.id)
 
@@ -92,6 +97,7 @@ export async function POST(request: Request) {
         submission: submission || null,
         submission_time: submissionTime ?? null,
         submission_word_count: countWords(submission),
+        ai_total_tokens: tokenCount,
       })
       .select('id')
       .single()

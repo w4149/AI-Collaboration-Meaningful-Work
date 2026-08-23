@@ -95,6 +95,10 @@ interface AppState {
   manipulationCheckCompleted: boolean
   setManipulationCheckCompleted: (completed: boolean) => void
 
+  // AI Token usage tracking (cumulative across all chat interactions)
+  aiTotalTokens: number
+  incrementAiTokens: (tokens: number) => void
+
   // Attention check tracking
   attentionCheck1Passed: boolean
   setAttentionCheck1Passed: (passed: boolean) => void
@@ -206,6 +210,10 @@ export const useAppStore = create<AppState>()(
       manipulationCheckCompleted: false,
       setManipulationCheckCompleted: (manipulationCheckCompleted) => set({ manipulationCheckCompleted }),
 
+      // AI Token usage tracking
+      aiTotalTokens: 0,
+      incrementAiTokens: (tokens) => set((state) => ({ aiTotalTokens: state.aiTotalTokens + tokens })),
+
       // Attention check tracking
       attentionCheck1Passed: false,
       setAttentionCheck1Passed: (passed) => set({ attentionCheck1Passed: passed }),
@@ -238,6 +246,7 @@ export const useAppStore = create<AppState>()(
         attentionCheck2Passed: false,
         attentionCheck1FailCount: 0,
         attentionCheck2FailCount: 0,
+        aiTotalTokens: 0,
       }),
     }),
     {
@@ -273,6 +282,7 @@ export const useAppStore = create<AppState>()(
         prolificId: state.prolificId,
         studyId: state.studyId,
         prolificSessionId: state.prolificSessionId,
+        aiTotalTokens: state.aiTotalTokens,
       }),
       merge: (persistedState: unknown, currentState) => {
         const state = persistedState as Partial<AppState>
