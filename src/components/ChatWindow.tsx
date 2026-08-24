@@ -155,7 +155,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
         <div ref={chatContainerRef} onScroll={handleChatScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
           {chatMessages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
-              <p>Ask me anything!</p>
+              <p></p>
             </div>
           ) : (
             chatMessages.map((msg) => (
