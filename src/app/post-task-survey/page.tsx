@@ -241,56 +241,10 @@ export default function PostTaskSurveyPage() {
         </CardHeader>
 
         <CardContent className="space-y-8 pb-2">
-          {/* Q1: Clarity */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              1. How clear were the task instructions? <span className="text-red-500">*</span>
-            </Label>
-            {renderRadioGroup('clarity', answers.clarity, CLARITY_OPTIONS, setClarity)}
-          </div>
-
-          {/* Q2: Unclear description (optional) */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              2. Was anything about the task instructions unclear? If so, please briefly describe what was unclear.
-              <span className="text-sm text-gray-400 font-normal"> (Optional)</span>
-            </Label>
-            <Textarea
-              value={answers.unclearDescription || ''}
-              onChange={(e) => setAnswers((p) => ({ ...p, unclearDescription: e.target.value }))}
-              placeholder="Describe what was unclear..."
-              className="min-h-[80px]"
-            />
-          </div>
-
-          {/* Q3: Difficulty */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              3. How difficult did you find the task? <span className="text-red-500">*</span>
-            </Label>
-            {renderRadioGroup('difficulty', answers.difficulty, DIFFICULTY_OPTIONS, setDifficulty)}
-          </div>
-
-          {/* Q4: Time */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              4. To what extent did you feel that you had enough time to complete the task to your satisfaction? <span className="text-red-500">*</span>
-            </Label>
-            {renderRadioGroup('time', answers.timeSufficient, TIME_OPTIONS, setTime)}
-          </div>
-
-          {/* Q5: Wait time */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              5. To what extent did you feel that you had to wait for the minimum time to pass before you could submit your response? <span className="text-red-500">*</span>
-            </Label>
-            {renderRadioGroup('waitTime', answers.waitTime, WAIT_TIME_OPTIONS, setWaitTime)}
-          </div>
-
-          {/* Q6: Cognitive load items */}
+          {/* Q1: Cognitive load items */}
           <div className="space-y-4">
             <Label className="text-base font-medium">
-              6. Thinking about the task you just completed, please indicate how much you agree or disagree with each of the following statements. <span className="text-red-500">*</span>
+              1. Thinking about the task you just completed, please indicate how much you agree or disagree with each of the following statements. <span className="text-red-500">*</span>
             </Label>
             <div className="space-y-5 bg-gray-50 p-4 rounded-lg border">
               {AGREEMENT_ITEMS.map((item) => (
@@ -322,12 +276,44 @@ export default function PostTaskSurveyPage() {
             </div>
           </div>
 
-          {/* Q7: Familiarity */}
+          {/* Q2: Familiarity */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              7. How familiar are you with tasks involving {taskTypeLabel}? <span className="text-red-500">*</span>
+              2. How familiar are you with tasks involving {taskTypeLabel}? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('familiarity', answers.familiarity, FAMILIARITY_OPTIONS, setFamiliarity)}
+          </div>
+
+          {/* Q3: Clarity */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              3. How clear were the task instructions? <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('clarity', answers.clarity, CLARITY_OPTIONS, setClarity)}
+          </div>
+
+          {/* Q4: Difficulty */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              4. How difficult did you find the task? <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('difficulty', answers.difficulty, DIFFICULTY_OPTIONS, setDifficulty)}
+          </div>
+
+          {/* Q5: Time */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              5. To what extent did you feel that you had enough time to complete the task to your satisfaction? <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('time', answers.timeSufficient, TIME_OPTIONS, setTime)}
+          </div>
+
+          {/* Q6: Wait time */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              6. To what extent did you feel that you had to wait for the minimum time to pass before you could submit your response? <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('waitTime', answers.waitTime, WAIT_TIME_OPTIONS, setWaitTime)}
           </div>
 
           {error && (
