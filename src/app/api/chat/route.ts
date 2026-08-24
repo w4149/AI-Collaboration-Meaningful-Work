@@ -142,7 +142,8 @@ Rules:
       if (errMsg.includes('ENOTFOUND') || errMsg.includes('Connection error')) {
         return NextResponse.json({ error: 'AI service is currently unreachable. Please check your network connection.' }, { status: 503 })
       }
-      throw apiError
+      const statusCode = apiError?.status || 502
+      return NextResponse.json({ error: `AI API error: ${errMsg}` }, { status: statusCode })
     }
   } catch (error) {
     console.error('Error in chat API:', error)

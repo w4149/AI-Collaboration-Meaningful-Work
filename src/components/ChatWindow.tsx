@@ -71,14 +71,19 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
           userId,
           taskId,
           message: userMessage.content,
-          history: chatMessages.map(msg => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          history: chatMessages
+            .filter(msg => msg.id !== userMessage.id)
+            .map(msg => ({
+              role: msg.role,
+              content: msg.content,
+            })),
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to get response')
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}))
+        throw new Error(errData.error || `Server error ${response.status}`)
+      }
 
       const data = await response.json()
 
@@ -94,13 +99,12 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
       }
 
       addChatMessage(assistantMessage)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error)
-      // Add error message
       addChatMessage({
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: `Error: ${error?.message || 'Unknown error. Please try again.'}`,
         timestamp: new Date(),
       })
     } finally {
