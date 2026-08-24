@@ -33,7 +33,7 @@ export const GROUP_TIME_CONFIG: Record<string, GroupFullConfig> = {
       'task1':   { submitMinMinutes: 5, autoSubmitMinutes: 15 },
       'task1-2': { submitMinMinutes: 5, autoSubmitMinutes: 15 },
       'task2':   { submitMinMinutes: 5, autoSubmitMinutes: 15 },
-      'task3':   { submitMinMinutes: 15, autoSubmitMinutes: 15 },
+      'task3':   { submitMinMinutes: 5, autoSubmitMinutes: 15 },
       'task4':   { submitMinMinutes: 5, autoSubmitMinutes: 15 },
       'task4-2': { submitMinMinutes: 5, autoSubmitMinutes: 15 },
     },
