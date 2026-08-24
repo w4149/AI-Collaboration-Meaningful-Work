@@ -110,6 +110,9 @@ Rules:
     // Add current message
     messages.push({ role: 'user', content: message })
 
+    // Cap output tokens to what the remaining budget allows
+    const maxOutputTokens = Math.max(256, Math.min(tokenBudget, 4096))
+
     // Call OpenRouter with timeout
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 30000) // 30s timeout for larger models
@@ -119,6 +122,7 @@ Rules:
         model,
         messages,
         temperature: 0.7,
+        max_tokens: maxOutputTokens,
       }, { signal: controller.signal })
       clearTimeout(timeout)
 
