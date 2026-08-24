@@ -23,7 +23,12 @@ const ENABLE_TASK_INJECTION = false
 
 export async function POST(request: Request) {
   try {
-    const { userId, taskId, message, history } = await request.json()
+    const { userId, taskId, message, history } = await request.json() as {
+      userId: string
+      taskId: string
+      message: string
+      history: { role: string; content: string }[]
+    }
 
     if (!userId || !taskId || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -89,7 +94,7 @@ Rules:
 
     // Add history, trimming from oldest to fit within token budget
     if (history && history.length > 0) {
-      let historyTokens = history.reduce((sum, h) => sum + estimateMessageTokens(h), 0)
+      let historyTokens = history.reduce((sum: number, h) => sum + estimateMessageTokens(h), 0)
       let startIdx = 0
 
       // Trim oldest messages until history fits within budget
@@ -99,7 +104,7 @@ Rules:
       }
 
       const trimmedHistory = history.slice(startIdx)
-      messages.push(...trimmedHistory)
+      messages.push(...(trimmedHistory as ChatCompletionMessageParam[]))
     }
 
     // Add current message
