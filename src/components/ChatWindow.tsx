@@ -148,6 +148,14 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
       
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <div ref={chatContainerRef} onScroll={handleChatScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
+          {/* Static reminder — not part of conversation history, not sent to API */}
+          <div className="flex w-full mb-4 justify-start">
+            <div className="max-w-[85%] rounded-lg px-4 py-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-tl-none">
+              <p className="text-sm leading-relaxed">
+                <strong className="text-amber-700">Reminder:</strong> The AI assistant has <strong>not</strong> seen the task instructions or materials. Please share any information it needs when you interact with it.
+              </p>
+            </div>
+          </div>
           {chatMessages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
               <p>Ask me anything about the task!</p>

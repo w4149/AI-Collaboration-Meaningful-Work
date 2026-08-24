@@ -2,8 +2,19 @@ import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabase-server'
 import type { ChatCompletionMessageParam } from 'openai/resources/chat'
 
-// Context length limit: keep last N user/assistant messages to control token costs
-const MAX_HISTORY_MESSAGES = 10
+// Context length limit: use token-based budgeting (16k context window)
+const MAX_CONTEXT_TOKENS = 16000
+const RESERVE_FOR_RESPONSE = 2000
+const CHARS_PER_TOKEN = 4
+const PER_MESSAGE_OVERHEAD = 4
+
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / CHARS_PER_TOKEN) + PER_MESSAGE_OVERHEAD
+}
+
+function estimateMessageTokens(msg: { role: string; content: string }): number {
+  return estimateTokens(msg.content) + PER_MESSAGE_OVERHEAD
+}
 
 // === TEMPORARILY DISABLED: System prompt & task content injection ===
 // To re-enable, set these to true
@@ -45,13 +56,12 @@ export async function POST(request: Request) {
       task = result.data
     }
 
-    // Build messages array
+    // Build messages array with token budget
     const messages: ChatCompletionMessageParam[] = []
+    let tokenBudget = MAX_CONTEXT_TOKENS
 
     if (ENABLE_SYSTEM_PROMPT) {
-      messages.push({
-        role: 'system',
-        content: `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task.
+      const systemPrompt = `You are a helpful, friendly AI assistant for a research study. Your role is to help participants understand and complete their writing task.
 
 Rules:
 - Keep your responses relatively concise (1-3 paragraphs max)
@@ -59,24 +69,36 @@ Rules:
 - Be encouraging and supportive
 - If asked about the task itself, you can discuss general approaches but don't provide a complete answer
 - Keep your tone professional but approachable
-- Respond in the same language the participant uses (if they write in English, respond in English)`,
-      })
+- Respond in the same language the participant uses (if they write in English, respond in English)`
+      messages.push({ role: 'system', content: systemPrompt })
+      tokenBudget -= estimateMessageTokens({ role: 'system', content: systemPrompt })
     }
 
     if (ENABLE_TASK_INJECTION && task?.content_to_display) {
-      // Truncate task content if too long (first 2000 chars)
       const taskSnippet = task.content_to_display.length > 2000
         ? task.content_to_display.substring(0, 2000) + '...'
         : task.content_to_display
-      messages.push({
-        role: 'system',
-        content: `The task content the participant is working with is:\n\n${taskSnippet}`,
-      })
+      const taskMessage = `The task content the participant is working with is:\n\n${taskSnippet}`
+      messages.push({ role: 'system', content: taskMessage })
+      tokenBudget -= estimateMessageTokens({ role: 'system', content: taskMessage })
     }
 
-    // Add history with limit
+    // Reserve tokens for the current message + AI response
+    tokenBudget -= estimateMessageTokens({ role: 'user', content: message })
+    tokenBudget -= RESERVE_FOR_RESPONSE
+
+    // Add history, trimming from oldest to fit within token budget
     if (history && history.length > 0) {
-      const trimmedHistory = history.slice(-MAX_HISTORY_MESSAGES)
+      let historyTokens = history.reduce((sum, h) => sum + estimateMessageTokens(h), 0)
+      let startIdx = 0
+
+      // Trim oldest messages until history fits within budget
+      while (historyTokens > tokenBudget && startIdx < history.length - 1) {
+        historyTokens -= estimateMessageTokens(history[startIdx])
+        startIdx++
+      }
+
+      const trimmedHistory = history.slice(startIdx)
       messages.push(...trimmedHistory)
     }
 
