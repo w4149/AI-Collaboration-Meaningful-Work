@@ -3,9 +3,24 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const { userId, prolificId, aiFamiliarity, aiWorkExtent } = await request.json()
+    const body = await request.json() as {
+      userId: string
+      prolificId?: string
+      aiFamiliarity: number
+      aiWorkExtent: number
+      aiInteractionFreq?: number
+      aiHelpful?: number
+      aiEasy?: number
+      aiSpeed?: number
+      aiNoUseReasons?: string
+      aiNoUseTechIssue?: string | null
+      aiNoUseOther?: string | null
+      aiSuggestions?: string | null
+    }
 
-    console.log('[Supplemental Question] Received:', JSON.stringify({ userId, aiFamiliarity, aiWorkExtent }))
+    const { userId, prolificId, aiFamiliarity, aiWorkExtent } = body
+
+    console.log('[Supplemental Question] Received:', JSON.stringify(body))
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
@@ -42,6 +57,14 @@ export async function POST(request: Request) {
         user_id: userId,
         ai_familiarity: Number(aiFamiliarity),
         ai_work_extent: Number(aiWorkExtent),
+        ai_interaction_freq: body.aiInteractionFreq ?? null,
+        ai_helpful: body.aiHelpful ?? null,
+        ai_easy: body.aiEasy ?? null,
+        ai_speed: body.aiSpeed ?? null,
+        ai_no_use_reasons: body.aiNoUseReasons ?? null,
+        ai_no_use_tech_issue: body.aiNoUseTechIssue ?? null,
+        ai_no_use_other: body.aiNoUseOther ?? null,
+        ai_suggestions: body.aiSuggestions ?? null,
         created_at: new Date().toISOString(),
       })
 
@@ -53,7 +76,7 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log('[Supplemental Question] Saved for user:', userId, 'aiFamiliarity:', aiFamiliarity)
+    console.log('[Supplemental Question] Saved for user:', userId)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[Supplemental Question] Server error:', error)

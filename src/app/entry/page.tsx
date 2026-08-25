@@ -247,6 +247,19 @@ export default function EntryPage() {
     }
   }, [router, searchParams, urlTask, urlGroup, prolificId, studyId, prolificSessionId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
 
+  const isAllAnswered = (): boolean => {
+    if (!compConfig) return true
+    for (const set of compConfig.sets) {
+      if (!visibleSets.has(set.id)) continue
+      const maxVisible = visibleQuestions[set.id] ?? 0
+      for (let qi = 0; qi <= maxVisible && qi < set.questions.length; qi++) {
+        const q = set.questions[qi]
+        if (answers[q.id] === undefined) return false
+      }
+    }
+    return true
+  }
+
   const isAllCorrect = (): boolean => {
     if (!compConfig) return true
     for (const set of compConfig.sets) {
@@ -263,62 +276,14 @@ export default function EntryPage() {
     setAnswers((prev) => {
       const newAnswers = { ...prev, [questionId]: value }
 
-      let allCorrectSoFar = true
-      let resetPoint: { setIndex: number; qIndex: number } | null = null
-
-      for (let si = 0; si < compConfig.sets.length; si++) {
-        const set = compConfig.sets[si]
-        const maxVisible = visibleQuestions[set.id] ?? 0
-        for (let qi = 0; qi <= maxVisible && qi < set.questions.length; qi++) {
-          const q = set.questions[qi]
-          const ans = newAnswers[q.id]
-          if (ans === undefined) {
-            allCorrectSoFar = false
-            break
-          }
-          if (ans !== q.correct) {
-            allCorrectSoFar = false
-            resetPoint = { setIndex: si, qIndex: qi }
-            break
-          }
-        }
-        if (!allCorrectSoFar) break
-      }
-
-      if (resetPoint) {
-        const newFailCount = failCount + 1
-        setFailCount(newFailCount)
-
-        if (newFailCount >= 2) {
-          setTimeout(() => {
-            setShowExcludeDialog(true)
-          }, 100)
-        }
-
-        setErrorMessage(
-          `Your answer to "${compConfig.sets[resetPoint.setIndex].questions[resetPoint.qIndex].text}" was incorrect. Please read the task instructions carefully and try again.`
-        )
-        setShowError(true)
-
-        const firstSetId = compConfig.sets[0].id
-        const resetAnswers: Record<string, string> = {}
-        if (questionId === compConfig.sets[resetPoint.setIndex].questions[resetPoint.qIndex].id) {
-          resetAnswers[questionId] = value
-        }
-        setVisibleSets(new Set([firstSetId]))
-        setVisibleQuestions({ [firstSetId]: 0 })
-        return resetAnswers
-      }
-
-      // Check if this was the last visible question of the current set
       const currentSet = compConfig.sets.find((s) => s.questions.some((q) => q.id === questionId))
-      if (currentSet && value === compConfig.sets.flatMap((s) => s.questions).find((q) => q.id === questionId)?.correct) {
+      if (currentSet) {
         const qIdx = currentSet.questions.findIndex((q) => q.id === questionId)
-        if (qIdx === (visibleQuestions[currentSet.id] ?? 0) && qIdx < currentSet.questions.length - 1) {
-          // Show next question in same set
+        const maxVisible = visibleQuestions[currentSet.id] ?? 0
+
+        if (qIdx === maxVisible && qIdx < currentSet.questions.length - 1) {
           setVisibleQuestions((prev) => ({ ...prev, [currentSet.id]: qIdx + 1 }))
         } else if (qIdx === currentSet.questions.length - 1) {
-          // Set complete → show next set or all done
           const setIdx = compConfig.sets.findIndex((s) => s.id === currentSet.id)
           if (setIdx < compConfig.sets.length - 1) {
             const nextSet = compConfig.sets[setIdx + 1]
@@ -334,8 +299,8 @@ export default function EntryPage() {
 
   const handleStart = async () => {
     if (!agreed) return
-    if (compConfig && !isAllCorrect()) {
-      setErrorMessage('Please answer all comprehension check questions correctly before proceeding.')
+    if (compConfig && !isAllAnswered()) {
+      setErrorMessage('Please answer all comprehension check questions before proceeding.')
       setShowError(true)
       return
     }
@@ -344,6 +309,28 @@ export default function EntryPage() {
 
   const handleConfirmSubmit = async () => {
     setShowConfirmDialog(false)
+
+    if (compConfig && !isAllCorrect()) {
+      const newFailCount = failCount + 1
+      setFailCount(newFailCount)
+
+      if (newFailCount >= 2) {
+        setShowExcludeDialog(true)
+        return
+      }
+
+      setErrorMessage(
+        'Some of your answers were incorrect. Please read the task instructions carefully and try again.'
+      )
+      setShowError(true)
+
+      const firstSetId = compConfig.sets[0].id
+      setAnswers({})
+      setVisibleSets(new Set([firstSetId]))
+      setVisibleQuestions({ [firstSetId]: 0 })
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -438,7 +425,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will use the <strong>AI assistant available in the interface</strong> to complete the task, and <strong>must not</strong> use any tools or resources other than those provided by the interface. You will have <strong>up to {g2Max} minutes</strong> to complete the task and paste the AI-generated response into the submission box.
+                    Please use the <strong>AI assistant available in the interface</strong> to complete the task, and <strong>must not</strong> use any tools or resources other than those provided by the interface. You will have <strong>up to {g2Max} minutes</strong> to complete the task and paste the AI-generated response into the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     <br /> <br />
@@ -527,7 +514,6 @@ export default function EntryPage() {
                     )}
                     {set.questions.slice(0, maxVisible + 1).map((q) => {
                       const isAnswered = answers[q.id] !== undefined
-                      const isCorrect = answers[q.id] === q.correct
                       return (
                         <div key={q.id} className="space-y-2 pb-3 border-b border-amber-200 last:border-0">
                           <p className="text-sm text-gray-700">{q.text}</p>
@@ -550,12 +536,6 @@ export default function EntryPage() {
                               </div>
                             </div>
                           </RadioGroup>
-                          {isAnswered && !isCorrect && (
-                            <p className="text-xs text-red-600">This answer is incorrect. Please try again.</p>
-                          )}
-                          {isAnswered && isCorrect && (
-                            <p className="text-xs text-green-600">✓ Correct</p>
-                          )}
                         </div>
                       )
                     })}
@@ -569,7 +549,7 @@ export default function EntryPage() {
         <CardFooter className="flex justify-center">
           <Button
             onClick={handleStart}
-            disabled={!agreed || isLoading || (!!compConfig && !isAllCorrect())}
+            disabled={!agreed || isLoading || (!!compConfig && !isAllAnswered())}
             size="lg"
             className="w-full sm:w-auto"
           >
