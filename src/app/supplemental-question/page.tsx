@@ -50,7 +50,7 @@ const AI_NO_USE_REASONS = [
   { value: 'b', label: 'I do not trust the AI-generated content, I prefer to complete it myself', hasInput: false },
   { value: 'c', label: 'I think my existing knowledge is sufficient to complete the task, no AI assistance is needed', hasInput: false },
   { value: 'd', label: 'I am concerned that using the AI will be considered cheating or affect the evaluation process', hasInput: false },
-  { value: 'e', label: 'I used other tools instead (e.g., different AI tools, search engines, or non-AI tools)', hasInput: false },
+  { value: 'e', label: 'I used other tools instead (e.g., external AI tools, search engines, or non-AI tools)', hasInput: false },
   { value: 'f', label: 'Other', hasInput: true },
 ]
 
