@@ -341,6 +341,20 @@ export default function EntryPage() {
     }
   }
 
+  // Block browser back navigation when exclusion dialog is shown
+  useEffect(() => {
+    if (!showExcludeDialog) return
+    const preventBack = (e: PopStateEvent) => {
+      e.preventDefault()
+      window.history.pushState(null, '', window.location.href)
+    }
+    window.history.pushState(null, '', window.location.href)
+    window.addEventListener('popstate', preventBack)
+    return () => {
+      window.removeEventListener('popstate', preventBack)
+    }
+  }, [showExcludeDialog])
+
   const handleExclude = () => {
     const eq = encodedQuery(searchParams)
     const qs = eq ? eq : ''
@@ -555,9 +569,9 @@ export default function EntryPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Exclusion Dialog */}
-      <Dialog open={showExcludeDialog} onOpenChange={(open) => { if (!open) setShowExcludeDialog(false) }}>
-        <DialogContent>
+      {/* Exclusion Dialog - non-dismissible */}
+      <Dialog open={showExcludeDialog}>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>You Have Been Disqualified</DialogTitle>
             <DialogDescription>
