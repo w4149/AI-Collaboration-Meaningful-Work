@@ -10,6 +10,7 @@ export async function POST(request: Request) {
       mentalEffort,
       autonomy,
       skill,
+      attentionCheck,
       prolificId,
       userId,
     } = await request.json()
@@ -126,6 +127,26 @@ export async function POST(request: Request) {
         } else {
           console.error('[Psychological Scale] users table update failed:', updateError.message)
         }
+      }
+    }
+
+    // Step 4: Save attention check answer (check1_answer) to attention_checks table
+    if (dbUserId && attentionCheck !== undefined) {
+      const { error: acError } = await supabaseServer
+        .from('attention_checks')
+        .upsert(
+          {
+            user_id: dbUserId,
+            check1_answer: Number(attentionCheck),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        )
+
+      if (acError) {
+        console.error('[Psychological Scale] attention_checks upsert failed:', acError.message)
+      } else {
+        console.log('[Psychological Scale] check1_answer saved:', Number(attentionCheck))
       }
     }
 

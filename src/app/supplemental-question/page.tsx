@@ -21,6 +21,14 @@ const AI_FAMILIARITY_OPTIONS = [
   { value: 7, label: 'Extremely familiar' },
 ]
 
+const AI_WORK_EXTENT_OPTIONS = [
+  { value: 1, label: 'Not at all' },
+  { value: 2, label: 'Slightly' },
+  { value: 3, label: 'Moderately' },
+  { value: 4, label: 'To a great extent' },
+  { value: 5, label: 'Completely' },
+]
+
 export default function SupplementalQuestionPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -30,6 +38,7 @@ export default function SupplementalQuestionPage() {
   const setSupplementalQuestionCompleted = useAppStore((s) => s.setSupplementalQuestionCompleted)
 
   const [aiFamiliarity, setAiFamiliarity] = useState<number | undefined>(undefined)
+  const [aiWorkExtent, setAiWorkExtent] = useState<number | undefined>(undefined)
   const [error, setError] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
@@ -57,8 +66,8 @@ export default function SupplementalQuestionPage() {
   }, [router, searchParams])
 
   const handleNext = () => {
-    if (aiFamiliarity === undefined) {
-      setError('Please answer the required question before proceeding.')
+    if (aiFamiliarity === undefined || aiWorkExtent === undefined) {
+      setError('Please answer all required questions before proceeding.')
       return
     }
     setError('')
@@ -80,6 +89,7 @@ export default function SupplementalQuestionPage() {
           userId,
           prolificId,
           aiFamiliarity,
+          aiWorkExtent,
         }),
       })
 
@@ -141,6 +151,13 @@ export default function SupplementalQuestionPage() {
               Before participating in this study, how familiar were you with generative AI tools (e.g., ChatGPT, Gemini, Claude, or another similar tool)? <span className="text-red-500">*</span>
             </Label>
             {renderScale('aiFamiliarity', aiFamiliarity, AI_FAMILIARITY_OPTIONS, (v) => setAiFamiliarity(Number(v)))}
+          </div>
+
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              To what extent do you currently use generative AI tools in your daily work? <span className="text-red-500">*</span>
+            </Label>
+            {renderScale('aiWorkExtent', aiWorkExtent, AI_WORK_EXTENT_OPTIONS, (v) => setAiWorkExtent(Number(v)))}
           </div>
 
           {error && (

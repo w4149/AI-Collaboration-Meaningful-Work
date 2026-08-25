@@ -132,33 +132,7 @@ export default function PsychologicalScalePage() {
     }
   }, [router, searchParams, setPsychologicalScaleCompleted])
 
-  const saveAttentionCheck = async (isCorrect: boolean): Promise<boolean> => {
-    try {
-      const payload = {
-        userId,
-        checkType: 2,
-        answer: String(answers.attentionCheck ?? ''),
-        isCorrect,
-      }
-      console.log('[PsychScale] saveAttentionCheck payload:', JSON.stringify(payload))
-      const res = await fetch('/api/attention-checks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) {
-        const errText = await res.text()
-        console.error('Attention check save failed:', res.status, errText)
-        return false
-      }
-      const data = await res.json()
-      console.log('[PsychScale] saveAttentionCheck response:', JSON.stringify(data))
-      return true
-    } catch (e) {
-      console.error('Failed to save attention check:', e)
-      return false
-    }
-  }
+  
 
   const allRequiredAnswered = (): boolean => {
     for (const item of MEANING_ITEMS) {
@@ -195,21 +169,6 @@ export default function PsychologicalScalePage() {
     const qs = eq ? eq : ''
 
     try {
-      const attentionAnswer = answers.attentionCheck
-      console.log('[PsychScale] userId from store:', userId, 'type:', typeof userId)
-      console.log('[PsychScale] attentionCheck answer:', attentionAnswer, 'type:', typeof attentionAnswer)
-      if (attentionAnswer !== undefined) {
-        const isCorrect = attentionAnswer === 7
-        console.log('[PsychScale] Saving attention check, isCorrect:', isCorrect)
-        const acRes = await saveAttentionCheck(isCorrect)
-        console.log('[PsychScale] saveAttentionCheck result:', acRes)
-        if (!acRes) {
-          console.warn('Attention check save failed, continuing anyway')
-        }
-      } else {
-        console.warn('[PsychScale] attentionCheck is undefined, skipping save')
-      }
-
       const response = await fetch('/api/psychological-scale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -217,6 +176,7 @@ export default function PsychologicalScalePage() {
           taskId,
           userId,
           prolificId,
+          attentionCheck: answers.attentionCheck,
           ...answers,
         }),
       })

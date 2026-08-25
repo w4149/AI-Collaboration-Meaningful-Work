@@ -97,6 +97,7 @@ type SurveyAnswers = {
   waitTime?: number
   agreement: Record<string, number | undefined>
   familiarity?: number
+  attentionCheck2?: number
 }
 
 export default function PostTaskSurveyPage() {
@@ -143,6 +144,7 @@ export default function PostTaskSurveyPage() {
 
   const allRequiredAnswered = (): boolean => {
     if (!answers.clarity) return false
+    if (!answers.attentionCheck2) return false
     if (!answers.difficulty) return false
     if (!answers.timeSufficient) return false
     if (!answers.waitTime) return false
@@ -177,6 +179,7 @@ export default function PostTaskSurveyPage() {
           taskId,
           userId,
           prolificId,
+          attentionCheck2: answers.attentionCheck2,
           ...answers,
         }),
       })
@@ -201,6 +204,8 @@ export default function PostTaskSurveyPage() {
   const setFamiliarity = (v: string) => setAnswers((p) => ({ ...p, familiarity: Number(v) }))
   const setAgreement = (id: string, v: string) => 
     setAnswers((p) => ({ ...p, agreement: { ...p.agreement, [id]: Number(v) } }))
+  const setAttention = (v: string) =>
+    setAnswers((p) => ({ ...p, attentionCheck2: Number(v) }))
 
   const renderRadioGroup = (
     name: string,
@@ -292,26 +297,34 @@ export default function PostTaskSurveyPage() {
             {renderRadioGroup('clarity', answers.clarity, CLARITY_OPTIONS, setClarity)}
           </div>
 
-          {/* Q4: Difficulty */}
+          {/* Q4: Attention check 2 */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              4. How difficult did you find the task? <span className="text-red-500">*</span>
+              4. This is an attention check question. Please select <strong>&quot;Strongly disagree&quot;</strong> below. <span className="text-red-500">*</span>
+            </Label>
+            {renderRadioGroup('attentionCheck2', answers.attentionCheck2, AGREEMENT_OPTIONS, setAttention)}
+          </div>
+
+          {/* Q5: Difficulty */}
+          <div className="space-y-3">
+            <Label className="text-base font-medium">
+              5. How difficult did you find the task? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('difficulty', answers.difficulty, DIFFICULTY_OPTIONS, setDifficulty)}
           </div>
 
-          {/* Q5: Time */}
+          {/* Q6: Time */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              5. To what extent did you feel that you had enough time to complete the task to your satisfaction? <span className="text-red-500">*</span>
+              6. To what extent did you feel that you had enough time to complete the task to your satisfaction? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('time', answers.timeSufficient, TIME_OPTIONS, setTime)}
           </div>
 
-          {/* Q6: Wait time */}
+          {/* Q7: Wait time */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              6. To what extent did you feel that you had to wait for the minimum time to pass before you could submit your response? <span className="text-red-500">*</span>
+              7. To what extent did you feel that you had to wait for the minimum time to pass before you could submit your response? <span className="text-red-500">*</span>
             </Label>
             {renderRadioGroup('waitTime', answers.waitTime, WAIT_TIME_OPTIONS, setWaitTime)}
           </div>

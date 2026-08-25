@@ -3,9 +3,9 @@ import { supabaseServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const { userId, prolificId, aiFamiliarity } = await request.json()
+    const { userId, prolificId, aiFamiliarity, aiWorkExtent } = await request.json()
 
-    console.log('[Supplemental Question] Received:', JSON.stringify({ userId, aiFamiliarity }))
+    console.log('[Supplemental Question] Received:', JSON.stringify({ userId, aiFamiliarity, aiWorkExtent }))
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
@@ -13,6 +13,10 @@ export async function POST(request: Request) {
 
     if (aiFamiliarity === undefined || aiFamiliarity === null) {
       return NextResponse.json({ error: 'Missing aiFamiliarity' }, { status: 400 })
+    }
+
+    if (aiWorkExtent === undefined || aiWorkExtent === null) {
+      return NextResponse.json({ error: 'Missing aiWorkExtent' }, { status: 400 })
     }
 
     // Ensure user exists
@@ -37,6 +41,7 @@ export async function POST(request: Request) {
       .insert({
         user_id: userId,
         ai_familiarity: Number(aiFamiliarity),
+        ai_work_extent: Number(aiWorkExtent),
         created_at: new Date().toISOString(),
       })
 

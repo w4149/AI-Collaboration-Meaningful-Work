@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       waitTime,
       agreement,
       familiarity,
+      attentionCheck2,
       prolificId,
       userId,
     } = await request.json()
@@ -128,6 +129,26 @@ export async function POST(request: Request) {
         } else {
           console.error('[Post-Task Survey] users table update failed:', updateError.message)
         }
+      }
+    }
+
+    // Step 4: Save attention check answer (check2_answer) to attention_checks table
+    if (dbUserId && attentionCheck2 !== undefined) {
+      const { error: acError } = await supabaseServer
+        .from('attention_checks')
+        .upsert(
+          {
+            user_id: dbUserId,
+            check2_answer: Number(attentionCheck2),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        )
+
+      if (acError) {
+        console.error('[Post-Task Survey] attention_checks upsert failed:', acError.message)
+      } else {
+        console.log('[Post-Task Survey] check2_answer saved:', Number(attentionCheck2))
       }
     }
 

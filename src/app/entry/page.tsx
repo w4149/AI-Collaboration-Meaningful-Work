@@ -13,43 +13,161 @@ import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 import { getParam, encodedQuery } from '@/lib/url-cipher'
 import { getSubmitMinMinutes, getAutoSubmitMinutes } from '@/lib/task-time-config'
 
-// Attention check questions per group
-const ATTENTION_CHECK = {
+type CompQuestion = {
+  id: string
+  text: string
+  optionA: string
+  optionB: string
+  correct: 'A' | 'B'
+}
+
+type CompSet = {
+  id: string
+  label: string
+  questions: CompQuestion[]
+}
+
+type CompConfig = {
+  title: string
+  sets: CompSet[]
+}
+
+const COMPREHENSION_CHECK: Record<string, CompConfig> = {
   'G1-Human': {
-    question: 'In the following task____',
-    options: [
-      { value: 'g1_wrong', label: 'I may use AI tools, search engines, or other external assistance to complete the task.' },
-      { value: 'g1_correct', label: 'I must complete the task independently and must not use AI tools, search engines, or other external assistance.' },
+    title: 'Comprehension Check',
+    sets: [
+      {
+        id: 'g1_p1',
+        label: '',
+        questions: [
+          {
+            id: 'g1_q1',
+            text: 'In the following task____',
+            optionA: 'I need to interact with AI to complete the task.',
+            optionB: 'I need to complete the task independently.',
+            correct: 'B',
+          },
+          {
+            id: 'g1_q2',
+            text: 'In the following task____',
+            optionA: 'I need to complete the task as quickly as possible.',
+            optionB: 'I need to complete the task carefully as if it were real work.',
+            correct: 'B',
+          },
+          {
+            id: 'g1_q3',
+            text: 'In the following task____',
+            optionA: 'I need to use search engines and other external tools as supplemental.',
+            optionB: 'I can only use my own knowledge to complete the task.',
+            correct: 'B',
+          },
+        ],
+      },
     ],
-    correctValue: 'g1_correct',
   },
   'G2-AI': {
-    question: 'In the following task____',
-    options: [
-      { value: 'g2_wrong', label: 'I may use tools and resources external to the interface for assistance.' },
-      { value: 'g2_correct', label: 'I may only use the AI assistant available in the interface for assistance.' },
+    title: 'Comprehension Check',
+    sets: [
+      {
+        id: 'g2_p1',
+        label: '',
+        questions: [
+          {
+            id: 'g2_q1',
+            text: 'In the following task____',
+            optionA: 'I need to complete the task independently.',
+            optionB: 'I need to interact with AI to complete the task.',
+            correct: 'B',
+          },
+          {
+            id: 'g2_q2',
+            text: 'In the following task____',
+            optionA: 'I need to open external AI products to interact.',
+            optionB: 'I need to use the AI provided in this study interface.',
+            correct: 'B',
+          },
+          {
+            id: 'g2_q3',
+            text: 'In the following task____',
+            optionA: 'I need to use search engines and other external tools as supplemental.',
+            optionB: 'I can only use the AI provided in this study interface.',
+            correct: 'B',
+          },
+        ],
+      },
     ],
-    correctValue: 'g2_correct',
   },
   'G3-HumanAndAI': {
-    question: 'In the following task____',
-    options: [
-      { value: 'g3_wrong', label: 'I may use the AI assistant available in the interface for assistance during Phase 1.' },
-      { value: 'g3_correct', label: 'I may use the AI assistant available in the interface for assistance during Phase 2.' },
+    title: 'Comprehension Check',
+    sets: [
+      {
+        id: 'g3_p1',
+        label: 'Phase 1',
+        questions: [
+          {
+            id: 'g3_p1_q1',
+            text: 'In the Phase 1____',
+            optionA: 'I need to interact with AI to complete the task.',
+            optionB: 'I need to complete the task independently.',
+            correct: 'B',
+          },
+          {
+            id: 'g3_p1_q2',
+            text: 'In the Phase 1____',
+            optionA: 'I need to complete the task as quickly as possible.',
+            optionB: 'I need to complete the task carefully as if it were real work.',
+            correct: 'B',
+          },
+          {
+            id: 'g3_p1_q3',
+            text: 'In the Phase 1____',
+            optionA: 'I need to use search engines and other external tools as supplemental.',
+            optionB: 'I can only use my own knowledge to complete the first draft.',
+            correct: 'B',
+          },
+        ],
+      },
+      {
+        id: 'g3_p2',
+        label: 'Phase 2',
+        questions: [
+          {
+            id: 'g3_p2_q1',
+            text: 'In the Phase 2____',
+            optionA: 'I need to complete the task independently.',
+            optionB: 'I need to interact with AI to complete the task.',
+            correct: 'B',
+          },
+          {
+            id: 'g3_p2_q2',
+            text: 'In the Phase 2____',
+            optionA: 'I need to open external AI products to interact.',
+            optionB: 'I need to use the AI provided in this study interface.',
+            correct: 'B',
+          },
+          {
+            id: 'g3_p2_q3',
+            text: 'In the Phase 2____',
+            optionA: 'I need to use search engines and other external tools as supplemental.',
+            optionB: 'I can only use the AI provided in this study interface.',
+            correct: 'B',
+          },
+        ],
+      },
     ],
-    correctValue: 'g3_correct',
   },
-} as const
+}
 
 export default function EntryPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [agreed, setAgreed] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [attentionAnswer, setAttentionAnswer] = useState<string>('')
-  const [showAttentionError, setShowAttentionError] = useState(false)
-  const [attentionSubmitted, setAttentionSubmitted] = useState(false)
-  const preUserIdFailuresRef = useRef<{ answer: string; count: number } | null>(null)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [failCount, setFailCount] = useState(0)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showExcludeDialog, setShowExcludeDialog] = useState(false)
 
   const setUser = useAppStore((state) => state.setUser)
   const setTask = useAppStore((state) => state.setTask)
@@ -58,17 +176,13 @@ export default function EntryPage() {
   const setTaskSubmitted = useAppStore((state) => state.setTaskSubmitted)
   const reset = useAppStore((state) => state.reset)
   const userId = useAppStore((state) => state.userId)
-  const attentionCheck1FailCount = useAppStore((state) => state.attentionCheck1FailCount)
-  const incrementAttentionCheck1Fail = useAppStore((state) => state.incrementAttentionCheck1Fail)
 
-  // Get params from URL (decoded from cipher)
   const urlTask = getParam(searchParams, 'task')
   const urlGroup = getParam(searchParams, 'group')
   const prolificId = searchParams.get('PROLIFIC_PID') || 'test_user_' + Date.now()
   const studyId = searchParams.get('STUDY_ID') || ''
   const prolificSessionId = searchParams.get('SESSION_ID') || ''
 
-  // Time config per group (pass urlTask for task-specific overrides)
   const g1Min = getSubmitMinMinutes('G1-Human', undefined, urlTask)
   const g1Max = getAutoSubmitMinutes('G1-Human', undefined, urlTask)
   const g2Min = getSubmitMinMinutes('G2-AI', undefined, urlTask)
@@ -78,11 +192,21 @@ export default function EntryPage() {
   const g3Phase2Min = getSubmitMinMinutes('G3-HumanAndAI', 2, urlTask)
   const g3Phase2Max = getAutoSubmitMinutes('G3-HumanAndAI', 2, urlTask)
 
-  // If task and group are in URL, skip select-task and start directly
   const hasUrlAssignment = !!(urlTask && urlGroup)
+  const compConfig = hasUrlAssignment && urlGroup ? COMPREHENSION_CHECK[urlGroup] : null
 
-  // Attention check config for current group
-  const attentionConfig = hasUrlAssignment && urlGroup ? ATTENTION_CHECK[urlGroup as keyof typeof ATTENTION_CHECK] : null
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [visibleSets, setVisibleSets] = useState<Set<string>>(new Set())
+  const [visibleQuestions, setVisibleQuestions] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    if (!compConfig) return
+    const firstSetId = compConfig.sets[0]?.id
+    if (firstSetId) {
+      setVisibleSets(new Set([firstSetId]))
+      setVisibleQuestions({ [firstSetId]: 0 })
+    }
+  }, [compConfig])
 
   useEffect(() => {
     if (!FLOW_CONFIG.entry) {
@@ -123,76 +247,103 @@ export default function EntryPage() {
     }
   }, [router, searchParams, urlTask, urlGroup, prolificId, studyId, prolificSessionId, reset, setTaskSubmitted, setUser, setGroupType, setStartTime, setTask])
 
-  const saveAttentionCheck = async (isCorrect: boolean) => {
-    try {
-      const res = await fetch('/api/attention-checks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          checkType: 1,
-          groupType: urlGroup,
-          answer: attentionAnswer,
-          isCorrect,
-        }),
-      })
-      if (!res.ok) {
-        const errText = await res.text()
-        console.error('Attention check save failed:', res.status, errText)
+  const isAllCorrect = (): boolean => {
+    if (!compConfig) return true
+    for (const set of compConfig.sets) {
+      for (const q of set.questions) {
+        if (answers[q.id] !== q.correct) return false
       }
-    } catch (e) {
-      console.error('Failed to save attention check:', e)
     }
+    return true
+  }
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    if (!compConfig) return
+
+    setAnswers((prev) => {
+      const newAnswers = { ...prev, [questionId]: value }
+
+      let allCorrectSoFar = true
+      let resetPoint: { setIndex: number; qIndex: number } | null = null
+
+      for (let si = 0; si < compConfig.sets.length; si++) {
+        const set = compConfig.sets[si]
+        const maxVisible = visibleQuestions[set.id] ?? 0
+        for (let qi = 0; qi <= maxVisible && qi < set.questions.length; qi++) {
+          const q = set.questions[qi]
+          const ans = newAnswers[q.id]
+          if (ans === undefined) {
+            allCorrectSoFar = false
+            break
+          }
+          if (ans !== q.correct) {
+            allCorrectSoFar = false
+            resetPoint = { setIndex: si, qIndex: qi }
+            break
+          }
+        }
+        if (!allCorrectSoFar) break
+      }
+
+      if (resetPoint) {
+        const newFailCount = failCount + 1
+        setFailCount(newFailCount)
+
+        if (newFailCount >= 2) {
+          setTimeout(() => {
+            setShowExcludeDialog(true)
+          }, 100)
+        }
+
+        setErrorMessage(
+          `Your answer to "${compConfig.sets[resetPoint.setIndex].questions[resetPoint.qIndex].text}" was incorrect. Please read the task instructions carefully and try again.`
+        )
+        setShowError(true)
+
+        const firstSetId = compConfig.sets[0].id
+        const resetAnswers: Record<string, string> = {}
+        if (questionId === compConfig.sets[resetPoint.setIndex].questions[resetPoint.qIndex].id) {
+          resetAnswers[questionId] = value
+        }
+        setVisibleSets(new Set([firstSetId]))
+        setVisibleQuestions({ [firstSetId]: 0 })
+        return resetAnswers
+      }
+
+      // Check if this was the last visible question of the current set
+      const currentSet = compConfig.sets.find((s) => s.questions.some((q) => q.id === questionId))
+      if (currentSet && value === compConfig.sets.flatMap((s) => s.questions).find((q) => q.id === questionId)?.correct) {
+        const qIdx = currentSet.questions.findIndex((q) => q.id === questionId)
+        if (qIdx === (visibleQuestions[currentSet.id] ?? 0) && qIdx < currentSet.questions.length - 1) {
+          // Show next question in same set
+          setVisibleQuestions((prev) => ({ ...prev, [currentSet.id]: qIdx + 1 }))
+        } else if (qIdx === currentSet.questions.length - 1) {
+          // Set complete → show next set or all done
+          const setIdx = compConfig.sets.findIndex((s) => s.id === currentSet.id)
+          if (setIdx < compConfig.sets.length - 1) {
+            const nextSet = compConfig.sets[setIdx + 1]
+            setVisibleSets((prev) => new Set([...Array.from(prev), nextSet.id]))
+            setVisibleQuestions((prev) => ({ ...prev, [nextSet.id]: 0 }))
+          }
+        }
+      }
+
+      return newAnswers
+    })
   }
 
   const handleStart = async () => {
     if (!agreed) return
-
-    let attentionCheckPassed = true
-    let attentionCheckData: { answer: string; isCorrect: boolean } | null = null
-
-    // If there's an attention check to validate
-    if (attentionConfig && !attentionSubmitted) {
-      if (!attentionAnswer) {
-        setShowAttentionError(true)
-        return
-      }
-      const isCorrect = attentionAnswer === attentionConfig.correctValue
-      attentionCheckData = { answer: attentionAnswer, isCorrect }
-      if (!isCorrect) {
-        incrementAttentionCheck1Fail()
-        // Save the failed attempt BEFORE clearing the answer
-        if (userId) {
-          try {
-            const res = await fetch('/api/attention-checks', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userId,
-                checkType: 1,
-                groupType: urlGroup,
-                answer: attentionAnswer,
-                isCorrect: false,
-              }),
-            })
-            if (!res.ok) {
-              console.error('Attention check save failed:', res.status, await res.text())
-            }
-          } catch (e) {
-            console.error('Failed to save attention check:', e)
-          }
-        } else {
-          preUserIdFailuresRef.current = {
-            answer: attentionAnswer,
-            count: (preUserIdFailuresRef.current?.count ?? 0) + 1,
-          }
-        }
-        setShowAttentionError(true)
-        return
-      }
-      attentionCheckPassed = true
+    if (compConfig && !isAllCorrect()) {
+      setErrorMessage('Please answer all comprehension check questions correctly before proceeding.')
+      setShowError(true)
+      return
     }
+    setShowConfirmDialog(true)
+  }
 
+  const handleConfirmSubmit = async () => {
+    setShowConfirmDialog(false)
     setIsLoading(true)
 
     try {
@@ -229,56 +380,6 @@ export default function EntryPage() {
         setGroupType(urlGroup as 'G1-Human' | 'G2-AI' | 'G3-HumanAndAI')
         setStartTime(new Date())
 
-        // Flush pre-userId failures first (so ever_failed is recorded)
-        if (preUserIdFailuresRef.current && data.userId) {
-          const failures = preUserIdFailuresRef.current
-          for (let i = 0; i < failures.count; i++) {
-            try {
-              const res = await fetch('/api/attention-checks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  userId: data.userId,
-                  checkType: 1,
-                  groupType: urlGroup,
-                  answer: failures.answer,
-                  isCorrect: false,
-                }),
-              })
-              if (!res.ok) {
-                console.error('Pre-userId attention check save failed:', res.status, await res.text())
-              }
-            } catch (e) {
-              console.error('Failed to save pre-userId attention check failure:', e)
-            }
-          }
-          preUserIdFailuresRef.current = null
-        }
-
-        // Save attention check with the real user ID
-        if (attentionCheckData && data.userId) {
-          try {
-            const res = await fetch('/api/attention-checks', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userId: data.userId,
-                checkType: 1,
-                groupType: urlGroup,
-                answer: attentionCheckData.answer,
-                isCorrect: attentionCheckData.isCorrect,
-              }),
-            })
-            if (!res.ok) {
-              console.error('Attention check save failed:', res.status, await res.text())
-            }
-          } catch (e) {
-            console.error('Failed to save attention check:', e)
-          }
-        }
-
-        setAttentionSubmitted(true)
-
         const eq = encodedQuery(searchParams)
         router.push(eq ? `/task${eq}` : '/task')
       } else {
@@ -294,6 +395,12 @@ export default function EntryPage() {
     }
   }
 
+  const handleExclude = () => {
+    const eq = encodedQuery(searchParams)
+    const qs = eq ? eq : ''
+    router.replace(`/reject${qs}`)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <Card className="max-w-3xl w-full">
@@ -301,7 +408,7 @@ export default function EntryPage() {
           <CardTitle className="text-2xl font-bold text-center">Everyday Work Task Study</CardTitle>
           <CardDescription className="text-center">Please read the following instructions carefully</CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Group-specific instructions */}
           <div className="space-y-4">
@@ -380,17 +487,18 @@ export default function EntryPage() {
               </div>
             )}
           </div>
-          
+
           <div className="flex items-start space-x-3 pt-4">
-            <Checkbox 
-              id="agree" 
-              checked={agreed} 
+            <Checkbox
+              id="agree"
+              checked={agreed}
               onCheckedChange={(checked) => {
                 setAgreed(checked as boolean)
                 if (!checked) {
-                  setAttentionAnswer('')
-                  setAttentionSubmitted(false)
-                  setShowAttentionError(false)
+                  setAnswers({})
+                  setVisibleSets(new Set())
+                  setVisibleQuestions({})
+                  setShowError(false)
                 }
               }}
             />
@@ -401,59 +509,124 @@ export default function EntryPage() {
             </div>
           </div>
 
-          {/* Attention check - shown after agreement for URL-assigned groups */}
-          {agreed && attentionConfig && !attentionSubmitted && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+          {/* Comprehension check */}
+          {agreed && compConfig && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-4">
               <Label className="text-sm font-medium text-amber-800">
-                Attention Check: Please answer the following question carefully.
+                Comprehension Check: Please answer the following questions carefully. Incorrect answers will result in disqualification from this study.
               </Label>
-              <p className="text-sm text-gray-700">{attentionConfig.question}</p>
-              <RadioGroup value={attentionAnswer} onValueChange={setAttentionAnswer}>
-                <div className="space-y-2">
-                  {attentionConfig.options.map((opt) => (
-                    <div key={opt.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={opt.value} id={`att-${opt.value}`} />
-                      <Label htmlFor={`att-${opt.value}`} className="text-sm cursor-pointer">
-                        {opt.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </RadioGroup>
+
+              {compConfig.sets.map((set) => {
+                if (!visibleSets.has(set.id)) return null
+                const maxVisible = visibleQuestions[set.id] ?? 0
+
+                return (
+                  <div key={set.id} className="space-y-3">
+                    {set.label && (
+                      <p className="text-sm font-semibold text-gray-700">{set.label}</p>
+                    )}
+                    {set.questions.slice(0, maxVisible + 1).map((q) => {
+                      const isAnswered = answers[q.id] !== undefined
+                      const isCorrect = answers[q.id] === q.correct
+                      return (
+                        <div key={q.id} className="space-y-2 pb-3 border-b border-amber-200 last:border-0">
+                          <p className="text-sm text-gray-700">{q.text}</p>
+                          <RadioGroup
+                            value={answers[q.id] ?? ''}
+                            onValueChange={(v) => handleAnswerChange(q.id, v)}
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="A" id={`${q.id}-A`} />
+                                <Label htmlFor={`${q.id}-A`} className="text-sm cursor-pointer">
+                                  {q.optionA}
+                                </Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="B" id={`${q.id}-B`} />
+                                <Label htmlFor={`${q.id}-B`} className="text-sm cursor-pointer">
+                                  {q.optionB}
+                                </Label>
+                              </div>
+                            </div>
+                          </RadioGroup>
+                          {isAnswered && !isCorrect && (
+                            <p className="text-xs text-red-600">This answer is incorrect. Please try again.</p>
+                          )}
+                          {isAnswered && isCorrect && (
+                            <p className="text-xs text-green-600">✓ Correct</p>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })}
             </div>
           )}
         </CardContent>
-        
+
         <CardFooter className="flex justify-center">
-          <Button 
-            onClick={handleStart} 
-            disabled={!agreed || isLoading}
+          <Button
+            onClick={handleStart}
+            disabled={!agreed || isLoading || (!!compConfig && !isAllCorrect())}
             size="lg"
             className="w-full sm:w-auto"
           >
-            {isLoading ? 'Starting...' : attentionConfig && !attentionSubmitted ? 'Submit Answer & Start' : 'Start Task'}
+            {isLoading ? 'Starting...' : compConfig ? 'Submit Answer & Start' : 'Start Task'}
           </Button>
         </CardFooter>
       </Card>
 
-      {/* Attention Check Error Dialog */}
-      <Dialog open={showAttentionError} onOpenChange={setShowAttentionError}>
+      {/* Error Dialog */}
+      <Dialog open={showError} onOpenChange={(open) => { if (!open) setShowError(false) }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Attention Check Failed</DialogTitle>
+            <DialogTitle>Comprehension Check Failed</DialogTitle>
             <DialogDescription>
-              {attentionAnswer === '' 
-                ? 'Please select an answer before proceeding.'
-                : 'Your answer is incorrect. Please read the task requirements carefully and try again.'}
+              {errorMessage}
+              {failCount >= 2
+                ? ' You have failed twice. You will be disqualified from this study.'
+                : ` This is attempt ${failCount} of 2.`}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end pt-4">
-            <Button onClick={() => {
-              setShowAttentionError(false)
-              setAttentionAnswer('')
-            }}>
-              {attentionAnswer === '' ? 'OK' : 'Try Again'}
+            <Button onClick={() => setShowError(false)}>OK</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm Submit Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Proceed to Next Step?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to proceed? Previous answers cannot be changed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Cancel
             </Button>
+            <Button onClick={handleConfirmSubmit} disabled={isLoading}>
+              {isLoading ? 'Starting...' : 'Yes, Proceed'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Exclusion Dialog */}
+      <Dialog open={showExcludeDialog} onOpenChange={(open) => { if (!open) setShowExcludeDialog(false) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>You Have Been Disqualified</DialogTitle>
+            <DialogDescription>
+              Unfortunately, you did not pass the comprehension check. You will now be redirected to complete the screening questionnaire, and your responses will be used for research purposes only.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button onClick={handleExclude}>Continue</Button>
           </div>
         </DialogContent>
       </Dialog>
