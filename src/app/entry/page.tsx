@@ -75,22 +75,22 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g2_q1',
             text: 'In the following task____',
-            optionA: 'I need to complete the task independently.',
-            optionB: 'I need to interact with AI to complete the task.',
+            optionA: 'I need to complete the task independently without using AI.',
+            optionB: 'I need to use AI as part of completing the task.',
             correct: 'B',
           },
           {
             id: 'g2_q2',
             text: 'In the following task____',
-            optionA: 'I need to open external AI products to interact.',
-            optionB: 'I need to use the AI provided in this study interface.',
+            optionA: 'I may use an external AI tool.',
+            optionB: 'I need to use the AI assistant provided in this study interface.',
             correct: 'B',
           },
           {
             id: 'g2_q3',
             text: 'In the following task____',
-            optionA: 'I need to use search engines and other external tools as supplemental.',
-            optionB: 'I can only use the AI provided in this study interface.',
+            optionA: 'I may use search engines or other external tools for additional assistance.',
+            optionB: 'I may not use search engines or other external tools for additional assistance.',
             correct: 'B',
           },
         ],
@@ -107,8 +107,8 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g3_p1_q1',
             text: 'In the Phase 1____',
-            optionA: 'I need to interact with AI to complete the task.',
-            optionB: 'I need to complete the task independently.',
+            optionA: 'I need to use AI as part of completing the task.',
+            optionB: 'I need to work on the task independently without using AI.',
             correct: 'B',
           },
           {
@@ -134,8 +134,8 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g3_p2_q1',
             text: 'In the Phase 2____',
-            optionA: 'I need to complete the task independently.',
-            optionB: 'I need to interact with AI to complete the task.',
+            optionA: 'I need to continue working independently without using AI.',
+            optionB: 'I need to use the AI assistant provided in this study interface to revise or improve my work.',
             correct: 'B',
           },
           {

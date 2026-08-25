@@ -6,28 +6,24 @@ export async function POST(request: Request) {
     const body = await request.json() as {
       userId: string
       prolificId?: string
-      aiFamiliarity: number
       aiWorkExtent: number
       aiInteractionFreq?: number
-      aiHelpful?: number
-      aiEasy?: number
-      aiSpeed?: number
+      ai_perceivedUsefulness?: number
+      ai_perceivedEaseOfUse?: number
+      ai_perceivedTrustworthiness?: number
+      ai_interactionFluency?: number
+      ai_satisfaction?: number
       aiNoUseReasons?: string
-      aiNoUseTechIssue?: string | null
       aiNoUseOther?: string | null
       aiSuggestions?: string | null
     }
 
-    const { userId, prolificId, aiFamiliarity, aiWorkExtent } = body
+    const { userId, prolificId, aiWorkExtent } = body
 
     console.log('[Supplemental Question] Received:', JSON.stringify(body))
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
-    }
-
-    if (aiFamiliarity === undefined || aiFamiliarity === null) {
-      return NextResponse.json({ error: 'Missing aiFamiliarity' }, { status: 400 })
     }
 
     if (aiWorkExtent === undefined || aiWorkExtent === null) {
@@ -55,14 +51,16 @@ export async function POST(request: Request) {
       .from('supplemental_questions')
       .insert({
         user_id: userId,
-        ai_familiarity: Number(aiFamiliarity),
+        ai_familiarity: null,
         ai_work_extent: Number(aiWorkExtent),
         ai_interaction_freq: body.aiInteractionFreq ?? null,
-        ai_helpful: body.aiHelpful ?? null,
-        ai_easy: body.aiEasy ?? null,
-        ai_speed: body.aiSpeed ?? null,
+        ai_perceived_usefulness: body.ai_perceivedUsefulness ?? null,
+        ai_perceived_ease_of_use: body.ai_perceivedEaseOfUse ?? null,
+        ai_perceived_trustworthiness: body.ai_perceivedTrustworthiness ?? null,
+        ai_interaction_fluency: body.ai_interactionFluency ?? null,
+        ai_satisfaction: body.ai_satisfaction ?? null,
         ai_no_use_reasons: body.aiNoUseReasons ?? null,
-        ai_no_use_tech_issue: body.aiNoUseTechIssue ?? null,
+        ai_no_use_tech_issue: null,
         ai_no_use_other: body.aiNoUseOther ?? null,
         ai_suggestions: body.aiSuggestions ?? null,
         created_at: new Date().toISOString(),

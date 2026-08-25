@@ -13,16 +13,6 @@ import { useAppStore } from '@/lib/store'
 import { getSkipRouteWithParams, FLOW_CONFIG } from '@/lib/flow-config'
 import { encodedQuery } from '@/lib/url-cipher'
 
-const AI_FAMILIARITY_OPTIONS = [
-  { value: 1, label: 'Not familiar at all' },
-  { value: 2, label: 'Slightly familiar' },
-  { value: 3, label: 'Somewhat familiar' },
-  { value: 4, label: 'Moderately familiar' },
-  { value: 5, label: 'Quite familiar' },
-  { value: 6, label: 'Very familiar' },
-  { value: 7, label: 'Extremely familiar' },
-]
-
 const AI_WORK_EXTENT_OPTIONS = [
   { value: 1, label: 'Never' },
   { value: 2, label: 'Rarely' },
@@ -36,35 +26,32 @@ const AI_WORK_EXTENT_OPTIONS = [
 const AGREEMENT_OPTIONS = [
   { value: 1, label: 'Strongly disagree' },
   { value: 2, label: 'Disagree' },
-  { value: 3, label: 'Somewhat disagree' },
-  { value: 4, label: 'Neither' },
-  { value: 5, label: 'Somewhat agree' },
-  { value: 6, label: 'Agree' },
-  { value: 7, label: 'Strongly agree' },
+  { value: 3, label: 'Neither' },
+  { value: 4, label: 'Agree' },
+  { value: 5, label: 'Strongly agree' },
 ]
 
 const AI_INTERACTION_OPTIONS = [
-  { value: 0, label: '0 times (I did not use it at all)' },
-  { value: 1, label: '1-2 times' },
-  { value: 2, label: '3-5 times' },
-  { value: 3, label: '6 or more times' },
+  { value: 0, label: 'Not at all — I completed the task without using the AI assistant' },
+  { value: 1, label: 'To a small extent — I consulted the AI assistant only once or twice' },
+  { value: 2, label: 'To a large extent — I consulted the AI assistant repeatedly' },
 ]
 
 const AI_EXPERIENCE_ITEMS = [
-  { id: 'ai_helpful', text: 'Provided helpful answers' },
-  { id: 'ai_easy', text: 'Easy to use' },
-  { id: 'ai_speed', text: 'Fast response speed' },
+  { id: 'ai_perceivedUsefulness', text: 'provided outputs that were helpful for completing my task.' },
+  { id: 'ai_perceivedEaseOfUse', text: 'required little effort for me to interact with.' },
+  { id: 'ai_perceivedTrustworthiness', text: 'produced outputs that I can trust.' },
+  { id: 'ai_interactionFluency', text: 'understood my intentions and maintained smooth conversation flow.' },
+  { id: 'ai_satisfaction', text: 'delivered an overall satisfying interaction experience.' },
 ]
 
 const AI_NO_USE_REASONS = [
-  { value: 'a', label: 'Encountered technical issues, cannot use the AI interface normally', hasInput: true },
-  { value: 'b', label: 'AI interface operations are too complex, I prefer to write it myself', hasInput: false },
-  { value: 'c', label: 'I do not trust the AI-generated content, I prefer to complete it myself', hasInput: false },
-  { value: 'd', label: 'I think my existing knowledge is sufficient to complete the task, no AI assistance is needed', hasInput: false },
-  { value: 'e', label: 'I am concerned that using the AI will be considered cheating or affect the evaluation process', hasInput: false },
-  { value: 'f', label: 'I used a different AI tool instead (e.g., ChatGPT, Claude, Gemini, etc.)', hasInput: false },
-  { value: 'g', label: 'I used a search engine or other non-AI tool', hasInput: false },
-  { value: 'h', label: 'Other', hasInput: true },
+  { value: 'a', label: 'The AI assistant was difficult to use or not useful, so I preferred to complete the task myself', hasInput: false },
+  { value: 'b', label: 'I do not trust the AI-generated content, I prefer to complete it myself', hasInput: false },
+  { value: 'c', label: 'I think my existing knowledge is sufficient to complete the task, no AI assistance is needed', hasInput: false },
+  { value: 'd', label: 'I am concerned that using the AI will be considered cheating or affect the evaluation process', hasInput: false },
+  { value: 'e', label: 'I used other tools instead (e.g., different AI tools, search engines, or non-AI tools)', hasInput: false },
+  { value: 'f', label: 'Other', hasInput: true },
 ]
 
 type NoUseReasons = {
@@ -74,8 +61,6 @@ type NoUseReasons = {
   d?: boolean
   e?: boolean
   f?: boolean
-  g?: boolean
-  h?: boolean
 }
 
 export default function SupplementalQuestionPage() {
@@ -89,21 +74,15 @@ export default function SupplementalQuestionPage() {
 
   const isHumanOnly = groupType === 'G1-Human'
 
-  const [aiFamiliarity, setAiFamiliarity] = useState<number | undefined>(undefined)
   const [aiWorkExtent, setAiWorkExtent] = useState<number | undefined>(undefined)
 
-  // AI interaction frequency (0=none, 1=1-2, 2=3-5, 3=6+)
   const [aiInteractionFreq, setAiInteractionFreq] = useState<number | undefined>(undefined)
 
-  // AI experience ratings (for those who used AI)
   const [aiExperience, setAiExperience] = useState<Record<string, number | undefined>>({})
 
-  // No-use reasons (for those who didn't use AI)
   const [noUseReasons, setNoUseReasons] = useState<NoUseReasons>({})
-  const [noUseTechIssue, setNoUseTechIssue] = useState('')
   const [noUseOther, setNoUseOther] = useState('')
 
-  // Optional suggestions
   const [aiSuggestions, setAiSuggestions] = useState('')
 
   const [error, setError] = useState<string>('')
@@ -139,7 +118,7 @@ export default function SupplementalQuestionPage() {
   }
 
   const handleNext = () => {
-    if (aiFamiliarity === undefined || aiWorkExtent === undefined) {
+    if (aiWorkExtent === undefined) {
       setError('Please answer all required questions before proceeding.')
       return
     }
@@ -163,14 +142,15 @@ export default function SupplementalQuestionPage() {
           setError('Please select at least one reason for not using the AI assistant.')
           return
         }
-        if (noUseReasons.a && !noUseTechIssue.trim()) {
-          setError('Please describe the technical issue you encountered.')
-          return
-        }
-        if (noUseReasons.h && !noUseOther.trim()) {
+        if (noUseReasons.f && !noUseOther.trim()) {
           setError('Please specify your reason for "Other".')
           return
         }
+      }
+
+      if (!aiSuggestions.trim()) {
+        setError('Please share your experience or suggestions in the text field.')
+        return
       }
     }
 
@@ -188,7 +168,6 @@ export default function SupplementalQuestionPage() {
     const payload: Record<string, unknown> = {
       userId,
       prolificId,
-      aiFamiliarity,
       aiWorkExtent,
     }
 
@@ -196,10 +175,12 @@ export default function SupplementalQuestionPage() {
       payload.aiInteractionFreq = aiInteractionFreq
 
       if (usedAI) {
-        payload.aiHelpful = aiExperience.ai_helpful
-        payload.aiEasy = aiExperience.ai_easy
-        payload.aiSpeed = aiExperience.ai_speed
-        payload.aiSuggestions = aiSuggestions || null
+        payload.ai_perceivedUsefulness = aiExperience.ai_perceivedUsefulness
+        payload.ai_perceivedEaseOfUse = aiExperience.ai_perceivedEaseOfUse
+        payload.ai_perceivedTrustworthiness = aiExperience.ai_perceivedTrustworthiness
+        payload.ai_interactionFluency = aiExperience.ai_interactionFluency
+        payload.ai_satisfaction = aiExperience.ai_satisfaction
+        payload.aiSuggestions = aiSuggestions
       } else {
         const reasons: string[] = []
         if (noUseReasons.a) reasons.push('a')
@@ -208,12 +189,9 @@ export default function SupplementalQuestionPage() {
         if (noUseReasons.d) reasons.push('d')
         if (noUseReasons.e) reasons.push('e')
         if (noUseReasons.f) reasons.push('f')
-        if (noUseReasons.g) reasons.push('g')
-        if (noUseReasons.h) reasons.push('h')
         payload.aiNoUseReasons = reasons.join(',')
-        payload.aiNoUseTechIssue = noUseReasons.a ? noUseTechIssue : null
-        payload.aiNoUseOther = noUseReasons.h ? noUseOther : null
-        payload.aiSuggestions = aiSuggestions || null
+        payload.aiNoUseOther = noUseReasons.f ? noUseOther : null
+        payload.aiSuggestions = aiSuggestions
       }
     }
 
@@ -302,15 +280,7 @@ export default function SupplementalQuestionPage() {
         </CardHeader>
 
         <CardContent className="space-y-8 pb-2">
-          {/* Q1: AI familiarity */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">
-              Before participating in this study, how familiar were you with generative AI tools (e.g., ChatGPT, Gemini, Claude, or another similar tool)? <span className="text-red-500">*</span>
-            </Label>
-            {renderScale('aiFamiliarity', aiFamiliarity, AI_FAMILIARITY_OPTIONS, (v) => setAiFamiliarity(Number(v)))}
-          </div>
-
-          {/* Q2: AI work extent */}
+          {/* Q1: AI work extent */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
               How often do you currently use generative AI tools (e.g., ChatGPT, Claude, Gemini) for work, study, or other daily tasks? <span className="text-red-500">*</span>
@@ -321,10 +291,10 @@ export default function SupplementalQuestionPage() {
           {/* AI interaction questions - hidden for Human-only group */}
           {!isHumanOnly && (
             <>
-              {/* Q3: AI interaction frequency */}
+              {/* Q2: AI interaction frequency */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  During the writing task, how many times did you interact with the AI assistant provided in the interface? <span className="text-red-500">*</span>
+                  To what extent did you interact with the AI assistant provided in the interface while completing the writing task? <span className="text-red-500">*</span>
                 </Label>
                 <RadioGroup
                   value={aiInteractionFreq !== undefined ? String(aiInteractionFreq) : ''}
@@ -352,7 +322,7 @@ export default function SupplementalQuestionPage() {
                   <div className="space-y-5 bg-gray-50 p-4 rounded-lg border">
                     {AI_EXPERIENCE_ITEMS.map((item) => (
                       <div key={item.id} className="space-y-2">
-                        <p className="text-sm text-gray-700">The AI available in the interface is {item.text}</p>
+                        <p className="text-sm text-gray-700">The AI available in the interface {item.text}</p>
                         {renderAgreementScale(
                           item.id,
                           aiExperience[item.id],
@@ -385,15 +355,7 @@ export default function SupplementalQuestionPage() {
                         </div>
                         {r.hasInput && noUseReasons[r.value as keyof NoUseReasons] && (
                           <div className="ml-7">
-                            {r.value === 'a' && (
-                              <Textarea
-                                placeholder="Describe the specific technical issues you encountered with the AI assistant..."
-                                value={noUseTechIssue}
-                                onChange={(e) => setNoUseTechIssue(e.target.value)}
-                                className="min-h-[60px]"
-                              />
-                            )}
-                            {r.value === 'h' && (
+                            {r.value === 'f' && (
                               <Textarea
                                 placeholder="Please specify other reasons..."
                                 value={noUseOther}
@@ -409,10 +371,10 @@ export default function SupplementalQuestionPage() {
                 </div>
               )}
 
-              {/* Optional: AI suggestions */}
+              {/* AI suggestions - required */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  Your experience with the AI assistant provided in the interface and any suggestions for improvement (optional)
+                  Did you experience any issues during your interaction with the AI assistant (e.g., technical malfunctions, unexpected outputs)? Please share any problems or suggestions for improvement below. <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   placeholder="Share your experience with the AI assistant and suggest improvements..."
