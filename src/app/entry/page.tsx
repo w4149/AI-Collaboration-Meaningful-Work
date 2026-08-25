@@ -124,7 +124,13 @@ export default function EntryPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showError, setShowError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [failCount, setFailCount] = useState(0)
+  const [failCount, setFailCount] = useState(() => {
+    try {
+      return parseInt(sessionStorage.getItem('compCheckFailCount') || '0', 10)
+    } catch {
+      return 0
+    }
+  })
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [showExcludeDialog, setShowExcludeDialog] = useState(false)
 
@@ -166,6 +172,31 @@ export default function EntryPage() {
       setVisibleQuestions({ [firstSetId]: 0 })
     }
   }, [compConfig])
+
+  // Check if already excluded on page load, or if fail count >= 2
+  useEffect(() => {
+    try {
+      const excluded = sessionStorage.getItem('compCheckExcluded') === 'true'
+      if (excluded) {
+        const eq = encodedQuery(searchParams)
+        router.replace(`/reject${eq ? eq : ''}`)
+        return
+      }
+      const storedFailCount = parseInt(sessionStorage.getItem('compCheckFailCount') || '0', 10)
+      if (storedFailCount >= 2) {
+        setShowExcludeDialog(true)
+      }
+    } catch {
+    }
+  }, [router, searchParams])
+
+  // Persist failCount to sessionStorage on change
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('compCheckFailCount', String(failCount))
+    } catch {
+    }
+  }, [failCount])
 
   useEffect(() => {
     if (!FLOW_CONFIG.entry) {
@@ -356,6 +387,10 @@ export default function EntryPage() {
   }, [showExcludeDialog])
 
   const handleExclude = () => {
+    try {
+      sessionStorage.setItem('compCheckExcluded', 'true')
+    } catch {
+    }
     const eq = encodedQuery(searchParams)
     const qs = eq ? eq : ''
     router.replace(`/reject${qs}`)
@@ -544,7 +579,18 @@ export default function EntryPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end pt-4">
-            <Button onClick={() => setShowError(false)}>OK</Button>
+            {failCount >= 2 ? (
+              <Button onClick={() => {
+                try {
+                  sessionStorage.setItem('compCheckExcluded', 'true')
+                } catch {
+                }
+                setShowError(false)
+                setShowExcludeDialog(true)
+              }}>Continue</Button>
+            ) : (
+              <Button onClick={() => setShowError(false)}>OK</Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -575,7 +621,7 @@ export default function EntryPage() {
           <DialogHeader>
             <DialogTitle>You Have Been Disqualified</DialogTitle>
             <DialogDescription>
-              Unfortunately, you did not pass the comprehension check. You will now be redirected to complete the screening questionnaire, and your responses will be used for research purposes only.
+              Unfortunately, you did not pass the comprehension check. In accordance with the Prolific policy, you will be redirected to the exit page. Thank you for your participation.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end pt-4">
