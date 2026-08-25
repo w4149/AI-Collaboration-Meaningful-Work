@@ -151,7 +151,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
           </Button>
         </div>
         <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed mt-2">
-          <strong className="font-semibold">Reminder:</strong> Use the AI assistant to complete the task. Please provide it with the task‑related materials.
+          <strong className="font-semibold">Reminder:</strong> Use the AI assistant to complete the task. You may provide it with the task‑related materials.
         </div>
       </CardHeader>
       
@@ -159,7 +159,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
         <div ref={chatContainerRef} onScroll={handleChatScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
           {chatMessages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
-              <p></p>
+              <p>Ask me anything!</p>
             </div>
           ) : (
             chatMessages.map((msg) => (

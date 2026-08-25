@@ -43,8 +43,15 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g1_q1',
             text: 'In the following task____',
-            optionA: 'I may use AI, search engines, or other external tools for assistance.',
-            optionB: 'I need to complete the task independently without using AI or other external tools.',
+            optionA: 'I need to use AI as part of completing the task.',
+            optionB: 'I need to work on the task independently without using AI.',
+            correct: 'B',
+          },
+          {
+            id: 'g1_q2',
+            text: 'In the following task____',
+            optionA: 'I may use search engines or other external tools for additional assistance.',
+            optionB: 'I need to use my own knowledge to complete the task.',
             correct: 'B',
           },
         ],
@@ -415,10 +422,9 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g1Max} minutes</strong> to complete the task and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
+                    You will have <strong>up to {g1Max} minutes</strong> to write your response independently and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
@@ -433,10 +439,9 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    Please use the <strong>AI assistant available in the interface</strong> to complete the task, and <strong>must not</strong> use any tools or resources other than those provided by the interface. You will have <strong>up to {g2Max} minutes</strong> to complete the task and paste the AI-generated response into the submission box.
+                    You will have <strong>up to {g2Max} minutes</strong> to generate your response using the <strong>AI assistant provided within the interface</strong>. You <strong>must not</strong> use any external tools or resources. Please paste the AI‑generated draft into the submission box (<strong>do not</strong> write your own version).
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>
@@ -464,10 +469,9 @@ export default function EntryPage() {
                     You will have <strong>up to {g3Max} minutes</strong> to write an initial draft independently, <strong>without using AI tools, search engines, or other outside assistance.</strong>
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
-                    You will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote, and <strong>must not</strong> use any tools or resources other than those provided by the interface. Then enter the revised draft in the submission box.
+                    You will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant provided within the interface</strong> to help review and revise the draft you just wrote. You <strong>must not</strong> use any external tools or resources. Please enter the revised draft in the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-                    <br /> <br />
                     Your response will be graded by professional evaluators based on real-world work scenarios.
                     Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
                   </p>

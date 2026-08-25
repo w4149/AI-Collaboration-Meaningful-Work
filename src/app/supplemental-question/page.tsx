@@ -16,11 +16,9 @@ import { encodedQuery } from '@/lib/url-cipher'
 const AI_WORK_EXTENT_OPTIONS = [
   { value: 1, label: 'Never' },
   { value: 2, label: 'Rarely' },
-  { value: 3, label: 'Occasionally' },
-  { value: 4, label: 'Sometimes' },
-  { value: 5, label: 'Often' },
-  { value: 6, label: 'Very often' },
-  { value: 7, label: 'Almost every day' },
+  { value: 3, label: 'Sometimes' },
+  { value: 4, label: 'Often' },
+  { value: 5, label: 'Almost every day' },
 ]
 
 const AGREEMENT_OPTIONS = [
@@ -32,9 +30,9 @@ const AGREEMENT_OPTIONS = [
 ]
 
 const AI_INTERACTION_OPTIONS = [
-  { value: 0, label: 'Not at all — I completed the task without using the AI assistant' },
-  { value: 1, label: 'To a small extent — I consulted the AI assistant only once or twice' },
-  { value: 2, label: 'To a large extent — I consulted the AI assistant repeatedly' },
+  { value: 0, label: 'Never — I completed the task without using the AI assistant' },
+  { value: 1, label: 'Seldom — I consulted the AI assistant only a few times' },
+  { value: 2, label: 'Often — I consulted the AI assistant repeatedly during the task' }
 ]
 
 const AI_EXPERIENCE_ITEMS = [
@@ -46,12 +44,14 @@ const AI_EXPERIENCE_ITEMS = [
 ]
 
 const AI_NO_USE_REASONS = [
-  { value: 'a', label: 'The AI assistant was difficult to use or not useful, so I preferred to complete the task myself', hasInput: false },
-  { value: 'b', label: 'I do not trust the AI-generated content, I prefer to complete it myself', hasInput: false },
-  { value: 'c', label: 'I think my existing knowledge is sufficient to complete the task, no AI assistance is needed', hasInput: false },
-  { value: 'd', label: 'I am concerned that using the AI will be considered cheating or affect the evaluation process', hasInput: false },
-  { value: 'e', label: 'I used other tools instead (e.g., external AI tools, search engines, or non-AI tools)', hasInput: false },
-  { value: 'f', label: 'Other', hasInput: true },
+  { value: 'a', label: 'The AI assistant is unavailable due to technical issues.', hasInput: false },
+  { value: 'b', label: 'After reading the task, I felt I could complete it fully on my own.', hasInput: false },
+  { value: 'c', label: 'I did not know how to use it (e.g., where to type or how to send).', hasInput: false },
+  { value: 'd', label: 'I thought using the AI assistant would take too much effort and time.', hasInput: false },
+  { value: 'e', label: 'I did not trust the AI-generated content.', hasInput: false },
+  { value: 'f', label: 'I was worried that using AI would be seen as cheating or would hurt my evaluation.', hasInput: false },
+  { value: 'g', label: 'I used another tool instead (e.g., ChatGPT, a search engine).', hasInput: false },
+  { value: 'h', label: 'Other', hasInput: true },
 ]
 
 type NoUseReasons = {
@@ -294,7 +294,7 @@ export default function SupplementalQuestionPage() {
               {/* Q2: AI interaction frequency */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  To what extent did you interact with the AI assistant provided in the interface while completing the writing task? <span className="text-red-500">*</span>
+                  How frequently did you interact with the AI assistant provided in the interface while completing the writing task? <span className="text-red-500">*</span>
                 </Label>
                 <RadioGroup
                   value={aiInteractionFreq !== undefined ? String(aiInteractionFreq) : ''}
@@ -374,10 +374,10 @@ export default function SupplementalQuestionPage() {
               {/* AI suggestions - required */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  Did you experience any issues during your interaction with the AI assistant (e.g., technical malfunctions, unexpected outputs)? Please share any problems or suggestions for improvement below. <span className="text-red-500">*</span>
+                  Did you experience any other issues interacting with the AI assistant that were not listed above? (Please enter “none” if you had no additional issues.) <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
-                  placeholder="Share your experience with the AI assistant and suggest improvements..."
+                  placeholder="Share other issues interacting with the AI assistant..."
                   value={aiSuggestions}
                   onChange={(e) => setAiSuggestions(e.target.value)}
                   className="min-h-[80px]"
