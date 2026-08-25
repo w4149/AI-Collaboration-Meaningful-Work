@@ -8,13 +8,9 @@ export async function POST(request: Request) {
       prolificId?: string
       aiWorkExtent: number
       aiInteractionFreq?: number
-      ai_perceivedUsefulness?: number
-      ai_perceivedEaseOfUse?: number
-      ai_perceivedTrustworthiness?: number
-      ai_interactionFluency?: number
-      ai_satisfaction?: number
       aiNoUseReasons?: string
       aiNoUseOther?: string | null
+      aiIssues?: string
       aiSuggestions?: string | null
     }
 
@@ -54,14 +50,15 @@ export async function POST(request: Request) {
         ai_familiarity: null,
         ai_work_extent: Number(aiWorkExtent),
         ai_interaction_freq: body.aiInteractionFreq ?? null,
-        ai_perceived_usefulness: body.ai_perceivedUsefulness ?? null,
-        ai_perceived_ease_of_use: body.ai_perceivedEaseOfUse ?? null,
-        ai_perceived_trustworthiness: body.ai_perceivedTrustworthiness ?? null,
-        ai_interaction_fluency: body.ai_interactionFluency ?? null,
-        ai_satisfaction: body.ai_satisfaction ?? null,
+        ai_perceived_usefulness: null,
+        ai_perceived_ease_of_use: null,
+        ai_perceived_trustworthiness: null,
+        ai_interaction_fluency: null,
+        ai_satisfaction: null,
         ai_no_use_reasons: body.aiNoUseReasons ?? null,
         ai_no_use_tech_issue: null,
         ai_no_use_other: body.aiNoUseOther ?? null,
+        ai_issues: body.aiIssues ?? null,
         ai_suggestions: body.aiSuggestions ?? null,
         created_at: new Date().toISOString(),
       })

@@ -21,26 +21,10 @@ const AI_WORK_EXTENT_OPTIONS = [
   { value: 5, label: 'Almost every day' },
 ]
 
-const AGREEMENT_OPTIONS = [
-  { value: 1, label: 'Strongly disagree' },
-  { value: 2, label: 'Disagree' },
-  { value: 3, label: 'Neither' },
-  { value: 4, label: 'Agree' },
-  { value: 5, label: 'Strongly agree' },
-]
-
 const AI_INTERACTION_OPTIONS = [
   { value: 0, label: 'Never — I completed the task without using the AI assistant' },
   { value: 1, label: 'Seldom — I consulted the AI assistant only a few times' },
   { value: 2, label: 'Often — I consulted the AI assistant repeatedly during the task' }
-]
-
-const AI_EXPERIENCE_ITEMS = [
-  { id: 'ai_perceivedUsefulness', text: 'provided outputs that were helpful for completing my task.' },
-  { id: 'ai_perceivedEaseOfUse', text: 'required little effort for me to interact with.' },
-  { id: 'ai_perceivedTrustworthiness', text: 'produced outputs that I can trust.' },
-  { id: 'ai_interactionFluency', text: 'understood my intentions and maintained smooth conversation flow.' },
-  { id: 'ai_satisfaction', text: 'delivered an overall satisfying interaction experience.' },
 ]
 
 const AI_NO_USE_REASONS = [
@@ -61,6 +45,30 @@ type NoUseReasons = {
   d?: boolean
   e?: boolean
   f?: boolean
+  g?: boolean
+  h?: boolean
+}
+
+const AI_ISSUE_OPTIONS = [
+  { value: 'a', label: 'My message could not be edited or sent smoothly.' },
+  { value: 'b', label: 'My message was submitted but received no reply.' },
+  { value: 'c', label: 'The AI Assistant showed an error and would not work.' },
+  { value: 'd', label: 'The AI Assistant responds too slowly.' },
+  { value: 'e', label: 'The AI repeatedly outputs the same content.' },
+  { value: 'f', label: 'The AI Assistant displays incomplete replies (truncated).' },
+  { value: 'g', label: 'The AI Assistant fails to provide helpful answers for me.' },
+  { value: 'h', label: 'The AI Assistant generates untrustworthy answers (provides false information).' },
+] as const
+
+type AiIssues = {
+  a?: boolean
+  b?: boolean
+  c?: boolean
+  d?: boolean
+  e?: boolean
+  f?: boolean
+  g?: boolean
+  h?: boolean
 }
 
 export default function SupplementalQuestionPage() {
@@ -78,10 +86,10 @@ export default function SupplementalQuestionPage() {
 
   const [aiInteractionFreq, setAiInteractionFreq] = useState<number | undefined>(undefined)
 
-  const [aiExperience, setAiExperience] = useState<Record<string, number | undefined>>({})
-
   const [noUseReasons, setNoUseReasons] = useState<NoUseReasons>({})
   const [noUseOther, setNoUseOther] = useState('')
+
+  const [aiIssues, setAiIssues] = useState<AiIssues>({})
 
   const [aiSuggestions, setAiSuggestions] = useState('')
 
@@ -89,8 +97,6 @@ export default function SupplementalQuestionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [showBackDialog, setShowBackDialog] = useState(false)
-
-  const usedAI = aiInteractionFreq !== undefined && aiInteractionFreq > 0
 
   useEffect(() => {
     const preventBack = (e: PopStateEvent) => {
@@ -117,6 +123,10 @@ export default function SupplementalQuestionPage() {
     setNoUseReasons((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
+  const toggleAiIssue = (key: keyof AiIssues) => {
+    setAiIssues((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
   const handleNext = () => {
     if (aiWorkExtent === undefined) {
       setError('Please answer all required questions before proceeding.')
@@ -129,23 +139,22 @@ export default function SupplementalQuestionPage() {
         return
       }
 
-      if (usedAI) {
-        for (const item of AI_EXPERIENCE_ITEMS) {
-          if (aiExperience[item.id] === undefined) {
-            setError('Please answer all AI experience rating questions.')
-            return
-          }
-        }
-      } else {
+      if (aiInteractionFreq === 0) {
         const hasReasons = Object.values(noUseReasons).some((v) => v)
         if (!hasReasons) {
           setError('Please select at least one reason for not using the AI assistant.')
           return
         }
-        if (noUseReasons.f && !noUseOther.trim()) {
+        if (noUseReasons.h && !noUseOther.trim()) {
           setError('Please specify your reason for "Other".')
           return
         }
+      }
+
+      const hasIssues = Object.values(aiIssues).some((v) => v)
+      if (!hasIssues) {
+        setError('Please select at least one AI interaction issue, or select "none" if you had no issues.')
+        return
       }
 
       if (!aiSuggestions.trim()) {
@@ -174,14 +183,7 @@ export default function SupplementalQuestionPage() {
     if (!isHumanOnly) {
       payload.aiInteractionFreq = aiInteractionFreq
 
-      if (usedAI) {
-        payload.ai_perceivedUsefulness = aiExperience.ai_perceivedUsefulness
-        payload.ai_perceivedEaseOfUse = aiExperience.ai_perceivedEaseOfUse
-        payload.ai_perceivedTrustworthiness = aiExperience.ai_perceivedTrustworthiness
-        payload.ai_interactionFluency = aiExperience.ai_interactionFluency
-        payload.ai_satisfaction = aiExperience.ai_satisfaction
-        payload.aiSuggestions = aiSuggestions
-      } else {
+      if (aiInteractionFreq === 0) {
         const reasons: string[] = []
         if (noUseReasons.a) reasons.push('a')
         if (noUseReasons.b) reasons.push('b')
@@ -189,10 +191,24 @@ export default function SupplementalQuestionPage() {
         if (noUseReasons.d) reasons.push('d')
         if (noUseReasons.e) reasons.push('e')
         if (noUseReasons.f) reasons.push('f')
+        if (noUseReasons.g) reasons.push('g')
+        if (noUseReasons.h) reasons.push('h')
         payload.aiNoUseReasons = reasons.join(',')
-        payload.aiNoUseOther = noUseReasons.f ? noUseOther : null
-        payload.aiSuggestions = aiSuggestions
+        payload.aiNoUseOther = noUseReasons.h ? noUseOther : null
       }
+
+      const issues: string[] = []
+      if (aiIssues.a) issues.push('a')
+      if (aiIssues.b) issues.push('b')
+      if (aiIssues.c) issues.push('c')
+      if (aiIssues.d) issues.push('d')
+      if (aiIssues.e) issues.push('e')
+      if (aiIssues.f) issues.push('f')
+      if (aiIssues.g) issues.push('g')
+      if (aiIssues.h) issues.push('h')
+      payload.aiIssues = issues.join(',')
+
+      payload.aiSuggestions = aiSuggestions
     }
 
     try {
@@ -234,31 +250,6 @@ export default function SupplementalQuestionPage() {
               {opt.value}
             </Label>
             <span className="text-[11px] text-gray-500 text-center leading-tight whitespace-nowrap min-h-[2em]">
-              {opt.label}
-            </span>
-          </div>
-        ))}
-      </div>
-    </RadioGroup>
-  )
-
-  const renderAgreementScale = (
-    name: string,
-    value: number | undefined,
-    onChange: (v: string) => void
-  ) => (
-    <RadioGroup value={value !== undefined ? String(value) : ''} onValueChange={onChange}>
-      <div className="flex justify-between gap-0.5">
-        {AGREEMENT_OPTIONS.map((opt) => (
-          <div key={opt.value} className="flex flex-col items-center gap-0.5 flex-1">
-            <RadioGroupItem value={String(opt.value)} id={`${name}-${opt.value}`} className="sr-only peer" />
-            <Label
-              htmlFor={`${name}-${opt.value}`}
-              className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-full border border-gray-300 text-[11px] font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground transition-colors"
-            >
-              {opt.value}
-            </Label>
-            <span className="text-[9px] text-gray-500 text-center leading-tight whitespace-nowrap">
               {opt.label}
             </span>
           </div>
@@ -313,27 +304,6 @@ export default function SupplementalQuestionPage() {
                 </RadioGroup>
               </div>
 
-              {/* If used AI: show experience ratings */}
-              {usedAI && (
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">
-                    To what extent do you agree with the following statements about the AI assistant provided in the interface? <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="space-y-5 bg-gray-50 p-4 rounded-lg border">
-                    {AI_EXPERIENCE_ITEMS.map((item) => (
-                      <div key={item.id} className="space-y-2">
-                        <p className="text-sm text-gray-700">The AI available in the interface {item.text}</p>
-                        {renderAgreementScale(
-                          item.id,
-                          aiExperience[item.id],
-                          (v) => setAiExperience((p) => ({ ...p, [item.id]: Number(v) }))
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* If did NOT use AI: show reasons */}
               {aiInteractionFreq === 0 && (
                 <div className="space-y-3">
@@ -355,7 +325,7 @@ export default function SupplementalQuestionPage() {
                         </div>
                         {r.hasInput && noUseReasons[r.value as keyof NoUseReasons] && (
                           <div className="ml-7">
-                            {r.value === 'f' && (
+                            {r.value === 'h' && (
                               <Textarea
                                 placeholder="Please specify other reasons..."
                                 value={noUseOther}
@@ -370,6 +340,27 @@ export default function SupplementalQuestionPage() {
                   </div>
                 </div>
               )}
+
+              {/* AI interaction issues - always shown (required) */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">
+                  Have you encountered the following issues while using the AI Assistant provided within the interface? (Select all that apply) <span className="text-red-500">*</span>
+                </Label>
+                <div className="space-y-3 bg-gray-50 p-4 rounded-lg border">
+                  {AI_ISSUE_OPTIONS.map((opt) => (
+                    <div key={opt.value} className="flex items-start space-x-2">
+                      <Checkbox
+                        id={`issue-${opt.value}`}
+                        checked={!!aiIssues[opt.value as keyof AiIssues]}
+                        onCheckedChange={() => toggleAiIssue(opt.value as keyof AiIssues)}
+                      />
+                      <Label htmlFor={`issue-${opt.value}`} className="text-sm cursor-pointer leading-tight">
+                        {opt.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* AI suggestions - required */}
               <div className="space-y-3">
