@@ -300,9 +300,9 @@ export default function PostTaskSurveyPage() {
           {/* Q4: Attention check 2 */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              4. This is an attention check question. Please select <strong>&quot;Strongly disagree&quot;</strong> below. <span className="text-red-500">*</span>
+              4. This is an attention check question. Please select <strong>&quot;To a great extent&quot;</strong> below. <span className="text-red-500">*</span>
             </Label>
-            {renderRadioGroup('attentionCheck2', answers.attentionCheck2, AGREEMENT_OPTIONS, setAttention)}
+            {renderRadioGroup('attentionCheck2', answers.attentionCheck2, TIME_OPTIONS, setAttention)}
           </div>
 
           {/* Q5: Difficulty */}

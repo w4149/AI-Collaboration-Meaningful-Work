@@ -8,9 +8,9 @@ import { LikertGroup } from '@/components/LikertScale'
 import { useAppStore } from '@/lib/store'
 
 const selfEfficacyAIQuestions = [
-  { id: 'se_ai1', label: '如果借助人工智能，我有信心完成工作中的这类写作任务。' },
-  { id: 'se_ai2', label: '我确信，使用人工智能的情况下，我能顺利完成本职工作中的这类写作任务。' },
-  { id: 'se_ai3', label: '我相信，依靠人工智能辅助，我可以完成和本职工作相关的这类写作任务。' },
+  { id: 'se_ai1', label: 'I have confidence in completing this writing task using AI.' },
+  { id: 'se_ai2', label: 'I am sure that I can complete this writing task using AI.' },
+  { id: 'se_ai3', label: 'I believe that I can complete this writing task using AI.' },
 ]
 
 const selfEfficacyNoAIQuestions = [
@@ -55,7 +55,7 @@ export default function SurveyPart4Page() {
 
   const handleContinue = async () => {
     if (!allAnswered) {
-      alert('请回答所有问题后再继续。')
+      alert('Please answer all questions before continuing.')
       return
     }
     setIsSubmitting(true)

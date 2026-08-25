@@ -24,11 +24,13 @@ const AI_FAMILIARITY_OPTIONS = [
 ]
 
 const AI_WORK_EXTENT_OPTIONS = [
-  { value: 1, label: 'Not at all' },
-  { value: 2, label: 'Slightly' },
-  { value: 3, label: 'Moderately' },
-  { value: 4, label: 'To a great extent' },
-  { value: 5, label: 'Completely' },
+  { value: 1, label: 'Never' },
+  { value: 2, label: 'Rarely' },
+  { value: 3, label: 'Occasionally' },
+  { value: 4, label: 'Sometimes' },
+  { value: 5, label: 'Often' },
+  { value: 6, label: 'Very often' },
+  { value: 7, label: 'Almost every day' },
 ]
 
 const AGREEMENT_OPTIONS = [
@@ -42,27 +44,27 @@ const AGREEMENT_OPTIONS = [
 ]
 
 const AI_INTERACTION_OPTIONS = [
-  { value: 0, label: '0 次' },
-  { value: 1, label: '1-2 次' },
-  { value: 2, label: '3-5 次' },
-  { value: 3, label: '6 次及以上' },
+  { value: 0, label: '0 times (I did not use it at all)' },
+  { value: 1, label: '1-2 times' },
+  { value: 2, label: '3-5 times' },
+  { value: 3, label: '6 or more times' },
 ]
 
 const AI_EXPERIENCE_ITEMS = [
-  { id: 'ai_helpful', text: '提供了有帮助的答案' },
-  { id: 'ai_easy', text: '容易操作' },
-  { id: 'ai_speed', text: '响应速度令人满意' },
+  { id: 'ai_helpful', text: 'Provided helpful answers' },
+  { id: 'ai_easy', text: 'Easy to use' },
+  { id: 'ai_speed', text: 'Fast response speed' },
 ]
 
 const AI_NO_USE_REASONS = [
-  { value: 'a', label: '遇到了技术问题，无法正常使用AI界面', hasInput: true },
-  { value: 'b', label: 'AI界面的操作步骤太繁琐，我宁愿直接自己写', hasInput: false },
-  { value: 'c', label: '我不信任AI生成的内容，更倾向于自己完成', hasInput: false },
-  { value: 'd', label: '我认为自己已有的知识足以完成任务，不需要AI辅助', hasInput: false },
-  { value: 'e', label: '我担心使用AI会被视为作弊或影响评价', hasInput: false },
-  { value: 'f', label: '我使用了其他AI工具（如ChatGPT、Claude、Gemini等）', hasInput: false },
-  { value: 'g', label: '我使用了搜索引擎或其他非AI工具', hasInput: false },
-  { value: 'h', label: '其他', hasInput: true },
+  { value: 'a', label: 'Encountered technical issues, cannot use the AI interface normally', hasInput: true },
+  { value: 'b', label: 'AI interface operations are too complex, I prefer to write it myself', hasInput: false },
+  { value: 'c', label: 'I do not trust the AI-generated content, I prefer to complete it myself', hasInput: false },
+  { value: 'd', label: 'I think my existing knowledge is sufficient to complete the task, no AI assistance is needed', hasInput: false },
+  { value: 'e', label: 'I am concerned that using the AI will be considered cheating or affect the evaluation process', hasInput: false },
+  { value: 'f', label: 'I used a different AI tool instead (e.g., ChatGPT, Claude, Gemini, etc.)', hasInput: false },
+  { value: 'g', label: 'I used a search engine or other non-AI tool', hasInput: false },
+  { value: 'h', label: 'Other', hasInput: true },
 ]
 
 type NoUseReasons = {
@@ -311,7 +313,7 @@ export default function SupplementalQuestionPage() {
           {/* Q2: AI work extent */}
           <div className="space-y-3">
             <Label className="text-base font-medium">
-              To what extent do you currently use generative AI tools in your daily work? <span className="text-red-500">*</span>
+              How often do you currently use generative AI tools (e.g., ChatGPT, Claude, Gemini) for work, study, or other daily tasks? <span className="text-red-500">*</span>
             </Label>
             {renderScale('aiWorkExtent', aiWorkExtent, AI_WORK_EXTENT_OPTIONS, (v) => setAiWorkExtent(Number(v)))}
           </div>
@@ -322,7 +324,7 @@ export default function SupplementalQuestionPage() {
               {/* Q3: AI interaction frequency */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  在完成写作任务的过程中，您与界面提供的AI助手进行了几次交互？ <span className="text-red-500">*</span>
+                  During the writing task, how many times did you interact with the AI assistant provided in the interface? <span className="text-red-500">*</span>
                 </Label>
                 <RadioGroup
                   value={aiInteractionFreq !== undefined ? String(aiInteractionFreq) : ''}
@@ -350,7 +352,7 @@ export default function SupplementalQuestionPage() {
                   <div className="space-y-5 bg-gray-50 p-4 rounded-lg border">
                     {AI_EXPERIENCE_ITEMS.map((item) => (
                       <div key={item.id} className="space-y-2">
-                        <p className="text-sm text-gray-700">界面提供的AI{item.text}</p>
+                        <p className="text-sm text-gray-700">The AI available in the interface is {item.text}</p>
                         {renderAgreementScale(
                           item.id,
                           aiExperience[item.id],
@@ -366,7 +368,7 @@ export default function SupplementalQuestionPage() {
               {aiInteractionFreq === 0 && (
                 <div className="space-y-3">
                   <Label className="text-base font-medium">
-                    您没有使用界面提供的AI助手的主要原因是？（请选择所有符合的选项） <span className="text-red-500">*</span>
+                    Why did you not use the AI assistant provided in the interface? <span className="text-red-500">*</span>
                   </Label>
                   <div className="space-y-3 bg-gray-50 p-4 rounded-lg border">
                     {AI_NO_USE_REASONS.map((r) => (
@@ -385,7 +387,7 @@ export default function SupplementalQuestionPage() {
                           <div className="ml-7">
                             {r.value === 'a' && (
                               <Textarea
-                                placeholder="请具体描述您遇到的技术问题..."
+                                placeholder="Describe the specific technical issues you encountered with the AI assistant..."
                                 value={noUseTechIssue}
                                 onChange={(e) => setNoUseTechIssue(e.target.value)}
                                 className="min-h-[60px]"
@@ -393,7 +395,7 @@ export default function SupplementalQuestionPage() {
                             )}
                             {r.value === 'h' && (
                               <Textarea
-                                placeholder="请具体说明其他原因..."
+                                placeholder="Please specify other reasons..."
                                 value={noUseOther}
                                 onChange={(e) => setNoUseOther(e.target.value)}
                                 className="min-h-[60px]"
@@ -410,10 +412,10 @@ export default function SupplementalQuestionPage() {
               {/* Optional: AI suggestions */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  您对界面内提供的AI助手的使用体验和优化建议（选填）
+                  Your experience with the AI assistant provided in the interface and any suggestions for improvement (optional)
                 </Label>
                 <Textarea
-                  placeholder="请分享您的使用体验和对AI助手的优化建议..."
+                  placeholder="Share your experience with the AI assistant and suggest improvements..."
                   value={aiSuggestions}
                   onChange={(e) => setAiSuggestions(e.target.value)}
                   className="min-h-[80px]"
