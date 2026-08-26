@@ -43,7 +43,7 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g1_q1',
             text: 'In the following task____',
-            optionA: 'I need to use AI as part of completing the task.',
+            optionA: 'I may use AI as part of completing the task.',
             optionB: 'I need to work on the task independently without using AI.',
             correct: 'B',
           },
@@ -100,7 +100,7 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g3_p1_q1',
             text: 'In the first stage of the following task____',
-            optionA: 'I need to use AI as part of completing the task.',
+            optionA: 'I may use AI as part of completing the task.',
             optionB: 'I need to work on the task independently without using AI.',
             correct: 'B',
           },
@@ -439,7 +439,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g2Max} minutes</strong> to generate your response using the <strong>AI assistant provided within the interface</strong>. You <strong>must not</strong> use any external tools or resources. Please paste the AI‑generated draft into the submission box (<strong>do not</strong> write your own version).
+                    You will have <strong>up to {g2Max} minutes</strong> to generate your response using the <strong>AI assistant provided within the interface</strong>. You <strong>must not</strong> use any external tools or resources. Please paste the AI‑generated draft into the submission box.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
