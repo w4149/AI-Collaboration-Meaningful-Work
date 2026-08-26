@@ -679,7 +679,7 @@ export default function TaskPage() {
             <Badge variant="outline" className="bg-green-500 text-white border-green-500">
               Phase 2 — AI Improvement
             </Badge>
-            <span className="text-green-700">ChatGPT and copy/paste are now available</span>
+            <span className="text-green-700">AI Assistant in this interface and copy/paste are now available</span>
           </div>
         </div>
       )}
