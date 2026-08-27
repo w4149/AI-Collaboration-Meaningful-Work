@@ -472,6 +472,7 @@ export default function EntryPage() {
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
                     Next, you will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant provided within the interface</strong> to review, revise, or improve the initial response you created in Phase 1.
+                    <br /> <br />
                     Please enter your final revised response into the submission box. You <strong>must not</strong> use any external AI tools, search engines, or other outside assistance during either phase.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
