@@ -468,7 +468,7 @@ export default function EntryPage() {
                     You will complete the task in <strong>two phases:</strong>
                     <br /> <br />
                     <strong>Phase 1 — Initial Response:</strong> <br />
-                    First, you will have <strong>up to {g3Max} minutes</strong> to work on the task independently and produce an initial response, <strong>without using AI tools, search engines, or other outside assistance.</strong>
+                    First, you will have <strong>up to {g3Max} minutes</strong> to work on the task independently and produce an initial response. Please complete your initial response <strong>without using AI tools, search engines, or other outside assistance.</strong>
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
                     Next, you will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant provided within the interface</strong> to review, revise, or improve the initial response you created in Phase 1.

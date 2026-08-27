@@ -648,11 +648,11 @@ export default function TaskPage() {
         <div className={`${groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'bg-amber-100 border-amber-200' : 'bg-purple-100 border-purple-200'} border-b px-4 py-2`}>
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
             <Badge variant="outline" className={groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'bg-amber-500 text-white border-amber-500' : 'bg-purple-500 text-white border-purple-500'}>
-              {groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'Phase 1 — Writing Draft' : 'Auto-submit'}
+              {groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'Phase 1 — Initial Response' : 'Auto-submit'}
             </Badge>
             <span className={`${groupType === 'G3-HumanAndAI' && currentPhase === 1 ? 'text-amber-700' : 'text-purple-700'} font-semibold`}>
               {groupType === 'G3-HumanAndAI' && currentPhase === 1
-                ? `Auto-submit your initial draft in ${formatCountdown(redirectCountdown)}`
+                ? `Auto-submit your initial response in ${formatCountdown(redirectCountdown)}`
                 : `Auto-submit in ${formatCountdown(redirectCountdown)}`}
             </span>
           </div>

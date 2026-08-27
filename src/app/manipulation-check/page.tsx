@@ -181,17 +181,17 @@ export default function ManipulationCheckPage() {
             <>
               <div className="space-y-4">
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <p className="text-sm font-medium text-gray-700 mb-3">In the first stage (writing the draft):</p>
+                  <p className="text-sm font-medium text-gray-700 mb-3">In the first stage (initial response):</p>
                   <div className="space-y-5">
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">
-                        1. While writing the draft, did you use any AI tool outside the study interface (e.g., ChatGPT, Gemini, Claude, or another similar tool)? <span className="text-red-500">*</span>
+                        1. While writing the initial response, did you use any AI tool outside the study interface (e.g., ChatGPT, Gemini, Claude, or another similar tool)? <span className="text-red-500">*</span>
                       </Label>
                       {renderRadioGroup('stage1-ai', stage1AiUsed, YES_NO_OPTIONS, setStage1AiUsed)}
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">
-                        2. While writing the draft, did you use any other outside assistance, such as a search engine or help from another person? <span className="text-red-500">*</span>
+                        2. While writing the initial response, did you use any other outside assistance, such as a search engine or help from another person? <span className="text-red-500">*</span>
                       </Label>
                       {renderRadioGroup('stage1-other', stage1OtherAssistance, YES_NO_OPTIONS, setStage1OtherAssistance)}
                     </div>
