@@ -308,7 +308,7 @@ export default function SupplementalQuestionPage() {
               {aiInteractionFreq === 0 && (
                 <div className="space-y-3">
                   <Label className="text-base font-medium">
-                    Why did you not use the AI assistant provided in the interface? <span className="text-red-500">*</span>
+                    Why did you not use the AI assistant provided in the interface? (Select all that apply)<span className="text-red-500">*</span>
                   </Label>
                   <div className="space-y-3 bg-gray-50 p-4 rounded-lg border">
                     {AI_NO_USE_REASONS.map((r) => (
