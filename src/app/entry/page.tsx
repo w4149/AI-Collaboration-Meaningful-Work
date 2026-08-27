@@ -76,7 +76,7 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
             id: 'g2_q2',
             text: 'In the following task____',
             optionA: 'I may use an external AI tool.',
-            optionB: 'I need to use the AI assistant provided in this study interface.',
+            optionB: 'I may only use the AI assistant provided in this study interface.',
             correct: 'B',
           },
           {
@@ -439,7 +439,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g2Max} minutes</strong> to complete the task using the <strong>AI assistant provided within the interface</strong>. Please use the AI assistant to produce your response. You <strong>should not</strong> draft or complete a response on your own.
+                    You will have <strong>up to {g2Max} minutes</strong> to complete the task using the <strong>AI assistant provided within the interface</strong>. You <strong>should not</strong> draft or complete a response on your own.
                     <br /> <br />
                     You may continue interacting with the AI assistant as needed, but you <strong>must not</strong> write the response yourself or modify the AI-generated text. In addition, you <strong>must not</strong> use any external AI tools, search engines, or other outside assistance.
                     <br /> <br />
