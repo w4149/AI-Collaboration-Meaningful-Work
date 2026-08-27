@@ -542,10 +542,11 @@ export default function TaskPage() {
         <div className="border rounded-lg overflow-hidden">
           <div className="bg-blue-50 p-3 rounded">
             <p className="text-blue-700 text-sm">
-              You may use the <strong>AI assistant available in the interface</strong> to complete the task, and <strong>must not</strong> use any tools or resources other than those provided by the interface.
+              You need to complete the task using the <strong>AI assistant provided within the interface</strong>. Please use the AI assistant to produce your response. You <strong>should not</strong> draft or complete a response on your own.
+              <br /> <br />
+              You may continue interacting with the AI assistant as needed, but you <strong>must not</strong> write the response yourself or modify the AI-generated text. In addition, you <strong>must not</strong> use any external AI tools, search engines, or other outside assistance.
               <br /> <br />
               When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-              <br /> <br />
               Your response will be graded by professional evaluators based on real-world work scenarios. 
               Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
             </p>
@@ -572,8 +573,8 @@ export default function TaskPage() {
           <div className="border rounded-lg overflow-hidden">
             <div className="bg-blue-50 p-3 rounded">
               <p className="text-blue-700 text-sm">
-                <strong>Phase 1 — Draft:</strong> <br />
-                Please write an initial draft independently, <strong>without using AI tools, search engines, or other outside assistance.</strong>
+                <strong>Phase 1 — Initial Response:</strong> <br />
+                Please work on the task independently and produce an initial response, <strong>without using AI tools, search engines, or other outside assistance.</strong>
               </p>
             </div>
             <div className="bg-amber-50 p-3 rounded">
@@ -589,10 +590,10 @@ export default function TaskPage() {
           <div className="bg-green-50 p-3 rounded">
             <p className="text-green-700 text-sm">
               <strong>Phase 2 — Revise with AI:</strong> <br />
-              You may use the <strong>AI assistant available in the interface</strong> to help review and revise the draft you just wrote. Then enter the revised draft in the submission box.
+              Please use the <strong>AI assistant provided within the interface</strong> to review, revise, or improve the initial response you created in Phase 1.
+              Please enter your final revised response into the submission box. You <strong>must not</strong> use any external AI tools, search engines, or other outside assistance during either phase.
               <br /> <br />
               When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
-              <br /> <br />
               Your response will be graded by professional evaluators based on real-world work scenarios.
               Please <strong>take the task seriously</strong> and approach it as you would a real work assignment.
             </p>
