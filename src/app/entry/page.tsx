@@ -68,7 +68,7 @@ const COMPREHENSION_CHECK: Record<string, CompConfig> = {
           {
             id: 'g2_q1',
             text: 'In the following task____',
-            optionA: 'I need to complete the task independently without using AI.',
+            optionA: 'I may complete the task independently without using AI.',
             optionB: 'I need to use AI as part of completing the task.',
             correct: 'B',
           },
@@ -422,7 +422,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g1Max} minutes</strong> to write your response independently and enter your response in the submission box. Please complete the task independently, <strong>without using AI tools, search engines, or other outside assistance</strong>.
+                    You will have <strong>up to {g1Max} minutes</strong> to complete the task independently and enter your response in the submission box. Please complete the task <strong>without using AI tools, search engines, or other outside assistance</strong>.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
@@ -439,7 +439,9 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g2Max} minutes</strong> to generate your response using the <strong>AI assistant provided within the interface</strong>. You <strong>must not</strong> use any external tools or resources. Please paste the AI‑generated draft into the submission box.
+                    You will have <strong>up to {g2Max} minutes</strong> to complete the task using the <strong>AI assistant provided within the interface</strong>. Please use the AI assistant to produce your response. You <strong>should not</strong> draft or complete a response on your own.
+                    <br /> <br />
+                    You may continue interacting with the AI assistant as needed, but you <strong>must not</strong> write the response yourself or modify the AI-generated text. In addition, you <strong>must not</strong> use any external AI tools, search engines, or other outside assistance.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     Your response will be graded by professional evaluators based on real-world work scenarios. 
@@ -465,11 +467,12 @@ export default function EntryPage() {
                     <br /> <br />
                     You will complete the task in <strong>two phases:</strong>
                     <br /> <br />
-                    <strong>Phase 1 — Draft:</strong> <br />
-                    You will have <strong>up to {g3Max} minutes</strong> to write an initial draft independently, <strong>without using AI tools, search engines, or other outside assistance.</strong>
+                    <strong>Phase 1 — Initial Response:</strong> <br />
+                    First, you will have <strong>up to {g3Max} minutes</strong> to work on the task independently and produce an initial response, <strong>without using AI tools, search engines, or other outside assistance.</strong>
                     <br /> <br />
                     <strong>Phase 2 — Revise with AI:</strong> <br />
-                    You will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant provided within the interface</strong> to help review and revise the draft you just wrote. You <strong>must not</strong> use any external tools or resources. Please enter the revised draft in the submission box.
+                    Next, you will have <strong>up to {g3Phase2Max} minutes</strong> to use the <strong>AI assistant provided within the interface</strong> to review, revise, or improve the initial response you created in Phase 1.
+                    Please enter your final revised response into the submission box. You <strong>must not</strong> use any external AI tools, search engines, or other outside assistance during either phase.
                     <br /> <br />
                     When you are finished, click <strong>Submit Task</strong> and complete a supplemental survey.
                     Your response will be graded by professional evaluators based on real-world work scenarios.

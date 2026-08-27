@@ -22,9 +22,9 @@ const AI_WORK_EXTENT_OPTIONS = [
 ]
 
 const AI_INTERACTION_OPTIONS = [
-  { value: 0, label: 'Never — I completed the task without using the AI assistant' },
-  { value: 1, label: 'Seldom — I consulted the AI assistant only a few times' },
-  { value: 2, label: 'Often — I consulted the AI assistant repeatedly during the task' }
+  { value: 0, label: 'Not at all — I completed the task without using the AI assistant' },
+  { value: 1, label: 'A little — I consulted the AI assistant only a few times' },
+  { value: 2, label: 'Quite a lot — I consulted the AI assistant repeatedly during the task' }
 ]
 
 const AI_NO_USE_REASONS = [
@@ -285,7 +285,7 @@ export default function SupplementalQuestionPage() {
               {/* Q2: AI interaction frequency */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  How frequently did you interact with the AI assistant provided in the interface while completing the writing task? <span className="text-red-500">*</span>
+                  How much did you interact with the AI assistant while completing the task? <span className="text-red-500">*</span>
                 </Label>
                 <RadioGroup
                   value={aiInteractionFreq !== undefined ? String(aiInteractionFreq) : ''}
