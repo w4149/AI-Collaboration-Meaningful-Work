@@ -23,6 +23,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
   const isChatOpen = useAppStore((state) => state.isChatOpen)
   const toggleChat = useAppStore((state) => state.toggleChat)
   const allowChat = useAppStore((state) => state.allowChat)
+  const groupType = useAppStore((state) => state.groupType)
   const userId = useAppStore((state) => state.userId)
   const taskId = useAppStore((state) => state.taskId)
 
@@ -151,7 +152,10 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
           </Button>
         </div>
         <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed mt-2">
-          <strong className="font-semibold">Reminder:</strong> Use the AI assistant to complete the task. Please provide it with the task‑related materials.
+          <strong className="font-semibold">Reminder:</strong>{' '}
+          {groupType === 'G3-HumanAndAI'
+            ? 'Use the AI assistant to review and improve your initial response. Please provide it with your initial response and the task-related materials.'
+            : 'Use the AI assistant to complete the task. Please provide it with the task\u2011related materials.'}
         </div>
       </CardHeader>
       
@@ -173,8 +177,9 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
           )}
           {isLoading && (
             <div className="flex w-full mb-4 justify-start">
-              <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-3 rounded-tl-none">
+              <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-3 rounded-tl-none flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm text-gray-600">Thinking…</span>
               </div>
             </div>
           )}
@@ -187,7 +192,7 @@ export default function ChatWindow({ disabled = false }: { disabled?: boolean })
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_CHARS))}
               onKeyDown={handleKeyDown}
-              placeholder="Type your message... (Press Enter to go to a new line)"
+              placeholder="Type your message... (Press Enter to go to a new line. Click “Send” to send the message.)"
               disabled={isLoading || disabled}
               rows={4}
               className="flex-1 resize-none min-h-[108px] max-h-[200px] overflow-y-auto"

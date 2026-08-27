@@ -678,9 +678,9 @@ export default function TaskPage() {
         <div className="bg-green-100 border-b border-green-200 px-4 py-2">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
             <Badge variant="outline" className="bg-green-500 text-white border-green-500">
-              Phase 2 — AI Improvement
+              Phase 2 — Revise with AI Assistant
             </Badge>
-            <span className="text-green-700">AI Assistant in this interface and copy/paste are now available</span>
+            <span className="text-green-700">The AI assistant and copy/paste functions are now available</span>
           </div>
         </div>
       )}

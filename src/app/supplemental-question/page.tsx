@@ -23,8 +23,8 @@ const AI_WORK_EXTENT_OPTIONS = [
 
 const AI_INTERACTION_OPTIONS = [
   { value: 0, label: 'Not at all — I completed the task without using the AI assistant.' },
-  { value: 1, label: 'A little — I consulted the AI assistant only a few times.' },
-  { value: 2, label: 'Quite a lot — I consulted the AI assistant repeatedly during the task.' }
+  { value: 1, label: 'A little — I interacted with the AI assistant only a few times.' },
+  { value: 2, label: 'Quite a lot — I interacted with the AI assistant repeatedly during the task.' }
 ]
 
 const AI_NO_USE_REASONS = [
