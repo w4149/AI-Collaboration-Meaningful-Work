@@ -58,6 +58,7 @@ const AI_ISSUE_OPTIONS = [
   { value: 'f', label: 'The AI Assistant displays incomplete replies (truncated).' },
   { value: 'g', label: 'The AI Assistant fails to provide helpful answers for me.' },
   { value: 'h', label: 'The AI Assistant generates untrustworthy answers (provides false information).' },
+  { value: 'i', label: 'None of the above (I encountered no issues).' },
 ] as const
 
 type AiIssues = {
@@ -69,6 +70,7 @@ type AiIssues = {
   f?: boolean
   g?: boolean
   h?: boolean
+  i?: boolean
 }
 
 export default function SupplementalQuestionPage() {
@@ -124,7 +126,17 @@ export default function SupplementalQuestionPage() {
   }
 
   const toggleAiIssue = (key: keyof AiIssues) => {
-    setAiIssues((prev) => ({ ...prev, [key]: !prev[key] }))
+    setAiIssues((prev) => {
+      if (key === 'i') {
+        // Toggle 'None': if selecting it, clear all others; if deselecting, just unset
+        const newVal = !prev.i
+        return { i: newVal }
+      } else {
+        // Toggle any issue: if selecting it, clear 'None'
+        const newVal = !prev[key]
+        return { ...prev, [key]: newVal, i: false }
+      }
+    })
   }
 
   const handleNext = () => {
@@ -153,7 +165,7 @@ export default function SupplementalQuestionPage() {
 
       const hasIssues = Object.values(aiIssues).some((v) => v)
       if (!hasIssues) {
-        setError('Please select at least one AI interaction issue, or select "none" if you had no issues.')
+        setError('Please select at least one AI interaction issue, or select "None of the above" if you had no issues.')
         return
       }
 
@@ -206,6 +218,7 @@ export default function SupplementalQuestionPage() {
       if (aiIssues.f) issues.push('f')
       if (aiIssues.g) issues.push('g')
       if (aiIssues.h) issues.push('h')
+      if (aiIssues.i) issues.push('i')
       payload.aiIssues = issues.join(',')
 
       payload.aiSuggestions = aiSuggestions
@@ -365,7 +378,7 @@ export default function SupplementalQuestionPage() {
               {/* AI suggestions - required */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  Did you experience any other issues interacting with the AI assistant that were not listed above? (Please enter “none” if you had no additional issues.) <span className="text-red-500">*</span>
+                  Please describe in detail any technical‑related issues you encountered within the experiment interface. Did you experience any other issues when interacting with the AI assistant that were not listed above? (Please enter “none” if you did not encounter any problems.) <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   placeholder="Share other issues interacting with the AI assistant..."

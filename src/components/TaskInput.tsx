@@ -93,7 +93,7 @@ export default function TaskInput({ allowPaste, disabled = false }: TaskInputPro
           ref={textareaRef}
           value={taskSubmission}
           onChange={handleChange}
-          placeholder="Write your response here..."
+          placeholder="Paste the AI-generated response here..."
           className="flex-1 resize-none min-h-[200px]"
           disabled={disabled}
           onPaste={(e) => !allowPaste && e.preventDefault()}
