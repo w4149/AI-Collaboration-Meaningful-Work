@@ -18,13 +18,12 @@ export default function TaskInput({ allowPaste, disabled = false }: TaskInputPro
   const currentPhase = useAppStore((state) => state.currentPhase)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // G2-AI always uses paste placeholder; G3-HumanAndAI uses it in Phase 2 only
-  const isAiAssisted =
-    groupType === 'G2-AI' ||
-    (groupType === 'G3-HumanAndAI' && currentPhase === 2)
-  const placeholder = isAiAssisted
-    ? 'Paste the AI-generated response here...'
-    : 'Write your response here...'
+  const placeholder =
+    groupType === 'G3-HumanAndAI' && currentPhase === 2
+      ? 'Enter your revised response here...'
+      : groupType === 'G2-AI'
+        ? 'Paste the AI-generated response here...'
+        : 'Write your response here...'
 
   useEffect(() => {
     const preventPaste = (e: ClipboardEvent) => {
