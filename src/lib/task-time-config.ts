@@ -53,16 +53,16 @@ export const GROUP_TIME_CONFIG: Record<string, GroupFullConfig> = {
     default: {
       submitMinMinutes: 5,
       autoSubmitMinutes: 15,
-      phase2SubmitMinMinutes: 3,
+      phase2SubmitMinMinutes: 2,
       phase2AutoSubmitMinutes: 15,
     },
     tasks: {
-      'task1':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
-      'task1-2': { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
-      'task2':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
-      'task3':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
-      'task4':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
-      'task4-2': { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 3, phase2AutoSubmitMinutes: 15 },
+      'task1':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
+      'task1-2': { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
+      'task2':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
+      'task3':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
+      'task4':   { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
+      'task4-2': { submitMinMinutes: 5, autoSubmitMinutes: 15, phase2SubmitMinMinutes: 2, phase2AutoSubmitMinutes: 15 },
     },
   },
 }

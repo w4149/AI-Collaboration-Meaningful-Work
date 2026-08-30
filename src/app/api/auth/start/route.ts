@@ -18,10 +18,7 @@ const TASK_CONTENTS = {
 
 For each idea, describe what customers would do, how the idea would work, and any special details you would include. Your ideas may be simple or elaborate, but aim to make them original and distinctive while providing enough detail for someone to picture the anniversary experience.
 
----
-
-Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
-
+*Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.*
 `,
 
   'task1-2': `
@@ -49,10 +46,8 @@ Design an anniversary event that meets the following requirements:
   2. Use evidence from **ALL three materials**. 
   
   3. Base your answer only on the information provided.
-  
----
 
-Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
+*Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.*
 
 ---
 
@@ -199,9 +194,7 @@ Work through the reviews in order, starting with Review 1, and provide a label f
   
   - Respond in a sincere, empathetic, and considerate way that helps the customer feel heard and respected, rebuilds trust, and preserves the customer relationship.
 
----
-
-Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.
+*Note: A response of about 80–200 words is generally sufficient, but you may write more or less as needed to fully address the task.*
 
 ---
 
