@@ -541,7 +541,7 @@ export default function TaskPage() {
         <div className="border rounded-lg overflow-hidden">
           <div className="bg-blue-50 p-3 rounded">
             <p className="text-blue-700 text-sm">
-              Please use the <strong>AI assistant provided within the interface</strong> to produce your response. You <strong>should not</strong> draft or complete a response on your own.
+              Please use the <strong>AI assistant provided within the interface</strong> to produce your response. Please copy and paste the task instructions and materials into the chatbox. You <strong>should not</strong> draft or complete a response on your own.
               <br /> <br />
               You may continue interacting with the AI assistant as needed, but you <strong>must not</strong> write the response yourself or modify the AI-generated text. In addition, you <strong>must not</strong> use any external AI tools, search engines, or other outside assistance.
               <br /> <br />

@@ -439,7 +439,7 @@ export default function EntryPage() {
                   <p className="text-blue-700 text-sm">
                     You will enter the task interface, where you can view <strong>task information in the left panel</strong>.
                     <br /> <br />
-                    You will have <strong>up to {g2Max} minutes</strong> to complete the task using the <strong>AI assistant provided within the interface</strong>. Please provide it with the task instructions and materials. You <strong>should not</strong> draft or complete a response on your own.
+                    You will have <strong>up to {g2Max} minutes</strong> to complete the task using the <strong>AI assistant provided within the interface</strong>. Please copy and paste the task instructions and materials into the chatbox. You <strong>should not</strong> draft or complete a response on your own.
                     <br /> <br />
                     You may continue interacting with the AI assistant as needed, but you <strong>must not</strong> write the response yourself or modify the AI-generated text. In addition, you <strong>must not</strong> use any external AI tools, search engines, or other outside assistance.
                     <br /> <br />
