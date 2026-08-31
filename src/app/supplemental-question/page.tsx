@@ -50,15 +50,14 @@ type NoUseReasons = {
 }
 
 const AI_ISSUE_OPTIONS = [
-  { value: 'a', label: 'My message could not be edited or sent smoothly.' },
-  { value: 'b', label: 'My message was submitted but received no reply.' },
-  { value: 'c', label: 'The AI Assistant showed an error and would not work.' },
-  { value: 'd', label: 'The AI Assistant responds too slowly.' },
-  { value: 'e', label: 'The AI repeatedly outputs the same content.' },
-  { value: 'f', label: 'The AI Assistant displays incomplete replies (truncated).' },
-  { value: 'g', label: 'The AI Assistant fails to provide helpful answers for me.' },
-  { value: 'h', label: 'The AI Assistant generates untrustworthy answers (provides false information).' },
-  { value: 'i', label: 'None of the above (I encountered no issues).' },
+  { value: 'a', label: 'I encountered no issues.', hasInput: false },
+  { value: 'b', label: 'My message could not be edited or sent smoothly.', hasInput: false },
+  { value: 'c', label: 'My message was submitted but received no reply.', hasInput: false },
+  { value: 'd', label: 'The AI Assistant showed an error and would not work.', hasInput: false },
+  { value: 'e', label: 'The AI Assistant responds too slowly.', hasInput: false },
+  { value: 'f', label: 'The AI repeatedly outputs the same content.', hasInput: false },
+  { value: 'g', label: 'The AI Assistant displays incomplete replies (truncated).', hasInput: false },
+  { value: 'h', label: 'Other', hasInput: true },
 ] as const
 
 type AiIssues = {
@@ -70,7 +69,6 @@ type AiIssues = {
   f?: boolean
   g?: boolean
   h?: boolean
-  i?: boolean
 }
 
 export default function SupplementalQuestionPage() {
@@ -92,6 +90,7 @@ export default function SupplementalQuestionPage() {
   const [noUseOther, setNoUseOther] = useState('')
 
   const [aiIssues, setAiIssues] = useState<AiIssues>({})
+  const [aiIssuesOther, setAiIssuesOther] = useState('')
 
   const [aiSuggestions, setAiSuggestions] = useState('')
 
@@ -127,14 +126,14 @@ export default function SupplementalQuestionPage() {
 
   const toggleAiIssue = (key: keyof AiIssues) => {
     setAiIssues((prev) => {
-      if (key === 'i') {
-        // Toggle 'None': if selecting it, clear all others; if deselecting, just unset
-        const newVal = !prev.i
-        return { i: newVal }
+      if (key === 'a') {
+        // Toggle 'I encountered no issues': clear all others when selecting
+        const newVal = !prev.a
+        return { a: newVal }
       } else {
-        // Toggle any issue: if selecting it, clear 'None'
+        // Toggle any other issue: clear 'I encountered no issues'
         const newVal = !prev[key]
-        return { ...prev, [key]: newVal, i: false }
+        return { ...prev, [key]: newVal, a: false }
       }
     })
   }
@@ -165,12 +164,12 @@ export default function SupplementalQuestionPage() {
 
       const hasIssues = Object.values(aiIssues).some((v) => v)
       if (!hasIssues) {
-        setError('Please select at least one AI interaction issue, or select "None of the above" if you had no issues.')
+        setError('Please select at least one option.')
         return
       }
 
-      if (!aiSuggestions.trim()) {
-        setError('Please share your experience or suggestions in the text field.')
+      if (aiIssues.h && !aiIssuesOther.trim()) {
+        setError('Please specify your reason for "Other".')
         return
       }
     }
@@ -218,10 +217,10 @@ export default function SupplementalQuestionPage() {
       if (aiIssues.f) issues.push('f')
       if (aiIssues.g) issues.push('g')
       if (aiIssues.h) issues.push('h')
-      if (aiIssues.i) issues.push('i')
       payload.aiIssues = issues.join(',')
+      payload.aiIssuesOther = aiIssues.h ? aiIssuesOther : null
 
-      payload.aiSuggestions = aiSuggestions
+      payload.aiSuggestions = aiSuggestions.trim() || null
     }
 
     try {
@@ -361,27 +360,39 @@ export default function SupplementalQuestionPage() {
                 </Label>
                 <div className="space-y-3 bg-gray-50 p-4 rounded-lg border">
                   {AI_ISSUE_OPTIONS.map((opt) => (
-                    <div key={opt.value} className="flex items-start space-x-2">
-                      <Checkbox
-                        id={`issue-${opt.value}`}
-                        checked={!!aiIssues[opt.value as keyof AiIssues]}
-                        onCheckedChange={() => toggleAiIssue(opt.value as keyof AiIssues)}
-                      />
-                      <Label htmlFor={`issue-${opt.value}`} className="text-sm cursor-pointer leading-tight">
-                        {opt.label}
-                      </Label>
+                    <div key={opt.value} className="space-y-2">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id={`issue-${opt.value}`}
+                          checked={!!aiIssues[opt.value as keyof AiIssues]}
+                          onCheckedChange={() => toggleAiIssue(opt.value as keyof AiIssues)}
+                        />
+                        <Label htmlFor={`issue-${opt.value}`} className="text-sm cursor-pointer leading-tight">
+                          {opt.label}
+                        </Label>
+                      </div>
+                      {opt.hasInput && aiIssues[opt.value as keyof AiIssues] && (
+                        <div className="ml-7">
+                          <Textarea
+                            placeholder="Please specify..."
+                            value={aiIssuesOther}
+                            onChange={(e) => setAiIssuesOther(e.target.value)}
+                            className="min-h-[60px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* AI suggestions - required */}
+              {/* AI suggestions - optional */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  Please describe in detail any technical‑related issues you encountered within the experiment interface. Did you experience any other issues when interacting with the AI assistant that were not listed above? (Please enter “none” if you did not encounter any problems.) <span className="text-red-500">*</span>
+                  Please describe in detail any technical‑related issues you encountered within the experiment interface, or share any other feedback about interacting with the AI assistant. (Optional)
                 </Label>
                 <Textarea
-                  placeholder="Share other issues interacting with the AI assistant..."
+                  placeholder="Share other issues or feedback..."
                   value={aiSuggestions}
                   onChange={(e) => setAiSuggestions(e.target.value)}
                   className="min-h-[80px]"

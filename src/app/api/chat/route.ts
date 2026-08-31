@@ -121,7 +121,6 @@ Rules:
       const completion = await client.chat.completions.create({
         model,
         messages,
-        temperature: 0.7,
         max_tokens: maxOutputTokens,
       }, { signal: controller.signal })
       clearTimeout(timeout)

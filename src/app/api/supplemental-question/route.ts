@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       aiNoUseReasons?: string
       aiNoUseOther?: string | null
       aiIssues?: string
+      aiIssuesOther?: string | null
       aiSuggestions?: string | null
     }
 
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
         ai_no_use_tech_issue: null,
         ai_no_use_other: body.aiNoUseOther ?? null,
         ai_issues: body.aiIssues ?? null,
+        ai_issues_other: body.aiIssuesOther ?? null,
         ai_suggestions: body.aiSuggestions ?? null,
         created_at: new Date().toISOString(),
       })
