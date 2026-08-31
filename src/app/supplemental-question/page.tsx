@@ -50,13 +50,13 @@ type NoUseReasons = {
 }
 
 const AI_ISSUE_OPTIONS = [
-  { value: 'a', label: 'I encountered no issues.', hasInput: false },
+  { value: 'a', label: 'I encountered no technical issues.', hasInput: false },
   { value: 'b', label: 'My message could not be edited or sent smoothly.', hasInput: false },
-  { value: 'c', label: 'My message was submitted but received no reply.', hasInput: false },
-  { value: 'd', label: 'The AI Assistant showed an error and would not work.', hasInput: false },
-  { value: 'e', label: 'The AI Assistant responds too slowly.', hasInput: false },
-  { value: 'f', label: 'The AI repeatedly outputs the same content.', hasInput: false },
-  { value: 'g', label: 'The AI Assistant displays incomplete replies (truncated).', hasInput: false },
+  { value: 'c', label: 'My message was submitted but I received no reply.', hasInput: false },
+  { value: 'd', label: 'The AI Assistant showed an error and did not work.', hasInput: false },
+  { value: 'e', label: 'The AI Assistant responded unusually slowly.', hasInput: false },
+  { value: 'f', label: 'The AI repeatedly output the same content.', hasInput: false },
+  { value: 'g', label: 'The AI Assistant’s replies were incomplete or cut off.', hasInput: false },
   { value: 'h', label: 'Other', hasInput: true },
 ] as const
 
@@ -356,7 +356,7 @@ export default function SupplementalQuestionPage() {
               {/* AI interaction issues - always shown (required) */}
               <div className="space-y-3">
                 <Label className="text-base font-medium">
-                  Have you encountered the following issues while using the AI Assistant provided within the interface? (Select all that apply) <span className="text-red-500">*</span>
+                  Have you encountered the following technical issues while using the AI Assistant provided within the interface? (Select all that apply) <span className="text-red-500">*</span>
                 </Label>
                 <div className="space-y-3 bg-gray-50 p-4 rounded-lg border">
                   {AI_ISSUE_OPTIONS.map((opt) => (
