@@ -142,8 +142,6 @@ should become:
 
 Please work through the records in order, starting with Record 1.
 
----
-
 | Record | Date               | Phone Number   | Amount |
 |--------|--------------------|----------------|--------|
 | 1      | April 8, 2026      | 415.555.0182   | 6.5    |
