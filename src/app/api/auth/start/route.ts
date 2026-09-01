@@ -97,89 +97,84 @@ When asked for the main reason they were visiting less often:
 
 `,
 
-  'task3': `You work at Lucky Coffee. The store manager has collected customer comments from an online review site and needs you to label each review using one of three categories.
+  'task3': `
+  
+You work at Lucky Coffee. The store is updating its membership database. Some customer records were entered using inconsistent formats, and your manager has asked you to standardize them.
 
 
-Your task: for each review, choose the **ONE label that fits best** from the three below.
+Your task is to reformat the customer records according to the rules below.
 
-- **Service**: What the staff do (e.g., assistance, order handling, or other staff behavior)
+**1. Date**:
 
-- **Environment**: What the store is like (e.g., space, facilities, or cleanliness)
+Convert the date to the format: YYYY-MM-DD
 
-- **Product**: What the drink or food is like (e.g., taste, temperature, sweetness, or strength)
+Example: April 8, 2026 → 2026-04-08
 
-For each comment, enter the review number and corresponding label on a separate line using the following format: 
+**2. Phone number**:
 
-**Number,Label**
+Convert the phone number to the format: (XXX) XXX-XXXX
+
+Example: 415.555.0182 → (415) 555-0182
+
+**3. Amount**:
+
+Convert the amount to a dollar sign followed by two decimal places: $X.XX
+
+Examples: 6.5 → $6.50;  $12 → $12.00
+
+For each record, enter the standardized information in the following format:
+
+**Record number, YYYY-MM-DD, (XXX) XXX-XXXX, $X.XX**
 
 ---
 
 For example:
 
-1,Service
+1 | April 8, 2026 | 415.555.0182 | 6.5
 
-2,Environment
+should become:
 
-3,Product
-
----
-
-Work through the reviews in order, starting with Review 1, and provide a label for each review.
+1, 2026-04-08, (415) 555-0182, $6.50
 
 ---
 
-|Number|Review|
-|------|------|
-| 1 | The barista gave me a quick recommendation when I said I wanted something not too sweet. |
-| 2 | My latte was a little too milky today — couldn't really taste the coffee. |
-| 3 | Espresso smelled amazing and tasted really smooth. |
-| 4 | Love the window seats, tons of natural light. |
-| 5 | Barista double‑checked my special requests and got everything right. |
-| 6 | The mocha was heavy on chocolate, kind of drowned out the coffee flavor. |
-| 7 | The iced tea was light and refreshing, not watered down at all. |
-| 8 | Barista let me know right when my drink was ready. |
-| 9 | Barista noticed my drink had been sitting and offered to make a fresh one. |
-| 10 | Staff noticed my hands were full and brought me a tray without asking. |
-| 11 | Vanilla latte was sweetened just right for me. |
-| 12 | The barista noticed I was waiting on a mobile order and checked on it for me. |
-| 13 | Latte art was gorgeous, and it tasted just as smooth. |
-| 14 | Cashier caught a mistake on my receipt and fixed it before I even said anything. |
-| 15 | Flat white had a great balance of milk and coffee. |
-| 16 | My iced latte was really well mixed, with no separation at all. |
-| 17 | Seats along the wall have outlets, good pick if you're trying to get work done. |
-| 18 | The drip coffee tasted fresh and had a nice nutty flavor. |
-| 19 | Barista patiently walked me through the differences between the new drinks. |
-| 20 | There’s enough room between tables that you don’t feel like you’re sitting with strangers. |
-| 21 | Staff tied up my to‑go bag so it was easy to carry. |
-| 22 | This place is spotless, floors are always clean. |
-| 23 | Americano was pretty bitter today, but not very acidic at least. |
-| 24 | Cashier processed my refund super quickly. |
-| 25 | The outdoor tables have enough shade to sit comfortably even when it’s sunny. |
-| 26 | Touchless faucets in the restroom are a nice touch. |
-| 27 | The caramel flavor was subtle, which I actually appreciated. |
-| 28 | The little corner near the bookshelf is probably the coziest place in the shop. |
-| 29 | Corner couch is comfy and feels pretty private. |
-| 30 | Cashier applied my rewards and coupon together, super convenient. |
-| 31 | Upstairs is way quieter than the first floor. |
-| 32 | Barista wrote down my complicated custom order and read it back to make sure it was right. |
-| 33 | Windows upstairs actually open, so the air feels way better than downstairs. |
-| 34 | This latte has a strong coconut flavor, honestly like it even more over ice. |
-| 35 | Dividers between the tables actually work — you can barely hear the table next to you. |
-| 36 | Barista kept an eye on my order and called my name the second it was ready. |
-| 37 | My hands were full, so the barista brought my order right to the table. |
-| 38 | Barista asked if I needed utensils before handing over my breakfast sandwich. |
-| 39 | Cold brew was strong, one cup woke me right up. |
-| 40 | There’s a good mix of bigger tables and little two‑person spots. |
-| 41 | Oat milk latte tasted kind of weak today. |
-| 42 | These chairs are so comfy, I can sit for hours. |
-| 43 | Cappuccino had a nice thick layer of foam with a little cinnamon on top. |
-| 44 | Barista reminded me to give my drink a stir before drinking. |
-| 45 | Matcha latte was a little bitter today. |
-| 46 | Hot latte had really smooth foam, easy to drink. |
-| 47 | Cold brew with oat milk was smoother, easier to drink. |
-| 48 | Barista put a sleeve on my cup so I wouldn't burn my hand. |
-| 49 | Seats in the back upstairs don't get much natural light. |
-| 50 | Almost left one of my drinks behind, but the cashier caught it and stopped me. |
+Please work through the records in order, starting with Record 1.
+
+---
+
+| Record | Date               | Phone Number   | Amount |
+|--------|--------------------|----------------|--------|
+| 1      | April 8, 2026      | 415.555.0182   | 6.5    |
+| 2      | 2026/05/17         | 2125550147     | $12    |
+| 3      | June 21, 2026      | 646-555-0139   | 4.75   |
+| 4      | 2026/07/03         | (917)5550186   | $8     |
+| 5      | August 14, 2026    | 718.555.0114   | 5.5    |
+| 6      | 2026/09/06         | 2025550172     | $11.2  |
+| 7      | September 19, 2026 | 305-555-0186   | 7      |
+| 8      | 2026/10/11         | (312)5550140   | $4.8   |
+| 9      | October 25, 2026   | 617.555.0191   | 9.25   |
+| 10     | 2026/11/06         | 2135550195     | $13    |
+| 11     | November 18, 2026  | (408)5550173   | 6.75   |
+| 12     | 2026/12/04         | 503-555-0136   | $5     |
+| 13     | December 22, 2026  | 702.555.0157   | 10.5   |
+| 14     | 2026/01/03         | (206)5550148   | $7.4   |
+| 15     | January 15, 2026   | 4045550127     | 8.25   |
+| 16     | 2026/02/08         | 602.555.0169   | $14    |
+| 17     | February 19, 2026  | 713-555-0118   | 5.6    |
+| 18     | 2026/03/07         | (512)5550193   | $9     |
+| 19     | March 24, 2026     | 8015550176     | 6.3    |
+| 20     | 2026/04/13         | 919.555.0109   | $12.5  |
+| 21     | April 28, 2026     | 314-555-0182   | 4      |
+| 22     | 2026/05/05         | (720)5550134   | $7.75  |
+| 23     | May 26, 2026       | 9015550155     | 11.5   |
+| 24     | 2026/06/17         | 469.555.0124   | $6     |
+| 25     | June 30, 2026      | 704-555-0161   | 8.4    |
+| 26     | 2026/07/12         | (816)5550190   | $15    |
+| 27     | July 21, 2026      | 8575550146     | 5.25   |
+| 28     | 2026/08/09         | 971.555.0103   | $10.8  |
+| 29     | August 27, 2026    | 678-555-0179   | 7.5    |
+| 30     | 2026/09/16         | (410)5550129   | $9.3   |
+
 `,
 
   'task4': `You work at Lucky Coffee and are responsible for responding to customer feedback. A customer has submitted the complaint below. Read the complaint and write a reply as a Lucky Coffee representative.
