@@ -62,6 +62,17 @@ export default function TaskPage() {
   const [taskTimerStart, setTaskTimerStart] = useState<Date | null>(isG3P2Init ? new Date() : null)
   const [submitCountdown, setSubmitCountdown] = useState<number | null>(null)
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null)
+  const [showNarrowNotice, setShowNarrowNotice] = useState(false)
+  const NARROW_BREAKPOINT = 1024
+
+  useEffect(() => {
+    const checkWidth = () => {
+      setShowNarrowNotice(window.innerWidth < NARROW_BREAKPOINT)
+    }
+    checkWidth()
+    window.addEventListener('resize', checkWidth)
+    return () => window.removeEventListener('resize', checkWidth)
+  }, [allowChat, isChatOpen])
 
   const submitMinutes = getSubmitMinMinutes(groupType, currentPhase, taskType)
   const autoSubmitMinutes = getAutoSubmitMinutes(groupType, currentPhase, taskType)
@@ -682,6 +693,23 @@ export default function TaskPage() {
             </Badge>
             <span className="text-green-700">The AI assistant and copy/paste functions are now available</span>
           </div>
+        </div>
+      )}
+
+      {allowChat && isChatOpen && showNarrowNotice && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md mx-4 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg shadow-lg px-4 py-3 flex items-start gap-3">
+          <span className="text-lg leading-none mt-0.5">💡</span>
+          <div className="flex-1 text-sm leading-relaxed">
+            <p className="font-semibold">Tip for a better experience</p>
+            <p>The AI assistant panel has moved below the task content because your browser window is narrow. For side-by-side viewing, please widen your browser to at least 1024px.</p>
+          </div>
+          <button
+            onClick={() => setShowNarrowNotice(false)}
+            className="text-amber-600 hover:text-amber-900 text-lg leading-none shrink-0"
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
         </div>
       )}
 
