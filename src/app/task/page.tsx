@@ -701,7 +701,7 @@ export default function TaskPage() {
           <span className="text-lg leading-none mt-0.5">💡</span>
           <div className="flex-1 text-sm leading-relaxed">
             <p className="font-semibold">Tip for a better experience</p>
-            <p>The AI assistant panel has moved below the task content because your browser window is narrow. For side-by-side viewing, please widen your browser to at least 1024px.</p>
+            <p>The AI assistant panel has moved below the task content because your browser window is too narrow. For side-by-side viewing, please widen your browser window to at least 1024px.</p>
           </div>
           <button
             onClick={() => setShowNarrowNotice(false)}
